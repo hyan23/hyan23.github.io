@@ -1,0 +1,951 @@
+<!DOCTYPE html>
+
+
+
+
+
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/favicon/apple-touch-icon.png?v=7.4.0">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon/favicon-32x32.png?v=7.4.0">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon/favicon-16x16.png?v=7.4.0">
+  <link rel="mask-icon" href="/images/favicon/safari-pinned-tab.svg?v=7.4.0" color="#222">
+  <link rel="manifest" href="/images/favicon/site.webmanifest">
+  <meta name="msapplication-config" content="/images/favicon/browserconfig.xml">
+  <meta http-equiv="Cache-Control" content="no-transform">
+  <meta http-equiv="Cache-Control" content="no-siteapp">
+
+<link rel="stylesheet" href="/css/main.css?v=7.4.0">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '7.4.0',
+    exturl: false,
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false},
+    copycode: {"enable":false,"show_result":false,"style":null},
+    back2top: {"enable":true,"sidebar":true,"scrollpercent":false},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: true,
+    lazyload: true,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: "",
+      labels: ""
+    },
+    localsearch: {"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: '',
+    motion: {"enable":false},
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="状态: 初稿  译注: 在本章, 枚举等同于枚举组, 枚举集(集合), 代表包含若干命名常量(即枚举值)的集合; 故而, 枚举值即枚举的成员, 也称枚举成员(或成员).  介绍 定义枚举即定义一组命名常量.运用枚举, 你能创建更清晰的程序, 例如用枚举成员代表程序中不同状态.TypeScript 支持数值型枚举和字符串型枚举.">
+<meta name="keywords" content="博客,个人博客,日志,在线工具">
+<meta property="og:type" content="article">
+<meta property="og:title" content="枚举">
+<meta property="og:url" content="https://hyan23.org/2019/11/20/ts-enums/index.html">
+<meta property="og:site_name" content="Hyan Lee">
+<meta property="og:description" content="状态: 初稿  译注: 在本章, 枚举等同于枚举组, 枚举集(集合), 代表包含若干命名常量(即枚举值)的集合; 故而, 枚举值即枚举的成员, 也称枚举成员(或成员).  介绍 定义枚举即定义一组命名常量.运用枚举, 你能创建更清晰的程序, 例如用枚举成员代表程序中不同状态.TypeScript 支持数值型枚举和字符串型枚举.">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2020-01-01T11:26:40.980Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="枚举">
+<meta name="twitter:description" content="状态: 初稿  译注: 在本章, 枚举等同于枚举组, 枚举集(集合), 代表包含若干命名常量(即枚举值)的集合; 故而, 枚举值即枚举的成员, 也称枚举成员(或成员).  介绍 定义枚举即定义一组命名常量.运用枚举, 你能创建更清晰的程序, 例如用枚举成员代表程序中不同状态.TypeScript 支持数值型枚举和字符串型枚举.">
+  <link rel="canonical" href="https://hyan23.org/2019/11/20/ts-enums/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>枚举 | Hyan Lee</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+  <div class="container">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Hyan Lee</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+      
+      
+      
+        
+        <li class="menu-item menu-item-home">
+      
+    
+      
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-关于-/-留言板">
+      
+    
+      
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于 / 留言板</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-categories">
+      
+    
+      
+      
+        
+      
+        
+          
+        
+      
+        
+      
+    
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类<span class="badge">6</span></a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-archives">
+      
+    
+      
+      
+        
+          
+        
+      
+        
+      
+        
+      
+    
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">31</span></a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-精选-/-系列">
+      
+    
+      
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <a href="/selections/" rel="section"><i class="fa fa-fw fa-book"></i>精选 / 系列</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-摄影">
+      
+    
+      
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <a href="/gallery/" rel="section"><i class="fa fa-fw fa-camera"></i>摄影</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-工具">
+      
+    
+      
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <a href="/tools/" rel="section"><i class="fa fa-fw fa-calculator"></i>工具</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-友情链接">
+      
+    
+      
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <a href="/friends/" rel="section"><i class="fa fa-fw fa-external-link"></i>友情链接</a>
+
+  </li>
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+            
+
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+      <article itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block post">
+    <link itemprop="mainEntityOfPage" href="https://hyan23.org/2019/11/20/ts-enums/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Hyan Lee">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar2.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hyan Lee">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">枚举
+
+          
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              
+                
+              
+
+              <time title="创建时间：2019-11-20 09:28:50" itemprop="dateCreated datePublished" datetime="2019-11-20T09:28:50+08:00">2019-11-20</time>
+            </span>
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-01-01 19:26:40" itemprop="dateModified" datetime="2020-01-01T19:26:40+08:00">2020-01-01</time>
+              </span>
+            
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/翻译稿/" itemprop="url" rel="index"><span itemprop="name">翻译稿</span></a></span>
+
+                
+                
+                  ，
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/翻译稿/TypeScript/" itemprop="url" rel="index"><span itemprop="name">TypeScript</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+          
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">本文字数：</span>
+              
+              <span>2.2k</span>
+            </span>
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <pre><code>状态: 初稿
+</code></pre><blockquote>
+<p>译注: 在本章, 枚举等同于枚举组, 枚举集(集合), 代表包含若干命名常量(即枚举值)的集合; 故而, 枚举值即枚举的成员, 也称枚举成员(或成员).</p>
+</blockquote>
+<h1 id="介绍" class="heading-control"><a href="#介绍" class="headerlink" title="介绍"></a>介绍<a class="heading-anchor" href="#介绍" aria-hidden="true"></a></h1><!-- # Enums -->
+<div class="translation-block" title="
+Enums allow us to define a set of named constants.
+Using enums can make it easier to document intent, or create a set of distinct cases.
+TypeScript provides both numeric and string-based enums.
+"><p>定义枚举即定义一组命名常量.<br>运用枚举, 你能创建更清晰的程序, 例如用枚举成员代表程序中不同状态.<br>TypeScript 支持数值型枚举和字符串型枚举.</p></div>
+<a id="more"></a>
+<h1 id="数值型枚举" class="heading-control"><a href="#数值型枚举" class="headerlink" title="数值型枚举"></a>数值型枚举<a class="heading-anchor" href="#数值型枚举" aria-hidden="true"></a></h1><!-- ## Numeric enums -->
+<div class="translation-block" title="
+We&amp;#39;ll first start off with numeric enums, which are probably more familiar if you&amp;#39;re coming from other languages.
+An enum can be defined using the `enum` keyword.
+"><p>考虑到你可能用过其他语言, 对数值型枚举比较熟悉, 我们就从数值型枚举开始.<br>用 <code>enum</code> 关键字定义一个枚举组.</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">enum</span> Direction &#123;</span><br><span class="line">    Up = <span class="number">1</span>,</span><br><span class="line">    Down,</span><br><span class="line">    Left,</span><br><span class="line">    Right,</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+Above, we have a numeric enum where `Up` is initialized with `1`.
+All of the following members are auto-incremented from that point on.
+In other words, `Direction.Up` has the value `1`,  `Down` has `2`, `Left` has `3`, and `Right` has `4`.
+
+If we wanted, we could leave off the initializers entirely:
+"><p>以上, 我们定义了一个数值型枚举, 并把 <code>Up</code> 初始化为 <code>1</code>.<br>它(<code>Up</code>)其后所有枚举值将在它的基础上依次递增.<br>换句话说, <code>Direction.Up</code> = 1, <code>.Down</code> = 2, <code>.Left</code> = 3, <code>.Right</code> = 4.</p>
+<p>只要你想, 不初始化任何成员也是可以的:</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">enum</span> Direction &#123;</span><br><span class="line">    Up,</span><br><span class="line">    Down,</span><br><span class="line">    Left,</span><br><span class="line">    Right,</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+Here, `Up` would have the value `0`, `Down` would have `1`, etc.
+This auto-incrementing behavior is useful for cases where we might not care about the member values themselves, but do care that each value is distinct from other values in the same enum.
+
+Using an enum is simple: just access any member as a property off of the enum itself, and declare types using the name of the enum:
+"><p>枚举第一个成员 <code>Up</code> 自动初始化为 <code>0</code>, 第二个成员 <code>Down</code> 初始化为 <code>1</code>, 依此类推.<br>如果你在实际应用中, 只是希望获得一组能相互区分的符号, 并不关心它们的值具体是什么, 初始化的自增行为就很省事了.</p>
+<p>枚举易于使用: 像访问对象属性一样访问枚举成员, 枚举名即枚举值的类型名:</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">enum</span> Response &#123;</span><br><span class="line">    No = <span class="number">0</span>,</span><br><span class="line">    Yes = <span class="number">1</span>,</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">respond</span>(<span class="params">recipient: <span class="built_in">string</span>, message: Response</span>): <span class="title">void</span> </span>&#123;</span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">respond(<span class="string">"Princess Caroline"</span>, Response.Yes)</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+Numeric enums can be mixed in [computed and constant members (see below)](#computed-and-constant-members).
+The short story is, enums without initializers either need to be first, or have to come after numeric enums initialized with numeric constants or other constant enum members.
+In other words, the following isn&amp;#39;t allowed:
+"><p>数值型枚举可以混合<a href="#%e6%81%92%e5%ae%9a%e6%88%90%e5%91%98%e4%b8%8e%e7%bb%8f%e8%ae%a1%e7%ae%97%e6%88%90%e5%91%98">恒定成员与经计算成员 (见后文)</a>.<br>简单来说, 未初始化的成员或出现在第一位, 或出现在由数值常量或其他恒定成员初始化的成员之后.<br>以下定义是错误的:</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">enum</span> E &#123;</span><br><span class="line">    A = getSomeValue(),</span><br><span class="line">    B, <span class="comment">// Error! Enum member must have initializer.</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="字符串型枚举" class="heading-control"><a href="#字符串型枚举" class="headerlink" title="字符串型枚举"></a>字符串型枚举<a class="heading-anchor" href="#字符串型枚举" aria-hidden="true"></a></h1><!-- ## String enums -->
+<div class="translation-block" title="
+String enums are a similar concept, but have some subtle [runtime differences](#enums-at-runtime) as documented below.
+In a string enum, each member has to be constant-initialized with a string literal, or with another string enum member.
+"><p>字符串型枚举概念相似, 如后文所述, 只在<a href="#">运行期</a>存在细微差别.<br>字符串型枚举成员有两种初始化方式: 1. 字符串字面量; 2. 其他字符串型枚举成员.</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">enum</span> Direction &#123;</span><br><span class="line">    Up = <span class="string">"UP"</span>,</span><br><span class="line">    Down = <span class="string">"DOWN"</span>,</span><br><span class="line">    Left = <span class="string">"LEFT"</span>,</span><br><span class="line">    Right = <span class="string">"RIGHT"</span>,</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+While string enums don&amp;#39;t have auto-incrementing behavior, string enums have the benefit that they &amp;quot;serialize&amp;quot; well.
+In other words, if you were debugging and had to read the runtime value of a numeric enum, the value is often opaque - it doesn&amp;#39;t convey any useful meaning on its own (though [reverse mapping](#enums-at-runtime) can often help), string enums allow you to give a meaningful and readable value when your code runs, independent of the name of the enum member itself.
+"><p>字符串型枚举没有初始化自增行为, 这让它在序列化时占优.<br>试想, 如果你在调试程序, 运行时的枚举数值显然不会直接告诉你它代表什么 (<a href="#">反向映射通常能起作用</a>), 而字符串型枚举值在运行时本身就是”可读”的, 具有独立于成员名的含义.</p></div>
+<h1 id="混合型枚举" class="heading-control"><a href="#混合型枚举" class="headerlink" title="混合型枚举"></a>混合型枚举<a class="heading-anchor" href="#混合型枚举" aria-hidden="true"></a></h1><!-- Heterogeneous enums -->
+<div class="translation-block" title="
+Technically enums can be mixed with string and numeric members, but it&amp;#39;s not clear why you would ever want to do so:
+"><p>就技术而言, 单个枚举可以混合字符串或数值型成员, 但不好解释为什么要这么做:</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">enum</span> BooleanLikeHeterogeneousEnum &#123;</span><br><span class="line">    No = <span class="number">0</span>,</span><br><span class="line">    Yes = <span class="string">"YES"</span>,</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+Unless you&amp;#39;re really trying to take advantage of JavaScript&amp;#39;s runtime behavior in a clever way, it&amp;#39;s advised that you don&amp;#39;t do this.
+"><p>除非你真打算聪明地从 JavaScript 运行时行为中获利, 否则, “不使用”才是明智之举.</p></div>
+<h1 id="恒定成员与经计算成员" class="heading-control"><a href="#恒定成员与经计算成员" class="headerlink" title="恒定成员与经计算成员"></a>恒定成员与经计算成员<a class="heading-anchor" href="#恒定成员与经计算成员" aria-hidden="true"></a></h1><!-- ## Computed and constant members -->
+<div class="translation-block" title="
+Each enum member has a value associated with it which can be either *constant* or *computed*.
+An enum member is considered constant if:
+
+* It is the first member in the enum and it has no initializer, in which case it&amp;#39;s assigned the value `0`:
+"><p>每个枚举成员与一个值关联, 这个值可以是<em>恒定</em>的, 也可以是<em>经计算</em>的.<br>满足以下任意一条的, 即为恒定成员:</p>
+<ul>
+<li>它是枚举第一个成员, 没有手动初始化, 在这种情况下, 它有定值 <code>0</code>.</li>
+</ul></div>
+  <figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// E.X is constant:</span></span><br><span class="line"><span class="keyword">enum</span> E &#123; X &#125;</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+* It does not have an initializer and the preceding enum member was a *numeric* constant.
+  In this case the value of the current enum member will be the value of the preceding enum member plus one.
+"><ul>
+<li>它前一个成员与数值常量关联, 自身没有手动初始化.<br>在这种情况下, 当前枚举成员的值等于前一个成员<em>加一</em>.</li>
+</ul></div>
+  <figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// All enum members in 'E1' and 'E2' are constant.</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">enum</span> E1 &#123; X, Y, Z &#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">enum</span> E2 &#123;</span><br><span class="line">    A = <span class="number">1</span>, B, C</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+* The enum member is initialized with a constant enum expression.
+  A constant enum expression is a subset of TypeScript expressions that can be fully evaluated at compile time.
+  An expression is a constant enum expression if it is:
+
+    1. a literal enum expression (basically a string literal or a numeric literal)
+    2. a reference to previously defined constant enum member (which can originate from a different enum)
+    3. a parenthesized constant enum expression
+    4. one of the `+`, `-`, `~` unary operators applied to constant enum expression
+    5. `+`, `-`, `*`, `&amp;#x2F;`, `%`, `&amp;lt;&amp;lt;`, `&amp;gt;&amp;gt;`, `&amp;gt;&amp;gt;&amp;gt;`, `&amp;amp;`, `|`, `^` binary operators with constant enum expressions as operands
+
+  It is a compile time error for constant enum expressions to be evaluated to `NaN` or `Infinity`.
+
+In all other cases enum member is considered computed.
+"><ul>
+<li><p>它由常枚举表达式初始化.<br>常枚举表达式是 TypeScript 表达式的子集, 它的值能够在编译期求出.<br>满足以下任意一条的, 即为常枚举表达式:</p>
+<ol>
+<li>一个字面量枚举表达式 (也就是数值字面量或字符串字面量)</li>
+<li>对已定义恒定枚举成员的引用 (可以来自不同枚举)</li>
+<li>以括号括起来的常枚举表达式</li>
+<li><code>+</code>, <code>-</code>, <code>~</code> 单目运算符应用于一个常枚举表达式</li>
+<li>以双目运算符 <code>+</code>, <code>-</code>, <code>*</code>, <code>/</code>, <code>%</code>, <code>&lt;&lt;</code>, <code>&gt;&gt;</code>, <code>&gt;&gt;&gt;</code>, <code>&amp;</code>, <code>|</code>, <code>^</code> 连接的两个常枚举表达式</li>
+</ol>
+<p>编译器要求常枚举表达式的值不等于 <code>NaN</code>, 或 <code>Infinity</code>.</p>
+</li>
+</ul>
+<p>不在此类的成员皆为<em>经计算</em>的.</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">enum</span> FileAccess &#123;</span><br><span class="line">    <span class="comment">// constant members</span></span><br><span class="line">    None,</span><br><span class="line">    Read    = <span class="number">1</span> &lt;&lt; <span class="number">1</span>,</span><br><span class="line">    Write   = <span class="number">1</span> &lt;&lt; <span class="number">2</span>,</span><br><span class="line">    ReadWrite  = Read | Write,</span><br><span class="line">    <span class="comment">// computed member</span></span><br><span class="line">    G = <span class="string">"123"</span>.length</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="枚举成员类型" class="heading-control"><a href="#枚举成员类型" class="headerlink" title="枚举成员类型"></a>枚举成员类型<a class="heading-anchor" href="#枚举成员类型" aria-hidden="true"></a></h1><!-- # Union enums and enum member types -->
+<div class="translation-block" title="
+There is a special subset of constant enum members that aren&amp;#39;t calculated: literal enum members.
+A literal enum member is a constant enum member with no initialized value, or with values that are initialized to
+
+* any string literal (e.g. `&amp;quot;foo&amp;quot;`, `&amp;quot;bar`, `&amp;quot;baz&amp;quot;`)
+* any numeric literal (e.g. `1`, `100`)
+* a unary minus applied to any numeric literal (e.g. `-1`, `-100`)
+
+When all members in an enum have literal enum values, some special semantics come to play.
+
+The first is that enum members also become types as well!
+For example, we can say that certain members can *only* have the value of an enum member:
+"><p>恒定枚举成员有一个不经计算的特殊子集: 字面量枚举成员.<br>无初值的恒定枚举成员, 或初值取自</p>
+<ul>
+<li>任何字符串字面量 (例如 <code>&quot;foo&quot;</code>, <code>&quot;bar&quot;</code>, <code>&quot;baz&quot;</code>)</li>
+<li>任何数值字面量 (例如 <code>1</code>, <code>100</code>)</li>
+<li>单目运算符 <code>-</code> 应用的数值字面量 (例如 <code>-1</code>, <code>-100</code>)</li>
+</ul>
+<p>的成员都是字面量枚举成员.</p>
+<p>当一个枚举组里只有字面量枚举成员的时候, 特殊语义就激活了.</p>
+<p>首先, 每个枚举成员变成单值类型!<br>于是, 我们能让特定类成员<em>只能</em>取值于某个枚举成员:</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">enum</span> ShapeKind &#123;</span><br><span class="line">    Circle,</span><br><span class="line">    Square,</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">interface</span> Circle &#123;</span><br><span class="line">    kind: ShapeKind.Circle;</span><br><span class="line">    radius: <span class="built_in">number</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">interface</span> Square &#123;</span><br><span class="line">    kind: ShapeKind.Square;</span><br><span class="line">    sideLength: <span class="built_in">number</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> c: Circle = &#123;</span><br><span class="line">    kind: ShapeKind.Square, <span class="comment">// Error! Type 'ShapeKind.Square' is not assignable to type 'ShapeKind.Circle'.</span></span><br><span class="line">    radius: <span class="number">100</span>,</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+The other change is that enum types themselves effectively become a *union* of each enum member.
+While we haven&amp;#39;t discussed [union types](.&amp;#x2F;Advanced%20Types.md#union-types) yet, all that you need to know is that with union enums, the type system is able to leverage the fact that it knows the exact set of values that exist in the enum itself.
+Because of that, TypeScript can catch silly bugs where we might be comparing values incorrectly.
+For example:
+"><p>另外一点, 枚举变成了联合其所有成员类型的<em>自适应类型</em>.<br>我们还没谈到<a href="#">自适应类型</a>, 它在这里的作用是: 使类型系统获知枚举包含的确切成员.<br>利用这些信息, TypeScript 可以发现由无效比较引发的 bug.<br>例如:</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">enum</span> E &#123;</span><br><span class="line">    Foo,</span><br><span class="line">    Bar,</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">f</span>(<span class="params">x: E</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (x !== E.Foo || x !== E.Bar) &#123;</span><br><span class="line">        <span class="comment">//             ~~~~~~~~~~~</span></span><br><span class="line">        <span class="comment">// Error! This condition will always return 'true' since the types 'E.Foo' and 'E.Bar' have no overlap.</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+In that example, we first checked whether `x` was *not* `E.Foo`.
+If that check succeeds, then our `||` will short-circuit, and the body of the &amp;#39;if&amp;#39; will run.
+However, if the check didn&amp;#39;t succeed, then `x` can *only* be `E.Foo`, so it doesn&amp;#39;t make sense to see whether it&amp;#39;s equal to `E.Bar`.
+"><p>在这个例子中, 我们首先判断 <code>x</code> <em>不是</em> <code>E.Foo</code>.<br>如果成立, <code>||</code> 运算符短路, 开始执行 <code>if</code> 主体.<br>如果不成立, 表示 <code>x</code> 等于 <code>E.Foo</code>, <code>x !== E.Bar</code> 一定为真, 由此可见, 这条条件语句没有意义.</p></div>
+<h1 id="运行期的枚举" class="heading-control"><a href="#运行期的枚举" class="headerlink" title="运行期的枚举"></a>运行期的枚举<a class="heading-anchor" href="#运行期的枚举" aria-hidden="true"></a></h1><!-- ## Enums at runtime -->
+<div class="translation-block" title="
+Enums are real objects that exist at runtime.
+For example, the following enum
+"><p>运行期间, 枚举是真实的对象.<br>例如, 下面的枚举</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">enum</span> E &#123;</span><br><span class="line">    X, Y, Z</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+can actually be passed around to functions
+"><p>可以传递给函数 <code>f</code></p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">f</span>(<span class="params">obj: &#123; X: <span class="built_in">number</span> &#125;</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> obj.X;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Works, since 'E' has a property named 'X' which is a number.</span></span><br><span class="line">f(E);</span><br></pre></td></tr></table></figure>
+<h1 id="编译期的枚举" class="heading-control"><a href="#编译期的枚举" class="headerlink" title="编译期的枚举"></a>编译期的枚举<a class="heading-anchor" href="#编译期的枚举" aria-hidden="true"></a></h1><!-- ## Enums at compile time -->
+<div class="translation-block" title="
+Even though Enums are real objects that exist at runtime, the `keyof` keyword works differently than you might expect for typical objects. Instead, use `keyof typeof` to get a Type that represents all Enum keys as strings.
+"><p>虽然在运行期枚举是真正的对象, <code>keyof</code> 一个枚举可能产出与作用于典型对象上不同的结果. 相应地, 你必须 <code>keyof typeof</code> 一个枚举来获取它所有成员名的字符串表示.</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">enum</span> LogLevel &#123;</span><br><span class="line">    ERROR, WARN, INFO, DEBUG</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * This is equivalent to:</span></span><br><span class="line"><span class="comment"> * type LogLevelStrings = 'ERROR' | 'WARN' | 'INFO' | 'DEBUG';</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">type</span> LogLevelStrings = keyof <span class="keyword">typeof</span> LogLevel;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">printImportant</span>(<span class="params">key: LogLevelStrings, message: <span class="built_in">string</span></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">const</span> num = LogLevel[key];</span><br><span class="line">    <span class="keyword">if</span> (num &lt;= LogLevel.WARN) &#123;</span><br><span class="line">       <span class="built_in">console</span>.log(<span class="string">'Log level key is: '</span>, key);</span><br><span class="line">       <span class="built_in">console</span>.log(<span class="string">'Log level value is: '</span>, num);</span><br><span class="line">       <span class="built_in">console</span>.log(<span class="string">'Log level message is: '</span>, message);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">printImportant(<span class="string">'ERROR'</span>, <span class="string">'This is a message'</span>);</span><br></pre></td></tr></table></figure>
+<h2 id="反向映射" class="heading-control"><a href="#反向映射" class="headerlink" title="反向映射"></a>反向映射<a class="heading-anchor" href="#反向映射" aria-hidden="true"></a></h2><!-- ### Reverse mappings -->
+<div class="translation-block" title="
+In addition to creating an object with property names for members, numeric enums members also get a *reverse mapping* from enum values to enum names.
+For example, in this example:
+"><p>除创建一个属性服务于枚举成员的对象外, 数值型枚举还会为你创建一个值到成员名的<em>反向映射</em>表.<br>考察下例:</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">enum</span> Enum &#123;</span><br><span class="line">    A</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">let</span> a = Enum.A;</span><br><span class="line"><span class="keyword">let</span> nameOfA = Enum[a]; <span class="comment">// "A"</span></span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+TypeScript might compile this down to something like the the following JavaScript:
+"><p>输出的 JavaScript 目标程序可能是:</p></div>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> Enum;</span><br><span class="line">(<span class="function"><span class="keyword">function</span> (<span class="params">Enum</span>) </span>&#123;</span><br><span class="line">    Enum[Enum[<span class="string">"A"</span>] = <span class="number">0</span>] = <span class="string">"A"</span>;</span><br><span class="line">&#125;)(Enum || (Enum = &#123;&#125;));</span><br><span class="line"><span class="keyword">var</span> a = Enum.A;</span><br><span class="line"><span class="keyword">var</span> nameOfA = Enum[a]; <span class="comment">// "A"</span></span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+In this generated code, an enum is compiled into an object that stores both forward (`name` -&amp;gt; `value`) and reverse (`value` -&amp;gt; `name`) mappings.
+References to other enum members are always emitted as property accesses and never inlined.
+
+Keep in mind that string enum members *do not* get a reverse mapping generated at all.
+"><p>我们看到, 编译生成的代码中, 枚举被转换成了一个对象, 它同时存储枚举的正向(<code>成员名</code> -&gt; <code>值</code>)和反向(<code>值</code> -&gt; <code>成员名</code>)映射.<br>对其他枚举成员的引用总是生成属性访问, 从不内联.</p>
+<p>我们<em>不为</em>字符串型枚举生成反向映射表.</p></div>
+<h2 id="内联枚举" class="heading-control"><a href="#内联枚举" class="headerlink" title="内联枚举"></a>内联枚举<a class="heading-anchor" href="#内联枚举" aria-hidden="true"></a></h2><!-- ### `const` enums -->
+<div class="translation-block" title="
+In most cases, enums are a perfectly valid solution.
+However sometimes requirements are tighter.
+To avoid paying the cost of extra generated code and additional indirection when accessing enum values, it&amp;#39;s possible to use `const` enums.
+Const enums are defined using the `const` modifier on our enums:
+"><p>多数场景, 枚举都很不错.<br>但有时条件严峻得多.<br>为了避免生成的枚举对象和对枚举值间接访问的开销, 可以使用内联枚举.<br>用 <code>const</code> 修饰符来定义内联枚举:</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> <span class="keyword">enum</span> Enum &#123;</span><br><span class="line">    A = <span class="number">1</span>,</span><br><span class="line">    B = A * <span class="number">2</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+Const enums can only use constant enum expressions and unlike regular enums they are completely removed during compilation.
+Const enum members are inlined at use sites.
+This is possible since const enums cannot have computed members.
+"><p>和一般枚举不同, 你只能用常枚举表达式初始化它的成员, 经过编译, 枚举定义被完全移除.<br>编译器把枚举值内联进引用处.<br>这要归功于内联枚举不允许经计算成员.</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> <span class="keyword">enum</span> Directions &#123;</span><br><span class="line">    Up,</span><br><span class="line">    Down,</span><br><span class="line">    Left,</span><br><span class="line">    Right</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> directions = [Directions.Up, Directions.Down, Directions.Left, Directions.Right]</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+in generated code will become
+"><p>会被编译成</p></div>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> directions = [<span class="number">0</span> <span class="comment">/* Up */</span>, <span class="number">1</span> <span class="comment">/* Down */</span>, <span class="number">2</span> <span class="comment">/* Left */</span>, <span class="number">3</span> <span class="comment">/* Right */</span>];</span><br></pre></td></tr></table></figure>
+<h1 id="外部枚举" class="heading-control"><a href="#外部枚举" class="headerlink" title="外部枚举"></a>外部枚举<a class="heading-anchor" href="#外部枚举" aria-hidden="true"></a></h1><!-- ## Ambient enums -->
+<div class="translation-block" title="
+Ambient enums are used to describe the shape of already existing enum types.
+"><p>我们用外部枚举描述已定义枚举的形体.</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">declare</span> <span class="keyword">enum</span> Enum &#123;</span><br><span class="line">    A = <span class="number">1</span>,</span><br><span class="line">    B,</span><br><span class="line">    C = <span class="number">2</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+One important difference between ambient and non-ambient enums is that, in regular enums, members that don&amp;#39;t have an initializer will be considered constant if its preceding enum member is considered constant.
+In contrast, an ambient (and non-const) enum member that does not have initializer is *always* considered computed.
+"><p>与非外部枚举一个重要差别是, 对于后者, 我们认为恒定成员后一个未初始化成员是恒定的.<br>相反, <em>所有</em>外部(非内联)枚举没手动初始化的成员都要经过计算.</p></div>
+    </div>
+
+    
+    
+    
+        
+      
+        <div id="reward-container">
+  <div>如果这篇文章对您有用，可以考虑打赏:)</div>
+  <button id="reward-button" disable="enable" onclick="var qr = document.getElementById(&quot;qr&quot;); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+        
+      
+      <div style="display: inline-block">
+        <img src="/images/wechatpay.png" alt="Hyan Lee 微信支付">
+        <p>微信支付</p>
+      </div>
+
+  </div>
+</div>
+
+      
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>Hyan Lee</li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://hyan23.org/2019/11/20/ts-enums/" title="枚举">https://hyan23.org/2019/11/20/ts-enums/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！</li>
+</ul>
+</div>
+
+      
+
+      <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+              
+                <a href="/2019/11/20/ts-generics/" rel="next" title="泛型">
+                  <i class="fa fa-chevron-left"></i> 泛型
+                </a>
+              
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+              
+                <a href="/2019/11/20/ts-type-inference/" rel="prev" title="类型推导">
+                  类型推导 <i class="fa fa-chevron-right"></i>
+                </a>
+              
+            </div>
+          </div>
+        
+      </footer>
+    
+  </div>
+  
+  
+  
+  </article>
+
+  </div>
+
+
+          </div>
+          
+    
+    <div class="comments" id="gitalk-container"></div>
+  
+
+        </div>
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+        
+        
+        
+        
+      
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#介绍"><span class="nav-number">1.</span> <span class="nav-text">介绍</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#数值型枚举"><span class="nav-number">2.</span> <span class="nav-text">数值型枚举</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#字符串型枚举"><span class="nav-number">3.</span> <span class="nav-text">字符串型枚举</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#混合型枚举"><span class="nav-number">4.</span> <span class="nav-text">混合型枚举</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#恒定成员与经计算成员"><span class="nav-number">5.</span> <span class="nav-text">恒定成员与经计算成员</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#枚举成员类型"><span class="nav-number">6.</span> <span class="nav-text">枚举成员类型</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#运行期的枚举"><span class="nav-number">7.</span> <span class="nav-text">运行期的枚举</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#编译期的枚举"><span class="nav-number">8.</span> <span class="nav-text">编译期的枚举</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#反向映射"><span class="nav-number">8.1.</span> <span class="nav-text">反向映射</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#内联枚举"><span class="nav-number">8.2.</span> <span class="nav-text">内联枚举</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#外部枚举"><span class="nav-number">9.</span> <span class="nav-text">外部枚举</span></a></li></ol></div>
+        
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image"
+      src="/images/avatar2.png"
+      alt="Hyan Lee">
+  <p class="site-author-name" itemprop="name">Hyan Lee</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">31</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-categories">
+        
+          
+            <a href="/categories/">
+          
+        
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">分类</span>
+        </a>
+      </div>
+    
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+      
+      
+        
+      
+      
+        
+      
+        <a href="https://github.com/hyan23" title="GitHub &rarr; https://github.com/hyan23" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+    
+      <span class="links-of-author-item">
+      
+      
+        
+      
+      
+        
+      
+        <a href="mailto:hyan23lee@hotmail.com" title="E-Mail &rarr; mailto:hyan23lee@hotmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+    
+      <span class="links-of-author-item">
+      
+      
+        
+      
+      
+        
+      
+        <a href="https://t.me/hyan23" title="Telegram &rarr; https://t.me/hyan23" rel="noopener" target="_blank"><i class="fa fa-fw fa-telegram"></i>Telegram</a>
+      </span>
+    
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    
+  
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+      
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2017 – <span itemprop="copyrightYear">2020</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Hyan Lee</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    
+    <span title="站点总字数">118k</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v3.9.0</div>
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js?v=3.1.0"></script>
+  <script src="//cdn.jsdelivr.net/npm/medium-zoom@1/dist/medium-zoom.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+<script src="/js/utils.js?v=7.4.0"></script>
+<script src="/js/schemes/pisces.js?v=7.4.0"></script>
+<script src="/js/next-boot.js?v=7.4.0"></script>
+
+
+
+  
+  <script>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+    mermaid.initialize({
+      theme: 'forest',
+      logLevel: 3,
+      flowchart: { curve: 'linear' },
+      gantt: { axisFormat: '%m/%d/%Y' },
+      sequence: { actorMargin: 50 }
+    });
+  }, window.mermaid);
+}
+</script>
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID: '442da4785490db3ece48',
+      clientSecret: '3bfa2829a34371ca37db636917e791d114bd338c',
+      repo: 'blog-comments',
+      owner: 'hyan23',
+      admin: ['hyan23'],
+      id: '2d9ac2bae713385c64fb8b4b303a6b81',
+        language: window.navigator.language || window.navigator.userLanguage,
+      
+      distractionFreeMode: 'true'
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+</script>
+
+</body>
+</html>

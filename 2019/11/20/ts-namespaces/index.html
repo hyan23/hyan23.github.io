@@ -1,0 +1,892 @@
+<!DOCTYPE html>
+
+
+
+
+
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/favicon/apple-touch-icon.png?v=7.4.0">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon/favicon-32x32.png?v=7.4.0">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon/favicon-16x16.png?v=7.4.0">
+  <link rel="mask-icon" href="/images/favicon/safari-pinned-tab.svg?v=7.4.0" color="#222">
+  <link rel="manifest" href="/images/favicon/site.webmanifest">
+  <meta name="msapplication-config" content="/images/favicon/browserconfig.xml">
+  <meta http-equiv="Cache-Control" content="no-transform">
+  <meta http-equiv="Cache-Control" content="no-siteapp">
+
+<link rel="stylesheet" href="/css/main.css?v=7.4.0">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '7.4.0',
+    exturl: false,
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false},
+    copycode: {"enable":false,"show_result":false,"style":null},
+    back2top: {"enable":true,"sidebar":true,"scrollpercent":false},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: true,
+    lazyload: true,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: "",
+      labels: ""
+    },
+    localsearch: {"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: '',
+    motion: {"enable":false},
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="状态: 初稿   对命名的说明:有必要说明, 在 TypeScript 1.5 中, 一些术语发生了变化.“内部模块” 现在叫做 “名字空间”.“外部模块” 简称 “模块”, 这是出于同 ECMAScript 2015 的命名保持一致的考虑, (module X { 等同于现在提出的 namespace X {).">
+<meta name="keywords" content="博客,个人博客,日志,在线工具">
+<meta property="og:type" content="article">
+<meta property="og:title" content="名字空间">
+<meta property="og:url" content="https://hyan23.org/2019/11/20/ts-namespaces/index.html">
+<meta property="og:site_name" content="Hyan Lee">
+<meta property="og:description" content="状态: 初稿   对命名的说明:有必要说明, 在 TypeScript 1.5 中, 一些术语发生了变化.“内部模块” 现在叫做 “名字空间”.“外部模块” 简称 “模块”, 这是出于同 ECMAScript 2015 的命名保持一致的考虑, (module X { 等同于现在提出的 namespace X {).">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2020-02-19T03:37:05.285Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="名字空间">
+<meta name="twitter:description" content="状态: 初稿   对命名的说明:有必要说明, 在 TypeScript 1.5 中, 一些术语发生了变化.“内部模块” 现在叫做 “名字空间”.“外部模块” 简称 “模块”, 这是出于同 ECMAScript 2015 的命名保持一致的考虑, (module X { 等同于现在提出的 namespace X {).">
+  <link rel="canonical" href="https://hyan23.org/2019/11/20/ts-namespaces/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>名字空间 | Hyan Lee</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+  <div class="container">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Hyan Lee</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+      
+      
+      
+        
+        <li class="menu-item menu-item-home">
+      
+    
+      
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-关于-/-留言板">
+      
+    
+      
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于 / 留言板</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-categories">
+      
+    
+      
+      
+        
+      
+        
+          
+        
+      
+        
+      
+    
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类<span class="badge">6</span></a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-archives">
+      
+    
+      
+      
+        
+          
+        
+      
+        
+      
+        
+      
+    
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">31</span></a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-精选-/-系列">
+      
+    
+      
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <a href="/selections/" rel="section"><i class="fa fa-fw fa-book"></i>精选 / 系列</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-摄影">
+      
+    
+      
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <a href="/gallery/" rel="section"><i class="fa fa-fw fa-camera"></i>摄影</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-工具">
+      
+    
+      
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <a href="/tools/" rel="section"><i class="fa fa-fw fa-calculator"></i>工具</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-友情链接">
+      
+    
+      
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <a href="/friends/" rel="section"><i class="fa fa-fw fa-external-link"></i>友情链接</a>
+
+  </li>
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+            
+
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+      <article itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block post">
+    <link itemprop="mainEntityOfPage" href="https://hyan23.org/2019/11/20/ts-namespaces/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Hyan Lee">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar2.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hyan Lee">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">名字空间
+
+          
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              
+                
+              
+
+              <time title="创建时间：2019-11-20 09:33:21" itemprop="dateCreated datePublished" datetime="2019-11-20T09:33:21+08:00">2019-11-20</time>
+            </span>
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-02-19 11:37:05" itemprop="dateModified" datetime="2020-02-19T11:37:05+08:00">2020-02-19</time>
+              </span>
+            
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/翻译稿/" itemprop="url" rel="index"><span itemprop="name">翻译稿</span></a></span>
+
+                
+                
+                  ，
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/翻译稿/TypeScript/" itemprop="url" rel="index"><span itemprop="name">TypeScript</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+          
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">本文字数：</span>
+              
+              <span>1.7k</span>
+            </span>
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <pre><code>状态: 初稿
+</code></pre><!--
+# Table of contents
+
+[Introduction](#introduction)
+
+[First steps](#first-steps)
+* [Validators in a single file](#validators-in-a-single-file)
+
+[Namespacing](#namespacing)
+* [Namespaced Validators](#namespaced-validators)
+
+[Splitting Across Files](#splitting-across-files)
+* [Multi-file namespaces](#multi-file-namespaces)
+
+[Aliases](#aliases)
+
+[Working with Other JavaScript Libraries](#working-with-other-javascript-libraries)
+* [Ambient Namespaces](#ambient-namespaces)
+-->
+<div class="translation-block" title="
+&amp;gt; **A note about terminology:**
+It&amp;#39;s important to note that in TypeScript 1.5, the nomenclature has changed.
+&amp;quot;Internal modules&amp;quot; are now &amp;quot;namespaces&amp;quot;.
+&amp;quot;External modules&amp;quot; are now simply &amp;quot;modules&amp;quot;, as to align with [ECMAScript 2015](http:&amp;#x2F;&amp;#x2F;www.ecma-international.org&amp;#x2F;ecma-262&amp;#x2F;6.0&amp;#x2F;)&amp;#39;s terminology, (namely that `module X {` is equivalent to the now-preferred `namespace X {`).
+"><blockquote>
+<p><strong>对命名的说明:</strong><br>有必要说明, 在 TypeScript 1.5 中, 一些术语发生了变化.<br>“内部模块” 现在叫做 “名字空间”.<br>“外部模块” 简称 “模块”, 这是出于同 <a href="http://www.ecma-international.org/ecma-262/6.0/" target="_blank" rel="noopener">ECMAScript 2015</a> 的命名保持一致的考虑, (<code>module X {</code> 等同于现在提出的 <code>namespace X {</code>).</p>
+</blockquote></div>
+<a id="more"></a>
+<h1 id="介绍" class="heading-control"><a href="#介绍" class="headerlink" title="介绍"></a>介绍<a class="heading-anchor" href="#介绍" aria-hidden="true"></a></h1><!-- # Introduction -->
+<div class="translation-block" title="
+&amp;lt;b&amp;gt;&amp;lt;a href=&amp;quot;#table-of-contents&amp;quot;&amp;gt;↥ back to top&amp;lt;&amp;#x2F;a&amp;gt;&amp;lt;&amp;#x2F;b&amp;gt;
+This post outlines the various ways to organize your code using namespaces (previously &amp;quot;internal modules&amp;quot;) in TypeScript.
+As we alluded in our note about terminology, &amp;quot;internal modules&amp;quot; are now referred to as &amp;quot;namespaces&amp;quot;.
+Additionally, anywhere the `module` keyword was used when declaring an internal module, the `namespace` keyword can and should be used instead.
+This avoids confusing new users by overloading them with similarly named terms.
+"><p>本章概述若干在 TypeScript 中用名字空间(以前叫 “内部模块”)组织你程序的方法.<br>我们”对命名的说明”提到, 现在用”名字空间”指代”内部模块”.<br>此外, 以往任何用到 <code>module</code> 关键字声明内部模块的地方, 都可以以及应当用 <code>namespace</code> 关键字替代.<br>我们不想灌输名字一样的术语弄昏新用户.</p></div>
+<h1 id="踏出第一步" class="heading-control"><a href="#踏出第一步" class="headerlink" title="踏出第一步"></a>踏出第一步<a class="heading-anchor" href="#踏出第一步" aria-hidden="true"></a></h1><!-- # First steps -->
+<div class="translation-block" title="
+&amp;lt;b&amp;gt;&amp;lt;a href=&amp;quot;#table-of-contents&amp;quot;&amp;gt;↥ back to top&amp;lt;&amp;#x2F;a&amp;gt;&amp;lt;&amp;#x2F;b&amp;gt;
+
+Let&amp;#39;s start with the program we&amp;#39;ll be using as our example throughout this page.
+We&amp;#39;ve written a small set of simplistic string validators, as you might write to check a user&amp;#39;s input on a form in a webpage or check the format of an externally-provided data file.
+"><p>首先, 给出将在通篇作为讨论对象的范例程序.<br>我们编写了一小批极简的字符串验证器, 验证器可以用来检验网页表单用户输入, 或来自外部的数据文件的格式.</p></div>
+<h2 id="单文件存放验证器" class="heading-control"><a href="#单文件存放验证器" class="headerlink" title="单文件存放验证器"></a>单文件存放验证器<a class="heading-anchor" href="#单文件存放验证器" aria-hidden="true"></a></h2><!-- ## Validators in a single file -->
+<!-- <b><a href="#table-of-contents">↥ back to top</a></b> -->
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">interface</span> StringValidator &#123;</span><br><span class="line">    isAcceptable(s: <span class="built_in">string</span>): <span class="built_in">boolean</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> lettersRegexp = <span class="regexp">/^[A-Za-z]+$/</span>;</span><br><span class="line"><span class="keyword">let</span> numberRegexp = <span class="regexp">/^[0-9]+$/</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> LettersOnlyValidator <span class="keyword">implements</span> StringValidator &#123;</span><br><span class="line">    isAcceptable(s: <span class="built_in">string</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> lettersRegexp.test(s);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> ZipCodeValidator <span class="keyword">implements</span> StringValidator &#123;</span><br><span class="line">    isAcceptable(s: <span class="built_in">string</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> s.length === <span class="number">5</span> &amp;&amp; numberRegexp.test(s);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Some samples to try</span></span><br><span class="line"><span class="keyword">let</span> strings = [<span class="string">"Hello"</span>, <span class="string">"98052"</span>, <span class="string">"101"</span>];</span><br><span class="line"></span><br><span class="line"><span class="comment">// Validators to use</span></span><br><span class="line"><span class="keyword">let</span> validators: &#123; [s: <span class="built_in">string</span>]: StringValidator; &#125; = &#123;&#125;;</span><br><span class="line">validators[<span class="string">"ZIP code"</span>] = <span class="keyword">new</span> ZipCodeValidator();</span><br><span class="line">validators[<span class="string">"Letters only"</span>] = <span class="keyword">new</span> LettersOnlyValidator();</span><br><span class="line"></span><br><span class="line"><span class="comment">// Show whether each string passed each validator</span></span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">let</span> s of strings) &#123;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">let</span> name <span class="keyword">in</span> validators) &#123;</span><br><span class="line">        <span class="keyword">let</span> isMatch = validators[name].isAcceptable(s);</span><br><span class="line">        <span class="built_in">console</span>.log(<span class="string">`'<span class="subst">$&#123; s &#125;</span>' <span class="subst">$&#123; isMatch ? <span class="string">"matches"</span> : <span class="string">"does not match"</span> &#125;</span> '<span class="subst">$&#123; name &#125;</span>'.`</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="创建名字空间" class="heading-control"><a href="#创建名字空间" class="headerlink" title="创建名字空间"></a>创建名字空间<a class="heading-anchor" href="#创建名字空间" aria-hidden="true"></a></h1><!-- # Namespacing -->
+<div class="translation-block" title="
+&amp;lt;b&amp;gt;&amp;lt;a href=&amp;quot;#table-of-contents&amp;quot;&amp;gt;↥ back to top&amp;lt;&amp;#x2F;a&amp;gt;&amp;lt;&amp;#x2F;b&amp;gt;
+
+As we add more validators, we&amp;#39;re going to want to have some kind of organization scheme so that we can keep track of our types and not worry about name collisions with other objects.
+Instead of putting lots of different names into the global namespace, let&amp;#39;s wrap up our objects into a namespace.
+"><p>当越来越多的验证器添加进来, 我们希望它们之间有一定组织形式, 此后, 我们不仅能更高效地管理我们的类型, 也不用担心命名冲突.<br>所以不要把一大堆名字一股脑儿放进全局名字空间, 而应分散安置在不同名字空间中.</p></div>
+<div class="translation-block" title="
+In this example, we&amp;#39;ll move all validator-related entities into a namespace called `Validation`.
+Because we want the interfaces and classes here to be visible outside the namespace, we preface them with `export`.
+Conversely, the variables `lettersRegexp` and `numberRegexp` are implementation details, so they are left unexported and will not be visible to code outside the namespace.
+In the test code at the bottom of the file, we now need to qualify the names of the types when used outside the namespace, e.g. `Validation.LettersOnlyValidator`.
+"><p>下例, 我们将所有与验证相关的实体移动到 <code>Validation</code> 名字空间.<br>因为我们想要这里的接口和类对外部可见, 所以它们的定义要以 <code>export</code> 打头.<br>相反地, <code>lettersRegexp</code> 和 <code>numberRegexp</code> 变量属于实现细节, 我们没导出它们, 进而对外部不可见.<br>文件末尾的测试代码表明, 名字空间的类型在外部使用, 需要对它的名字加以限定, 如 <code>Validation.LettersOnlyValidator</code>.</p></div>
+<h2 id="验证器收入名字空间" class="heading-control"><a href="#验证器收入名字空间" class="headerlink" title="验证器收入名字空间"></a>验证器收入名字空间<a class="heading-anchor" href="#验证器收入名字空间" aria-hidden="true"></a></h2><!-- ## Namespaced Validators -->
+<!-- <b><a href="#table-of-contents">↥ back to top</a></b> -->
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">namespace</span> Validation &#123;</span><br><span class="line">    <span class="keyword">export</span> <span class="keyword">interface</span> StringValidator &#123;</span><br><span class="line">        isAcceptable(s: <span class="built_in">string</span>): <span class="built_in">boolean</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">const</span> lettersRegexp = <span class="regexp">/^[A-Za-z]+$/</span>;</span><br><span class="line">    <span class="keyword">const</span> numberRegexp = <span class="regexp">/^[0-9]+$/</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">export</span> <span class="keyword">class</span> LettersOnlyValidator <span class="keyword">implements</span> StringValidator &#123;</span><br><span class="line">        isAcceptable(s: <span class="built_in">string</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span> lettersRegexp.test(s);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">export</span> <span class="keyword">class</span> ZipCodeValidator <span class="keyword">implements</span> StringValidator &#123;</span><br><span class="line">        isAcceptable(s: <span class="built_in">string</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span> s.length === <span class="number">5</span> &amp;&amp; numberRegexp.test(s);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Some samples to try</span></span><br><span class="line"><span class="keyword">let</span> strings = [<span class="string">"Hello"</span>, <span class="string">"98052"</span>, <span class="string">"101"</span>];</span><br><span class="line"></span><br><span class="line"><span class="comment">// Validators to use</span></span><br><span class="line"><span class="keyword">let</span> validators: &#123; [s: <span class="built_in">string</span>]: Validation.StringValidator; &#125; = &#123;&#125;;</span><br><span class="line">validators[<span class="string">"ZIP code"</span>] = <span class="keyword">new</span> Validation.ZipCodeValidator();</span><br><span class="line">validators[<span class="string">"Letters only"</span>] = <span class="keyword">new</span> Validation.LettersOnlyValidator();</span><br><span class="line"></span><br><span class="line"><span class="comment">// Show whether each string passed each validator</span></span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">let</span> s of strings) &#123;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">let</span> name <span class="keyword">in</span> validators) &#123;</span><br><span class="line">        <span class="built_in">console</span>.log(<span class="string">`"<span class="subst">$&#123; s &#125;</span>" - <span class="subst">$&#123; validators[name].isAcceptable(s) ? <span class="string">"matches"</span> : <span class="string">"does not match"</span> &#125;</span> <span class="subst">$&#123; name &#125;</span>`</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="跨文件拆分" class="heading-control"><a href="#跨文件拆分" class="headerlink" title="跨文件拆分"></a>跨文件拆分<a class="heading-anchor" href="#跨文件拆分" aria-hidden="true"></a></h1><!-- # Splitting Across Files -->
+<div class="translation-block" title="
+&amp;lt;b&amp;gt;&amp;lt;a href=&amp;quot;#table-of-contents&amp;quot;&amp;gt;↥ back to top&amp;lt;&amp;#x2F;a&amp;gt;&amp;lt;&amp;#x2F;b&amp;gt;
+
+As our application grows, we&amp;#39;ll want to split the code across multiple files to make it easier to maintain.
+"><p>随着应用程序不断扩大, 我们希望把源程序拆分为一个个小文件, 使其易于维护.</p></div>
+<h2 id="跨文件名字空间" class="heading-control"><a href="#跨文件名字空间" class="headerlink" title="跨文件名字空间"></a>跨文件名字空间<a class="heading-anchor" href="#跨文件名字空间" aria-hidden="true"></a></h2><!-- ## Multi-file namespaces -->
+<div class="translation-block" title="
+&amp;lt;b&amp;gt;&amp;lt;a href=&amp;quot;#table-of-contents&amp;quot;&amp;gt;↥ back to top&amp;lt;&amp;#x2F;a&amp;gt;&amp;lt;&amp;#x2F;b&amp;gt;
+
+Here, we&amp;#39;ll split our `Validation` namespace across many files.
+Even though the files are separate, they can each contribute to the same namespace and can be consumed as if they were all defined in one place.
+Because there are dependencies between files, we&amp;#39;ll add reference tags to tell the compiler about the relationships between the files.
+Our test code is otherwise unchanged.
+"><p>这里, 我们把名字空间 <code>Validation</code> 拆分成多个文件.<br>虽然每个文件是物理独立的, 但它们实际上在向同一个名字空间贡献内容, 使用起来也像是定义在同一文件.<br>由于一个文件可能会依赖另一文件, 我们要添加引用标签向编译器揭示文件间的依赖关系.<br>我们的测试代码无需修改.</p></div>
+<h5 id="Validation-ts" class="heading-control"><a href="#Validation-ts" class="headerlink" title="Validation.ts"></a>Validation.ts<a class="heading-anchor" href="#Validation-ts" aria-hidden="true"></a></h5><figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">namespace</span> Validation &#123;</span><br><span class="line">    <span class="keyword">export</span> <span class="keyword">interface</span> StringValidator &#123;</span><br><span class="line">        isAcceptable(s: <span class="built_in">string</span>): <span class="built_in">boolean</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h5 id="LettersOnlyValidator-ts" class="heading-control"><a href="#LettersOnlyValidator-ts" class="headerlink" title="LettersOnlyValidator.ts"></a>LettersOnlyValidator.ts<a class="heading-anchor" href="#LettersOnlyValidator-ts" aria-hidden="true"></a></h5><figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/// &lt;reference path="Validation.ts" /&gt;</span></span><br><span class="line"><span class="keyword">namespace</span> Validation &#123;</span><br><span class="line">    <span class="keyword">const</span> lettersRegexp = <span class="regexp">/^[A-Za-z]+$/</span>;</span><br><span class="line">    <span class="keyword">export</span> <span class="keyword">class</span> LettersOnlyValidator <span class="keyword">implements</span> StringValidator &#123;</span><br><span class="line">        isAcceptable(s: <span class="built_in">string</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span> lettersRegexp.test(s);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h5 id="ZipCodeValidator-ts" class="heading-control"><a href="#ZipCodeValidator-ts" class="headerlink" title="ZipCodeValidator.ts"></a>ZipCodeValidator.ts<a class="heading-anchor" href="#ZipCodeValidator-ts" aria-hidden="true"></a></h5><figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/// &lt;reference path="Validation.ts" /&gt;</span></span><br><span class="line"><span class="keyword">namespace</span> Validation &#123;</span><br><span class="line">    <span class="keyword">const</span> numberRegexp = <span class="regexp">/^[0-9]+$/</span>;</span><br><span class="line">    <span class="keyword">export</span> <span class="keyword">class</span> ZipCodeValidator <span class="keyword">implements</span> StringValidator &#123;</span><br><span class="line">        isAcceptable(s: <span class="built_in">string</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span> s.length === <span class="number">5</span> &amp;&amp; numberRegexp.test(s);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h5 id="Test-ts" class="heading-control"><a href="#Test-ts" class="headerlink" title="Test.ts"></a>Test.ts<a class="heading-anchor" href="#Test-ts" aria-hidden="true"></a></h5><figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/// &lt;reference path="Validation.ts" /&gt;</span></span><br><span class="line"><span class="comment">/// &lt;reference path="LettersOnlyValidator.ts" /&gt;</span></span><br><span class="line"><span class="comment">/// &lt;reference path="ZipCodeValidator.ts" /&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// Some samples to try</span></span><br><span class="line"><span class="keyword">let</span> strings = [<span class="string">"Hello"</span>, <span class="string">"98052"</span>, <span class="string">"101"</span>];</span><br><span class="line"></span><br><span class="line"><span class="comment">// Validators to use</span></span><br><span class="line"><span class="keyword">let</span> validators: &#123; [s: <span class="built_in">string</span>]: Validation.StringValidator; &#125; = &#123;&#125;;</span><br><span class="line">validators[<span class="string">"ZIP code"</span>] = <span class="keyword">new</span> Validation.ZipCodeValidator();</span><br><span class="line">validators[<span class="string">"Letters only"</span>] = <span class="keyword">new</span> Validation.LettersOnlyValidator();</span><br><span class="line"></span><br><span class="line"><span class="comment">// Show whether each string passed each validator</span></span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">let</span> s of strings) &#123;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">let</span> name <span class="keyword">in</span> validators) &#123;</span><br><span class="line">        <span class="built_in">console</span>.log(<span class="string">`"<span class="subst">$&#123; s &#125;</span>" - <span class="subst">$&#123; validators[name].isAcceptable(s) ? <span class="string">"matches"</span> : <span class="string">"does not match"</span> &#125;</span> <span class="subst">$&#123; name &#125;</span>`</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+Once there are multiple files involved, we&amp;#39;ll need to make sure all of the compiled code gets loaded.
+There are two ways of doing this.
+
+First, we can use concatenated output using the `--outFile` flag to compile all of the input files into a single JavaScript output file:
+"><p>一旦编译了多个文件, 就有必要确保能完整地加载所有编译后的文件.<br>我们介绍两种方法.</p>
+<p>第一种, 合并编译, 指定 <code>--outFile</code> 选项将所有输入文件编译成单一的大 JavaScript 文件:</p></div>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tsc --outFile sample.js Test.ts</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+The compiler will automatically order the output file based on the reference tags present in the files. You can also specify each file individually:
+"><p>编译器自动根据文件中的引用标签调整各输出文件相对顺序. 你也可以分别指定每个文件:</p></div>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tsc --outFile sample.js Validation.ts LettersOnlyValidator.ts ZipCodeValidator.ts Test.ts</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+Alternatively, we can use per-file compilation (the default) to emit one JavaScript file for each input file.
+If multiple JS files get produced, we&amp;#39;ll need to use `&amp;lt;script&amp;gt;` tags on our webpage to load each emitted file in the appropriate order, for example:
+"><p>第二种, 分别编译 (默认), 为每个输入文件生成一个 JavaScript 文件.<br>得到多个 JS 文件以后, 我们需要在网页中插入 <code>&lt;script&gt;</code> 标签以适当顺序加载每个输出文件, 举例如下:</p></div>
+<h5 id="MyTestPage-html-片段" class="heading-control"><a href="#MyTestPage-html-片段" class="headerlink" title="MyTestPage.html (片段)"></a>MyTestPage.html (片段)<a class="heading-anchor" href="#MyTestPage-html-片段" aria-hidden="true"></a></h5><!-- ##### MyTestPage.html (excerpt) -->
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">src</span>=<span class="string">"Validation.js"</span> <span class="attr">type</span>=<span class="string">"text/javascript"</span> /&gt;</span></span><br><span class="line"><span class="handlebars"><span class="xml"><span class="tag">&lt;<span class="name">script</span> <span class="attr">src</span>=<span class="string">"LettersOnlyValidator.js"</span> <span class="attr">type</span>=<span class="string">"text/javascript"</span> /&gt;</span></span></span></span><br><span class="line"><span class="handlebars"><span class="xml"><span class="tag">&lt;<span class="name">script</span> <span class="attr">src</span>=<span class="string">"ZipCodeValidator.js"</span> <span class="attr">type</span>=<span class="string">"text/javascript"</span> /&gt;</span></span></span></span><br><span class="line"><span class="handlebars"><span class="xml"><span class="tag">&lt;<span class="name">script</span> <span class="attr">src</span>=<span class="string">"Test.js"</span> <span class="attr">type</span>=<span class="string">"text/javascript"</span> /&gt;</span></span></span></span><br></pre></td></tr></table></figure>
+<h1 id="别名" class="heading-control"><a href="#别名" class="headerlink" title="别名"></a>别名<a class="heading-anchor" href="#别名" aria-hidden="true"></a></h1><!-- # Aliases -->
+<div class="translation-block" title="
+&amp;lt;b&amp;gt;&amp;lt;a href=&amp;quot;#table-of-contents&amp;quot;&amp;gt;↥ back to top&amp;lt;&amp;#x2F;a&amp;gt;&amp;lt;&amp;#x2F;b&amp;gt;
+
+Another way that you can simplify working with namespaces is to use `import q = x.y.z` to create shorter names for commonly-used objects.
+Not to be confused with the `import x = require(&amp;quot;name&amp;quot;)` syntax used to load modules, this syntax simply creates an alias for the specified symbol.
+You can use these sorts of imports (commonly referred to as aliases) for any kind of identifier, including objects created from module imports.
+"><p>另一种可以减轻名字空间使用负担的方法是用 <code>import q = x.y.z</code> 语句为常用对象起一个更短的名字.<br>此处不应与模块加载语法 <code>import x = require(&quot;name&quot;)</code> 混淆, 此语句简单地为特定标识符创建一个别名.<br>你可以为任何标识符声明这类导入 (普遍作为别名引用), 包括自模块导入创建的对象.</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">namespace</span> Shapes &#123;</span><br><span class="line">    <span class="keyword">export</span> <span class="keyword">namespace</span> Polygons &#123;</span><br><span class="line">        <span class="keyword">export</span> <span class="keyword">class</span> Triangle &#123; &#125;</span><br><span class="line">        <span class="keyword">export</span> <span class="keyword">class</span> Square &#123; &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> polygons = Shapes.Polygons;</span><br><span class="line"><span class="keyword">let</span> sq = <span class="keyword">new</span> polygons.Square(); <span class="comment">// Same as 'new Shapes.Polygons.Square()'</span></span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+Notice that we don&amp;#39;t use the `require` keyword; instead we assign directly from the qualified name of the symbol we&amp;#39;re importing.
+This is similar to using `var`, but also works on the type and namespace meanings of the imported symbol.
+Importantly, for values, `import` is a distinct reference from the original symbol, so changes to an aliased `var` will not be reflected in the original variable.
+"><p>注意, 我们没使用 <code>require</code> 关键字; 而是直接把要导入符号的全限定名称作为右值赋值.<br>类似 <code>var</code>, 但它同时对导入符号的类型或名字空间含义起作用.<br>特别地, 对于值, <code>import</code> 是来自源标识符的特别引用, 对 <code>var</code> 变量别名的修改不会反映到原始变量.</p>
+<!-- TODO: 理解 --></div>
+<h1 id="与其他-JavaScript-库协同工作" class="heading-control"><a href="#与其他-JavaScript-库协同工作" class="headerlink" title="与其他 JavaScript 库协同工作"></a>与其他 JavaScript 库协同工作<a class="heading-anchor" href="#与其他-JavaScript-库协同工作" aria-hidden="true"></a></h1><!-- # Working with Other JavaScript Libraries -->
+<div class="translation-block" title="
+&amp;lt;b&amp;gt;&amp;lt;a href=&amp;quot;#table-of-contents&amp;quot;&amp;gt;↥ back to top&amp;lt;&amp;#x2F;a&amp;gt;&amp;lt;&amp;#x2F;b&amp;gt;
+
+To describe the shape of libraries not written in TypeScript, we need to declare the API that the library exposes.
+Because most JavaScript libraries expose only a few top-level objects, namespaces are a good way to represent them.
+
+We call declarations that don&amp;#39;t define an implementation &amp;quot;ambient&amp;quot;.
+Typically these are defined in `.d.ts` files.
+If you&amp;#39;re familiar with C&amp;#x2F;C++, you can think of these as `.h` files.
+Let&amp;#39;s look at a few examples.
+"><p>要描述非 TypeScript 库的形体, 我们需要声明该库暴露的 API.<br>由于多数 JavaScript 库只导出少许顶层对象, 名字空间是表示它们较好的一种选择.</p>
+<p>我们称没有定义实现的声明为 “外部的”.<br>按照惯例, 把这些声明放置在 <code>.d.ts</code> 文件中.<br>如果你熟悉 C/C++, 它们相当于 <code>.h</code> 文件.<br>一起来看些例子.</p></div>
+<h2 id="外部名字空间" class="heading-control"><a href="#外部名字空间" class="headerlink" title="外部名字空间"></a>外部名字空间<a class="heading-anchor" href="#外部名字空间" aria-hidden="true"></a></h2><!-- ## Ambient Namespaces -->
+<div class="translation-block" title="
+&amp;lt;b&amp;gt;&amp;lt;a href=&amp;quot;#table-of-contents&amp;quot;&amp;gt;↥ back to top&amp;lt;&amp;#x2F;a&amp;gt;&amp;lt;&amp;#x2F;b&amp;gt;
+
+The popular library D3 defines its functionality in a global object called `d3`.
+Because this library is loaded through a `&amp;lt;script&amp;gt;` tag (instead of a module loader), its declaration uses namespaces to define its shape.
+For the TypeScript compiler to see this shape, we use an ambient namespace declaration.
+For example, we could begin writing it as follows:
+"><p>有名的 D3 库在一个叫 d3 的全局对象里定义它所有功能.<br>由于该库通过 <code>&lt;script&gt;</code> 标签加载 (而不是模块加载器), 它的声明文件采用名字空间描述其形体.<br>为使 TypeScript 编译器看到它的形体, 要使用外部名字空间声明.<br>例如, 我们可以这样开始:</p></div>
+<h5 id="D3-d-ts-摘要" class="heading-control"><a href="#D3-d-ts-摘要" class="headerlink" title="D3.d.ts (摘要)"></a>D3.d.ts (摘要)<a class="heading-anchor" href="#D3-d-ts-摘要" aria-hidden="true"></a></h5><!-- ##### D3.d.ts (simplified excerpt) -->
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">declare</span> <span class="keyword">namespace</span> D3 &#123;</span><br><span class="line">    <span class="keyword">export</span> <span class="keyword">interface</span> Selectors &#123;</span><br><span class="line">        select: &#123;</span><br><span class="line">            (selector: <span class="built_in">string</span>): Selection;</span><br><span class="line">            (element: EventTarget): Selection;</span><br><span class="line">        &#125;;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">export</span> <span class="keyword">interface</span> Event &#123;</span><br><span class="line">        x: <span class="built_in">number</span>;</span><br><span class="line">        y: <span class="built_in">number</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">export</span> <span class="keyword">interface</span> Base <span class="keyword">extends</span> Selectors &#123;</span><br><span class="line">        event: Event;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">declare</span> <span class="keyword">var</span> d3: D3.Base;</span><br></pre></td></tr></table></figure>
+    </div>
+
+    
+    
+    
+        
+      
+        <div id="reward-container">
+  <div>如果这篇文章对您有用，可以考虑打赏:)</div>
+  <button id="reward-button" disable="enable" onclick="var qr = document.getElementById(&quot;qr&quot;); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+        
+      
+      <div style="display: inline-block">
+        <img src="/images/wechatpay.png" alt="Hyan Lee 微信支付">
+        <p>微信支付</p>
+      </div>
+
+  </div>
+</div>
+
+      
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>Hyan Lee</li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://hyan23.org/2019/11/20/ts-namespaces/" title="名字空间">https://hyan23.org/2019/11/20/ts-namespaces/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！</li>
+</ul>
+</div>
+
+      
+
+      <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+              
+                <a href="/2019/11/20/ts-modules/" rel="next" title="模块">
+                  <i class="fa fa-chevron-left"></i> 模块
+                </a>
+              
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+              
+                <a href="/2019/11/20/ts-namespaces-and-modules/" rel="prev" title="名字空间和模块">
+                  名字空间和模块 <i class="fa fa-chevron-right"></i>
+                </a>
+              
+            </div>
+          </div>
+        
+      </footer>
+    
+  </div>
+  
+  
+  
+  </article>
+
+  </div>
+
+
+          </div>
+          
+    
+    <div class="comments" id="gitalk-container"></div>
+  
+
+        </div>
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+        
+        
+        
+        
+      
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#介绍"><span class="nav-number">1.</span> <span class="nav-text">介绍</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#踏出第一步"><span class="nav-number">2.</span> <span class="nav-text">踏出第一步</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#单文件存放验证器"><span class="nav-number">2.1.</span> <span class="nav-text">单文件存放验证器</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#创建名字空间"><span class="nav-number">3.</span> <span class="nav-text">创建名字空间</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#验证器收入名字空间"><span class="nav-number">3.1.</span> <span class="nav-text">验证器收入名字空间</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#跨文件拆分"><span class="nav-number">4.</span> <span class="nav-text">跨文件拆分</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#跨文件名字空间"><span class="nav-number">4.1.</span> <span class="nav-text">跨文件名字空间</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#别名"><span class="nav-number">5.</span> <span class="nav-text">别名</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#与其他-JavaScript-库协同工作"><span class="nav-number">6.</span> <span class="nav-text">与其他 JavaScript 库协同工作</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#外部名字空间"><span class="nav-number">6.1.</span> <span class="nav-text">外部名字空间</span></a></li></ol></li></ol></div>
+        
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image"
+      src="/images/avatar2.png"
+      alt="Hyan Lee">
+  <p class="site-author-name" itemprop="name">Hyan Lee</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">31</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-categories">
+        
+          
+            <a href="/categories/">
+          
+        
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">分类</span>
+        </a>
+      </div>
+    
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+      
+      
+        
+      
+      
+        
+      
+        <a href="https://github.com/hyan23" title="GitHub &rarr; https://github.com/hyan23" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+    
+      <span class="links-of-author-item">
+      
+      
+        
+      
+      
+        
+      
+        <a href="mailto:hyan23lee@hotmail.com" title="E-Mail &rarr; mailto:hyan23lee@hotmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+    
+      <span class="links-of-author-item">
+      
+      
+        
+      
+      
+        
+      
+        <a href="https://t.me/hyan23" title="Telegram &rarr; https://t.me/hyan23" rel="noopener" target="_blank"><i class="fa fa-fw fa-telegram"></i>Telegram</a>
+      </span>
+    
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    
+  
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+      
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2017 – <span itemprop="copyrightYear">2020</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Hyan Lee</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    
+    <span title="站点总字数">118k</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v3.9.0</div>
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js?v=3.1.0"></script>
+  <script src="//cdn.jsdelivr.net/npm/medium-zoom@1/dist/medium-zoom.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+<script src="/js/utils.js?v=7.4.0"></script>
+<script src="/js/schemes/pisces.js?v=7.4.0"></script>
+<script src="/js/next-boot.js?v=7.4.0"></script>
+
+
+
+  
+  <script>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+    mermaid.initialize({
+      theme: 'forest',
+      logLevel: 3,
+      flowchart: { curve: 'linear' },
+      gantt: { axisFormat: '%m/%d/%Y' },
+      sequence: { actorMargin: 50 }
+    });
+  }, window.mermaid);
+}
+</script>
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID: '442da4785490db3ece48',
+      clientSecret: '3bfa2829a34371ca37db636917e791d114bd338c',
+      repo: 'blog-comments',
+      owner: 'hyan23',
+      admin: ['hyan23'],
+      id: '252a61b7cb6fd64cd48e7ebba02bfbcd',
+        language: window.navigator.language || window.navigator.userLanguage,
+      
+      distractionFreeMode: 'true'
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+</script>
+
+</body>
+</html>

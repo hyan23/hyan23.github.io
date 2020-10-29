@@ -1,0 +1,949 @@
+<!DOCTYPE html>
+
+
+
+
+
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/favicon/apple-touch-icon.png?v=7.4.0">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon/favicon-32x32.png?v=7.4.0">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon/favicon-16x16.png?v=7.4.0">
+  <link rel="mask-icon" href="/images/favicon/safari-pinned-tab.svg?v=7.4.0" color="#222">
+  <link rel="manifest" href="/images/favicon/site.webmanifest">
+  <meta name="msapplication-config" content="/images/favicon/browserconfig.xml">
+  <meta http-equiv="Cache-Control" content="no-transform">
+  <meta http-equiv="Cache-Control" content="no-siteapp">
+
+<link rel="stylesheet" href="/css/main.css?v=7.4.0">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '7.4.0',
+    exturl: false,
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false},
+    copycode: {"enable":false,"show_result":false,"style":null},
+    back2top: {"enable":true,"sidebar":true,"scrollpercent":false},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: true,
+    lazyload: true,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: "",
+      labels: ""
+    },
+    localsearch: {"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: '',
+    motion: {"enable":false},
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="状态: 初稿 介绍 考虑组件的结构合理, 接口稳定, 特别是实现可重用, 是软件工程思想一个重要组成部分.如果一个组件既能处理今天的数据, 又能处理明天的数据, 你就能以最灵活的方式构建大型软件系统. 在 C#, Java 等语言的工具箱中, 泛型是创建可重用组件最受欢迎的工具之一, 借助泛型, 你能够创建适用于多种数据类型的通用组件.用户可以重用这些组件以处理自己的自定义类型.">
+<meta name="keywords" content="博客,个人博客,日志,在线工具">
+<meta property="og:type" content="article">
+<meta property="og:title" content="泛型">
+<meta property="og:url" content="https://hyan23.org/2019/11/20/ts-generics/index.html">
+<meta property="og:site_name" content="Hyan Lee">
+<meta property="og:description" content="状态: 初稿 介绍 考虑组件的结构合理, 接口稳定, 特别是实现可重用, 是软件工程思想一个重要组成部分.如果一个组件既能处理今天的数据, 又能处理明天的数据, 你就能以最灵活的方式构建大型软件系统. 在 C#, Java 等语言的工具箱中, 泛型是创建可重用组件最受欢迎的工具之一, 借助泛型, 你能够创建适用于多种数据类型的通用组件.用户可以重用这些组件以处理自己的自定义类型.">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2020-02-19T03:37:05.284Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="泛型">
+<meta name="twitter:description" content="状态: 初稿 介绍 考虑组件的结构合理, 接口稳定, 特别是实现可重用, 是软件工程思想一个重要组成部分.如果一个组件既能处理今天的数据, 又能处理明天的数据, 你就能以最灵活的方式构建大型软件系统. 在 C#, Java 等语言的工具箱中, 泛型是创建可重用组件最受欢迎的工具之一, 借助泛型, 你能够创建适用于多种数据类型的通用组件.用户可以重用这些组件以处理自己的自定义类型.">
+  <link rel="canonical" href="https://hyan23.org/2019/11/20/ts-generics/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>泛型 | Hyan Lee</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+  <div class="container">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Hyan Lee</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+      
+      
+      
+        
+        <li class="menu-item menu-item-home">
+      
+    
+      
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-关于-/-留言板">
+      
+    
+      
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于 / 留言板</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-categories">
+      
+    
+      
+      
+        
+      
+        
+          
+        
+      
+        
+      
+    
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类<span class="badge">6</span></a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-archives">
+      
+    
+      
+      
+        
+          
+        
+      
+        
+      
+        
+      
+    
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">31</span></a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-精选-/-系列">
+      
+    
+      
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <a href="/selections/" rel="section"><i class="fa fa-fw fa-book"></i>精选 / 系列</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-摄影">
+      
+    
+      
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <a href="/gallery/" rel="section"><i class="fa fa-fw fa-camera"></i>摄影</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-工具">
+      
+    
+      
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <a href="/tools/" rel="section"><i class="fa fa-fw fa-calculator"></i>工具</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-友情链接">
+      
+    
+      
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <a href="/friends/" rel="section"><i class="fa fa-fw fa-external-link"></i>友情链接</a>
+
+  </li>
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+            
+
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+      <article itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block post">
+    <link itemprop="mainEntityOfPage" href="https://hyan23.org/2019/11/20/ts-generics/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Hyan Lee">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar2.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hyan Lee">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">泛型
+
+          
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              
+                
+              
+
+              <time title="创建时间：2019-11-20 09:27:56" itemprop="dateCreated datePublished" datetime="2019-11-20T09:27:56+08:00">2019-11-20</time>
+            </span>
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-02-19 11:37:05" itemprop="dateModified" datetime="2020-02-19T11:37:05+08:00">2020-02-19</time>
+              </span>
+            
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/翻译稿/" itemprop="url" rel="index"><span itemprop="name">翻译稿</span></a></span>
+
+                
+                
+                  ，
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/翻译稿/TypeScript/" itemprop="url" rel="index"><span itemprop="name">TypeScript</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+          
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">本文字数：</span>
+              
+              <span>2.8k</span>
+            </span>
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <pre><code>状态: 初稿
+</code></pre><h1 id="介绍" class="heading-control"><a href="#介绍" class="headerlink" title="介绍"></a>介绍<a class="heading-anchor" href="#介绍" aria-hidden="true"></a></h1><!-- # Introduction -->
+<div class="translation-block" title="
+A major part of software engineering is building components that not only have well-defined and consistent APIs, but are also reusable.
+Components that are capable of working on the data of today as well as the data of tomorrow will give you the most flexible capabilities for building up large software systems.
+
+In languages like C# and Java, one of the main tools in the toolbox for creating reusable components is *generics*, that is, being able to create a component that can work over a variety of types rather than a single one.
+This allows users to consume these components and use their own types.
+"><p>考虑组件的结构合理, 接口稳定, 特别是实现可重用, 是软件工程思想一个重要组成部分.<br>如果一个组件既能处理今天的数据, 又能处理明天的数据, 你就能以最灵活的方式构建大型软件系统.</p>
+<p>在 C#, Java 等语言的工具箱中, <em>泛型</em>是创建可重用组件最受欢迎的工具之一, 借助泛型, 你能够创建适用于多种数据类型的通用组件.<br>用户可以重用这些组件以处理自己的自定义类型.</p></div>
+<a id="more"></a>
+<h1 id="第一个程序" class="heading-control"><a href="#第一个程序" class="headerlink" title="第一个程序"></a>第一个程序<a class="heading-anchor" href="#第一个程序" aria-hidden="true"></a></h1><!-- # Hello World of Generics -->
+<div class="translation-block" title="
+To start off, let&amp;#39;s do the &amp;quot;hello world&amp;quot; of generics: the identity function.
+The identity function is a function that will return back whatever is passed in.
+You can think of this in a similar way to the `echo` command.
+
+Without generics, we would either have to give the identity function a specific type:
+"><p>作为开始, 我们来编写泛型的 “hello world” 程序: identity 函数.<br>函数功能与 <code>echo</code> 命令差不多.<br>直接返回函数参数.</p>
+<p>通常(没有泛型), <code>identity</code> 参数类型可能是 <code>number</code>:</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">identity</span>(<span class="params">arg: <span class="built_in">number</span></span>): <span class="title">number</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> arg;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+Or, we could describe the identity function using the `any` type:
+"><p>又或是 <code>any</code>:</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">identity</span>(<span class="params">arg: <span class="built_in">any</span></span>): <span class="title">any</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> arg;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+While using `any` is certainly generic in that it will cause the function to accept any and all types for the type of `arg`, we actually are losing the information about what that type was when the function returns.
+If we passed in a number, the only information we have is that any type could be returned.
+
+Instead, we need a way of capturing the type of the argument in such a way that we can also use it to denote what is being returned.
+Here, we will use a *type variable*, a special kind of variable that works on types rather than values.
+"><p>第二种情况已经有泛型的意思, 函数参数 <code>arg</code> 能接收所有 / 任何类型的实参, 但是, 无论实参是 <code>number</code> 还是别的什么类型, 函数都返回 <code>any</code>.<br>换句话说, 实参在函数内部打了个转, 我们丢失了它的类型信息.</p>
+<p>所以我们需要一种方法记录参数的类型, 从而顺理成章地推出返回值类型.<br>在 TypeScript 中, 我们使用一种不记录值, 只记录类型本身的特殊变量 — <em>类型参数</em>.</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">identity</span>&lt;<span class="title">T</span>&gt;(<span class="params">arg: T</span>): <span class="title">T</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> arg;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+We&amp;#39;ve now added a type variable `T` to the identity function.
+This `T` allows us to capture the type the user provides (e.g. `number`), so that we can use that information later.
+Here, we use `T` again as the return type. On inspection, we can now see the same type is used for the argument and the return type.
+This allows us to traffic that type information in one side of the function and out the other.
+
+We say that this version of the `identity` function is generic, as it works over a range of types.
+Unlike using `any`, it&amp;#39;s also just as precise (ie, it doesn&amp;#39;t lose any information) as the first `identity` function that used numbers for the argument and return type.
+
+Once we&amp;#39;ve written the generic identity function, we can call it in one of two ways.
+The first way is to pass all of the arguments, including the type argument, to the function:
+"><p>经过修改, 我们为 <code>identity</code> 函数添加了一个类型参数 <code>T</code>.<br>这个 <code>T</code> 将用户确定的实际类型记录下来 (例如: <code>number</code>), 供我们以后使用.<br>观察函数签名, 我们看到, <code>T</code> 同时作为参数 <code>arg</code> 的类型和函数返回值类型.<br>于是我们把类型信息从函数输入传递到了输出.</p>
+<p>由于这个函数对多种数据类型通用, 我们称这是一个泛型函数.<br>与 <code>any</code> 不同, 如果参数和返回值类型是 <code>number</code>, 这个函数会如同最初的 <code>identity</code> 一样精准(它不丢失任何信息).</p>
+<p>给定泛型函数 <code>identity</code>, 可从以下两种方式中任选其一调用.<br>第一种向函数传递包括类型参数在内的所有必要参数:</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> output = identity&lt;<span class="built_in">string</span>&gt;(<span class="string">"myString"</span>);  <span class="comment">// type of output will be 'string'</span></span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+Here we explicitly set `T` to be `string` as one of the arguments to the function call, denoted using the `&amp;lt;&amp;gt;` around the arguments rather than `()`.
+
+The second way is also perhaps the most common. Here we use *type argument inference* -- that is, we want the compiler to set the value of `T` for us automatically based on the type of the argument we pass in:
+"><p>在这个例子中, 我们显式指出 <code>T</code> 为 <code>string</code>, 与函数参数不同, 类型参数要用 <code>&lt;&gt;</code> 括起来.</p>
+<p>第二种方式 — 也可能是最常见的, <em>类型参数推导</em>. 下例, 我们要求编译器根据实参类型自动求出 <code>T</code> 值:</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> output = identity(<span class="string">"myString"</span>);  <span class="comment">// type of output will be 'string'</span></span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+Notice that we didn&amp;#39;t have to explicitly pass the type in the angle brackets (`&amp;lt;&amp;gt;`); the compiler just looked at the value `&amp;quot;myString&amp;quot;`, and set `T` to its type.
+While type argument inference can be a helpful tool to keep code shorter and more readable, you may need to explicitly pass in the type arguments as we did in the previous example when the compiler fails to infer the type, as may happen in more complex examples.
+"><p>这次我们并没有用一对尖括号初始化类型参数; 编译器只要搞清楚 <code>&quot;myString&quot;</code> 的类型(这是显而易见的), 就能推出 <code>T</code> 的值.<br>类型参数推导有助于缩短代码长度, 提高可读性. 但在更复杂的, 以至于编译器无法自动推导类型参数的情形, 你还是要按照第一种方式所做的, 显式指出类型参数.</p></div>
+<h1 id="使用类型参数" class="heading-control"><a href="#使用类型参数" class="headerlink" title="使用类型参数"></a>使用类型参数<a class="heading-anchor" href="#使用类型参数" aria-hidden="true"></a></h1><!-- # Working with Generic Type Variables -->
+<div class="translation-block" title="
+When you begin to use generics, you&amp;#39;ll notice that when you create generic functions like `identity`, the compiler will enforce that you use any generically typed parameters in the body of the function correctly.
+That is, that you actually treat these parameters as if they could be any and all types.
+
+Let&amp;#39;s take our `identity` function from earlier:
+"><p>你将发现, 一旦你开始使用泛型, 并创建像 <code>identity</code> 那样的泛型函数, 编译器会检查你是否在函数体内正确使用每个依赖类型参数的变量.<br>站在你的立场, 你必须把类型参数变量当作<em>任何 / 所有</em>类型对待.</p>
+<p>再看 <code>identity</code> 函数:</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">identity</span>&lt;<span class="title">T</span>&gt;(<span class="params">arg: T</span>): <span class="title">T</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> arg;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+What if we want to also log the length of the argument `arg` to the console with each call?
+We might be tempted to write this:
+"><p>假如我们想把每次调用的实参 <code>arg</code> 的长度记录到日志中, 你会怎么做?<br>你可能会写下:</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">loggingIdentity</span>&lt;<span class="title">T</span>&gt;(<span class="params">arg: T</span>): <span class="title">T</span> </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(arg.length);  <span class="comment">// Error: T doesn't have .length</span></span><br><span class="line">    <span class="keyword">return</span> arg;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+When we do, the compiler will give us an error that we&amp;#39;re using the `.length` member of `arg`, but nowhere have we said that `arg` has this member.
+Remember, we said earlier that these type variables stand in for any and all types, so someone using this function could have passed in a `number` instead, which does not have a `.length` member.
+
+Let&amp;#39;s say that we&amp;#39;ve actually intended this function to work on arrays of `T` rather than `T` directly. Since we&amp;#39;re working with arrays, the `.length` member should be available.
+We can describe this just like we would create arrays of other types:
+"><p>很遗憾, 编译器指出取得 <code>arg</code> 的 <code>length</code> 属性那条语句有语法错误, 因为我们从未担保 <code>arg</code> 有一个叫 <code>length</code> 的成员.<br>我们早先说过, 类型参数是类型本身的变量, 能代表<em>任何 / 所有</em>类型, 函数用户就可能用 <code>number</code> 初始化 <code>T</code>, 而 <code>number</code> 没有 <code>length</code> 成员.</p>
+<p>如果仅让上例通过编译, 可以把参数 <code>arg</code> 变成数组. 对于数组来说, 不管它存储的元素是什么类型(<code>T</code>), 数组本身总有 <code>length</code> 成员.<br>把泛型参数看成普通类型, 声明一个泛型数组类型:</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">loggingIdentity</span>&lt;<span class="title">T</span>&gt;(<span class="params">arg: T[]</span>): <span class="title">T</span>[] </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(arg.length);  <span class="comment">// Array has a .length, so no more error</span></span><br><span class="line">    <span class="keyword">return</span> arg;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+You can read the type of `loggingIdentity` as &amp;quot;the generic function `loggingIdentity` takes a type parameter `T`, and an argument `arg` which is an array of `T`s, and returns an array of `T`s.&amp;quot;
+If we passed in an array of numbers, we&amp;#39;d get an array of numbers back out, as `T` would bind to `number`.
+This allows us to use our generic type variable `T` as part of the types we&amp;#39;re working with, rather than the whole type, giving us greater flexibility.
+
+We can alternatively write the sample example this way:
+"><p>函数 <code>loggingIdentity</code> 读作: 有类型参数 <code>T</code>, 接受 <code>T</code> 数组类型参数 <code>arg</code>, 返回一个 <code>T</code> 数组的泛型函数.<br>如果我们传入 <code>number</code> 数组, <code>T</code> 与 <code>number</code> 绑定, 由此, 返回值也是 <code>number</code> 数组.<br>类型参数 <code>T</code> 可以传递给其他泛型类型, 带给我们更大灵活性.</p>
+<p>我们可以如下重写上个例子:</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">loggingIdentity</span>&lt;<span class="title">T</span>&gt;(<span class="params">arg: <span class="built_in">Array</span>&lt;T&gt;</span>): <span class="title">Array</span>&lt;<span class="title">T</span>&gt; </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(arg.length);  <span class="comment">// Array has a .length, so no more error</span></span><br><span class="line">    <span class="keyword">return</span> arg;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+You may already be familiar with this style of type from other languages.
+In the next section, we&amp;#39;ll cover how you can create your own generic types like `Array&amp;lt;T&amp;gt;`.
+"><p>这种类型风格常见于支持泛型的语言.<br>下节, 我们讨论创建你自己的泛型类 <code>Array&lt;T&gt;</code>.</p></div>
+<h1 id="泛型接口" class="heading-control"><a href="#泛型接口" class="headerlink" title="泛型接口"></a>泛型接口<a class="heading-anchor" href="#泛型接口" aria-hidden="true"></a></h1><!-- # Generic Types -->
+<div class="translation-block" title="
+In previous sections, we created generic identity functions that worked over a range of types.
+In this section, we&amp;#39;ll explore the type of the functions themselves and how to create generic interfaces.
+
+The type of generic functions is just like those of non-generic functions, with the type parameters listed first, similarly to function declarations:
+"><p>上一节, 我们创建了适应多种类型的 <code>identity</code> 函数.<br>本节, 我们探讨函数本身的类型, 以及如何创建泛型接口.</p>
+<p>泛型函数的类型与普通函数差别不大, 仿照函数定义, 类型参数列在最前:</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">identity</span>&lt;<span class="title">T</span>&gt;(<span class="params">arg: T</span>): <span class="title">T</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> arg;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> myIdentity: &lt;T&gt;<span class="function">(<span class="params">arg: T</span>) =&gt;</span> T = identity;</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+We could also have used a different name for the generic type parameter in the type, so long as the number of type variables and how the type variables are used line up.
+"><p>只要类型参数数量相同, 位置一一对应, 函数类型中类型参数的名称可以是任意的.</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">identity</span>&lt;<span class="title">T</span>&gt;(<span class="params">arg: T</span>): <span class="title">T</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> arg;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> myIdentity: &lt;U&gt;<span class="function">(<span class="params">arg: U</span>) =&gt;</span> U = identity;</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+We can also write the generic type as a call signature of an object literal type:
+"><!-- TODO: 理解 -->
+<p>也可以把函数类型写作对象字面量类型的调用签名:</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">identity</span>&lt;<span class="title">T</span>&gt;(<span class="params">arg: T</span>): <span class="title">T</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> arg;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> myIdentity: &#123;&lt;T&gt;(arg: T): T&#125; = identity;</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+Which leads us to writing our first generic interface.
+Let&amp;#39;s take the object literal from the previous example and move it to an interface:
+"><p>这引领我们写下第一个泛型接口.<br>让我们把以上对象字面量转变成接口:</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">interface</span> GenericIdentityFn &#123;</span><br><span class="line">    &lt;T&gt;(arg: T): T;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">identity</span>&lt;<span class="title">T</span>&gt;(<span class="params">arg: T</span>): <span class="title">T</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> arg;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> myIdentity: GenericIdentityFn = identity;</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+In a similar example, we may want to move the generic parameter to be a parameter of the whole interface.
+This lets us see what type(s) we&amp;#39;re generic over (e.g. `Dictionary&amp;lt;string&amp;gt;` rather than just `Dictionary`).
+This makes the type parameter visible to all the other members of the interface.
+"><p>下个例子的出发点是, 我们可能希望类型参数不仅对其中一个方法, 而对整个接口起作用.<br>由此我们能够看到整个接口统一于什么类型 (例如: <code>Dictionary&lt;string&gt;</code> 比 <code>Dictionary</code> 直观得多).<br>接口中所有成员都能引用这个类型参数.</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">interface</span> GenericIdentityFn&lt;T&gt; &#123;</span><br><span class="line">    (arg: T): T;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">identity</span>&lt;<span class="title">T</span>&gt;(<span class="params">arg: T</span>): <span class="title">T</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> arg;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> myIdentity: GenericIdentityFn&lt;<span class="built_in">number</span>&gt; = identity;</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+Notice that our example has changed to be something slightly different.
+Instead of describing a generic function, we now have a non-generic function signature that is a part of a generic type.
+When we use `GenericIdentityFn`, we now will also need to specify the corresponding type argument (here: `number`), effectively locking in what the underlying call signature will use.
+Understanding when to put the type parameter directly on the call signature and when to put it on the interface itself will be helpful in describing what aspects of a type are generic.
+
+In addition to generic interfaces, we can also create generic classes.
+Note that it is not possible to create generic enums and namespaces.
+"><p>此例发生了一点小小的变化.<br>对比修改前, 我们的函数签名是非泛型的, 它现在是一个泛型类型的一部分.<br>指定类型参数 <code>T</code> (这里: <code>number</code>)来使用 <code>GenericIdentityFn</code>, 实际上同时把调用签名的参数确定了下来.<br>希望描述类型某部分是泛型的, 就要理解何时把类型参数放在调用签名上, 何时把类型参数放在接口上.</p>
+<p>除泛型接口外, 我们也能够创建泛型类.<br>但是不能创建泛型枚举和名字空间.</p></div>
+<h1 id="泛型类" class="heading-control"><a href="#泛型类" class="headerlink" title="泛型类"></a>泛型类<a class="heading-anchor" href="#泛型类" aria-hidden="true"></a></h1><!-- # Generic Classes -->
+<div class="translation-block" title="
+A generic class has a similar shape to a generic interface.
+Generic classes have a generic type parameter list in angle brackets (`&amp;lt;&amp;gt;`) following the name of the class.
+"><p>泛型类有与泛型接口相似的外观.<br>尖括号包裹的类型参数列表紧跟在泛型类类名之后.</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> GenericNumber&lt;T&gt; &#123;</span><br><span class="line">    zeroValue: T;</span><br><span class="line">    add: <span class="function">(<span class="params">x: T, y: T</span>) =&gt;</span> T;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> myGenericNumber = <span class="keyword">new</span> GenericNumber&lt;<span class="built_in">number</span>&gt;();</span><br><span class="line">myGenericNumber.zeroValue = <span class="number">0</span>;</span><br><span class="line">myGenericNumber.add = <span class="function"><span class="keyword">function</span>(<span class="params">x, y</span>) </span>&#123; <span class="keyword">return</span> x + y; &#125;;</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+This is a pretty literal use of the `GenericNumber` class, but you may have noticed that nothing is restricting it to only use the `number` type.
+We could have instead used `string` or even more complex objects.
+"><p>这是 <code>GenericNumber</code> 类一个粗浅用例, 但我们反复强调, <code>T</code> 能代表的类型不受限制.<br>你可以将它初始化为 <code>number</code>, <code>string</code>, 甚至更复杂的类型.</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> stringNumeric = <span class="keyword">new</span> GenericNumber&lt;<span class="built_in">string</span>&gt;();</span><br><span class="line">stringNumeric.zeroValue = <span class="string">""</span>;</span><br><span class="line">stringNumeric.add = <span class="function"><span class="keyword">function</span>(<span class="params">x, y</span>) </span>&#123; <span class="keyword">return</span> x + y; &#125;;</span><br><span class="line"></span><br><span class="line"><span class="built_in">console</span>.log(stringNumeric.add(stringNumeric.zeroValue, <span class="string">"test"</span>));</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+Just as with interface, putting the type parameter on the class itself lets us make sure all of the properties of the class are working with the same type.
+
+As we covered in [our section on classes](.&amp;#x2F;Classes.md), a class has two sides to its type: the static side and the instance side.
+Generic classes are only generic over their instance side rather than their static side, so when working with classes, static members can not use the class&amp;#39;s type parameter.
+"><p>参考接口, 为类本身添加类型参数可保证它所有引用 <code>T</code> 的成员类型统一.</p>
+<p>正如我们在<a href="#">类</a>一章阐述的, 一个类有静态面和实例面.<br>泛型谈的只是一个类的实例面, 静态成员不能引用类的类型参数.</p></div>
+<h1 id="约束类型参数" class="heading-control"><a href="#约束类型参数" class="headerlink" title="约束类型参数"></a>约束类型参数<a class="heading-anchor" href="#约束类型参数" aria-hidden="true"></a></h1><!-- # Generic Constraints -->
+<div class="translation-block" title="
+If you remember from an earlier example, you may sometimes want to write a generic function that works on a set of types where you have some knowledge about what capabilities that set of types will have.
+In our `loggingIdentity` example, we wanted to be able to access the `.length` property of `arg`, but the compiler could not prove that every type had a `.length` property, so it warns us that we can&amp;#39;t make this assumption.
+"><p>至此, 你可能希望编写一个泛型函数, 它只允许已知具有特定本领的类型集合初始化其类型参数.<br>回到 <code>loggingIdentity</code> 函数, 在那里, 我们试图访问 <code>arg</code> 的 <code>length</code> 属性, 而编译器没有同意, 因为它不能证明所有类型都有 <code>length</code> 属性.</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">loggingIdentity</span>&lt;<span class="title">T</span>&gt;(<span class="params">arg: T</span>): <span class="title">T</span> </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(arg.length);  <span class="comment">// Error: T doesn't have .length</span></span><br><span class="line">    <span class="keyword">return</span> arg;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+Instead of working with any and all types, we&amp;#39;d like to constrain this function to work with any and all types that also have the `.length` property.
+As long as the type has this member, we&amp;#39;ll allow it, but it&amp;#39;s required to have at least this member.
+To do so, we must list our requirement as a constraint on what T can be.
+
+To do so, we&amp;#39;ll create an interface that describes our constraint.
+Here, we&amp;#39;ll create an interface that has a single `.length` property and then we&amp;#39;ll use this interface and the `extends` keyword to denote our constraint:
+"><p>与其让类型参数代表<em>任何 / 所有</em>类型, 同时失去对实际类型做出任何<em>期望 / 假设</em>的能力, 我们不如约束该函数只为有 <code>length</code> 属性的类型工作.<br>只要一个类型具有 <code>length</code> 属性, 我们就接受它, 而且, 该属性是必要的.<br>显然, 我们需要列出一些要求, 这些要求确定 <code>T</code> 应该满足的条件.</p>
+<p>在 TypeScript 中, 我们定义接口来描述对类型参数的要求.<br>这里, 我们创建了一个包含 <code>length</code> 属性的接口, 然后, 用 <code>extends</code> 关键字表达对类型参数 <code>T</code> 的相关约束 <code>Lengthwise</code>:</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">interface</span> Lengthwise &#123;</span><br><span class="line">    length: <span class="built_in">number</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">loggingIdentity</span>&lt;<span class="title">T</span> <span class="title">extends</span> <span class="title">Lengthwise</span>&gt;(<span class="params">arg: T</span>): <span class="title">T</span> </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(arg.length);  <span class="comment">// Now we know it has a .length property, so no more error</span></span><br><span class="line">    <span class="keyword">return</span> arg;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+Because the generic function is now constrained, it will no longer work over any and all types:
+"><p>泛型函数约束了它的类型参数 <code>T</code>, 所以, 不再对<em>任何 / 所有</em>类型通用:</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">loggingIdentity(<span class="number">3</span>);  <span class="comment">// Error, number doesn't have a .length property</span></span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+Instead, we need to pass in values whose type has all the required properties:
+"><p>我们只能向它传递包含所有必要属性的值:</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">loggingIdentity(&#123;length: <span class="number">10</span>, value: <span class="number">3</span>&#125;);</span><br></pre></td></tr></table></figure>
+<h2 id="在约束子句中使用类型参数" class="heading-control"><a href="#在约束子句中使用类型参数" class="headerlink" title="在约束子句中使用类型参数"></a>在约束子句中使用类型参数<a class="heading-anchor" href="#在约束子句中使用类型参数" aria-hidden="true"></a></h2><!-- ## Using Type Parameters in Generic Constraints -->
+<div class="translation-block" title="
+You can declare a type parameter that is constrained by another type parameter.
+For example, here we&amp;#39;d like to get a property from an object given its name.
+We&amp;#39;d like to ensure that we&amp;#39;re not accidentally grabbing a property that does not exist on the `obj`, so we&amp;#39;ll place a constraint between the two types:
+"><p>你可以声明一个类型参数受限于另一个类型参数.<br>作为例子, 我们希望给定属性名获取对象属性.<br>我们应当确保不会意外地试图取得一个不存在于对象 <code>obj</code> 中的属性, 不妨如实陈述两类型参数间关系:</p>
+<blockquote>
+<p>译注: <code>keyof</code> 关键字首次出现在<a href="#">高级数据类型</a>一章.</p>
+</blockquote></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">getProperty</span>&lt;<span class="title">T</span>, <span class="title">K</span> <span class="title">extends</span> <span class="title">keyof</span> <span class="title">T</span>&gt;(<span class="params">obj: T, key: K</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> obj[key];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> x = &#123; a: <span class="number">1</span>, b: <span class="number">2</span>, c: <span class="number">3</span>, d: <span class="number">4</span> &#125;;</span><br><span class="line"></span><br><span class="line">getProperty(x, <span class="string">"a"</span>); <span class="comment">// okay</span></span><br><span class="line">getProperty(x, <span class="string">"m"</span>); <span class="comment">// error: Argument of type 'm' isn't assignable to 'a' | 'b' | 'c' | 'd'.</span></span><br></pre></td></tr></table></figure>
+<h2 id="使用类类型" class="heading-control"><a href="#使用类类型" class="headerlink" title="使用类类型"></a>使用类类型<a class="heading-anchor" href="#使用类类型" aria-hidden="true"></a></h2><!-- ## Using Class Types in Generics -->
+<div class="translation-block" title="
+When creating factories in TypeScript using generics, it is necessary to refer to class types by their constructor functions. For example,
+"><p>在 TypeScript 中创建泛型工厂函数时, 有必要通过构造器函数引用类类型, 例如:</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">create</span>&lt;<span class="title">T</span>&gt;(<span class="params">c: &#123;<span class="keyword">new</span>(): T; &#125;</span>): <span class="title">T</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> c();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+A more advanced example uses the prototype property to infer and constrain relationships between the constructor function and the instance side of class types.
+"><p>一个更高级的用例是利用 <code>prototype</code> 属性推断和限制类类型构造器函数和实例面的关系.</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> BeeKeeper &#123;</span><br><span class="line">    hasMask: <span class="built_in">boolean</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> ZooKeeper &#123;</span><br><span class="line">    nametag: <span class="built_in">string</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> Animal &#123;</span><br><span class="line">    numLegs: <span class="built_in">number</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> Bee <span class="keyword">extends</span> Animal &#123;</span><br><span class="line">    keeper: BeeKeeper;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> Lion <span class="keyword">extends</span> Animal &#123;</span><br><span class="line">    keeper: ZooKeeper;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">createInstance</span>&lt;<span class="title">A</span> <span class="title">extends</span> <span class="title">Animal</span>&gt;(<span class="params">c: <span class="keyword">new</span> () =&gt; A</span>): <span class="title">A</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> c();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">createInstance(Lion).keeper.nametag;  <span class="comment">// typechecks!</span></span><br><span class="line">createInstance(Bee).keeper.hasMask;   <span class="comment">// typechecks!</span></span><br></pre></td></tr></table></figure>
+    </div>
+
+    
+    
+    
+        
+      
+        <div id="reward-container">
+  <div>如果这篇文章对您有用，可以考虑打赏:)</div>
+  <button id="reward-button" disable="enable" onclick="var qr = document.getElementById(&quot;qr&quot;); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+        
+      
+      <div style="display: inline-block">
+        <img src="/images/wechatpay.png" alt="Hyan Lee 微信支付">
+        <p>微信支付</p>
+      </div>
+
+  </div>
+</div>
+
+      
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>Hyan Lee</li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://hyan23.org/2019/11/20/ts-generics/" title="泛型">https://hyan23.org/2019/11/20/ts-generics/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！</li>
+</ul>
+</div>
+
+      
+
+      <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+              
+                <a href="/2019/11/20/ts-functions/" rel="next" title="函数">
+                  <i class="fa fa-chevron-left"></i> 函数
+                </a>
+              
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+              
+                <a href="/2019/11/20/ts-enums/" rel="prev" title="枚举">
+                  枚举 <i class="fa fa-chevron-right"></i>
+                </a>
+              
+            </div>
+          </div>
+        
+      </footer>
+    
+  </div>
+  
+  
+  
+  </article>
+
+  </div>
+
+
+          </div>
+          
+    
+    <div class="comments" id="gitalk-container"></div>
+  
+
+        </div>
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+        
+        
+        
+        
+      
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#介绍"><span class="nav-number">1.</span> <span class="nav-text">介绍</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#第一个程序"><span class="nav-number">2.</span> <span class="nav-text">第一个程序</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#使用类型参数"><span class="nav-number">3.</span> <span class="nav-text">使用类型参数</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#泛型接口"><span class="nav-number">4.</span> <span class="nav-text">泛型接口</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#泛型类"><span class="nav-number">5.</span> <span class="nav-text">泛型类</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#约束类型参数"><span class="nav-number">6.</span> <span class="nav-text">约束类型参数</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#在约束子句中使用类型参数"><span class="nav-number">6.1.</span> <span class="nav-text">在约束子句中使用类型参数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#使用类类型"><span class="nav-number">6.2.</span> <span class="nav-text">使用类类型</span></a></li></ol></li></ol></div>
+        
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image"
+      src="/images/avatar2.png"
+      alt="Hyan Lee">
+  <p class="site-author-name" itemprop="name">Hyan Lee</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">31</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-categories">
+        
+          
+            <a href="/categories/">
+          
+        
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">分类</span>
+        </a>
+      </div>
+    
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+      
+      
+        
+      
+      
+        
+      
+        <a href="https://github.com/hyan23" title="GitHub &rarr; https://github.com/hyan23" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+    
+      <span class="links-of-author-item">
+      
+      
+        
+      
+      
+        
+      
+        <a href="mailto:hyan23lee@hotmail.com" title="E-Mail &rarr; mailto:hyan23lee@hotmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+    
+      <span class="links-of-author-item">
+      
+      
+        
+      
+      
+        
+      
+        <a href="https://t.me/hyan23" title="Telegram &rarr; https://t.me/hyan23" rel="noopener" target="_blank"><i class="fa fa-fw fa-telegram"></i>Telegram</a>
+      </span>
+    
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    
+  
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+      
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2017 – <span itemprop="copyrightYear">2020</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Hyan Lee</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    
+    <span title="站点总字数">118k</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v3.9.0</div>
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js?v=3.1.0"></script>
+  <script src="//cdn.jsdelivr.net/npm/medium-zoom@1/dist/medium-zoom.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+<script src="/js/utils.js?v=7.4.0"></script>
+<script src="/js/schemes/pisces.js?v=7.4.0"></script>
+<script src="/js/next-boot.js?v=7.4.0"></script>
+
+
+
+  
+  <script>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+    mermaid.initialize({
+      theme: 'forest',
+      logLevel: 3,
+      flowchart: { curve: 'linear' },
+      gantt: { axisFormat: '%m/%d/%Y' },
+      sequence: { actorMargin: 50 }
+    });
+  }, window.mermaid);
+}
+</script>
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID: '442da4785490db3ece48',
+      clientSecret: '3bfa2829a34371ca37db636917e791d114bd338c',
+      repo: 'blog-comments',
+      owner: 'hyan23',
+      admin: ['hyan23'],
+      id: '0af2ea222d5a5aa192dd2d5a77c87122',
+        language: window.navigator.language || window.navigator.userLanguage,
+      
+      distractionFreeMode: 'true'
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+</script>
+
+</body>
+</html>

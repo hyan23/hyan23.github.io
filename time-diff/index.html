@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="description" content="Time Diff">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="icon" href="https://via.placeholder.com/70x70">
+    <link rel="stylesheet" href="/css/mvp.css">
+
+    <title>Time Diff</title>
+
+    <script src="/js/handy.js"></script>
+
+    <script type="text/javascript">
+        function calc_time_diff()
+        {
+            var new_time = document.getElementById("new_time");
+            var old_time = document.getElementById("old_time");
+            var result = document.getElementById("result");
+            console.assert(new_time != null);
+            console.assert(old_time != null);
+            console.assert(result != null);
+            
+            var diff = Math.abs(Date.parse(new_time.value) - Date.parse(old_time.value));
+            // var s = diff / 1000 % 60;
+            if (isNaN(diff))
+            {
+                return;
+            }
+            var m = ~~(diff / 1000 / 60 % 60);
+            var h = ~~(diff / 1000 / 60 / 60);
+            result.innerText = `${h}:${m > 9 ? m.toString() : '0' + m}`;
+        }
+        
+        window.onload = function()
+        {
+            var old_time = document.getElementById("old_time");
+            var new_time = document.getElementById("new_time");
+            console.assert(old_time != null);
+            console.assert(new_time != null);
+            
+            var now = new Date();
+            var now_str = new Date(now.getTime() - now.getTimezoneOffset() * 60 * 1000).toISOString();
+            now_str = now_str.substr(0, now_str.length - 5);
+            // old_time.value = now_str;
+            // new_time.value = now_str;
+            
+            calc_time_diff();
+        }
+    </script>
+</head>
+
+<body>
+    <header></header>
+
+    <main>
+        <article></article>
+    
+        <section>
+            <form>
+                <header>
+                    <h2>Time Diff</h2>
+                    <!--<p>作者: <a href="https://github.com/hyan23" target="_blank">@hyan23</a></p>-->
+                </header>
+                
+                <!-- https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/datetime-local -->
+                <label for="new_time">new time</label>
+                <input type="datetime-local" id="new_time" name="new_time" onchange="calc_time_diff();">
+                <label for="old_time">old time</label>
+                <input type="datetime-local" id="old_time" name="old_time" onchange="calc_time_diff();">
+                <label for="result"></label>
+                <label id="result"></label>
+            </form>
+        </section>
+    </main>
+
+    <footer></footer>
+</body>
+
+</html>

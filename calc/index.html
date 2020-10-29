@@ -1,0 +1,124 @@
+
+
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="description" content="表达式计算器">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="icon" href="https://via.placeholder.com/70x70">
+    <link rel="stylesheet" href="/css/mvp.css">
+
+    <title>表达式计算器</title>
+
+    <script src="/js/handy.js"></script>
+
+    <script type="text/javascript">
+        function on_expr_list_input()
+        {
+            var expr_list = document.getElementById("expr_list");
+            var result = document.getElementById("result");
+            var add_mode = document.getElementById("add_mode");
+            var times_imm = document.getElementById("times_imm");
+            console.assert(expr_list != null);
+            console.assert(result != null);
+            console.assert(add_mode != null);
+            console.assert(times_imm != null);
+            
+            var lines = [];
+            expr_list.value.split('\n').forEach(line => {
+                var line_trimmed = line.trim();
+                if (line_trimmed.length > 0) {
+                    lines.push(line.trim());
+                }
+            });
+            
+            result.innerHTML = "<span>结果：</span><br>";
+            if (add_mode.checked) {
+                for (var line of lines) {
+                    var sum = 0;
+                    var expr = "";
+                    var array = line.split(/ +/);
+                    for (var i in array) {
+                        sum += Number.parseFloat(array[i]);
+                        expr += "" + array[i] + (i < array.length - 1 ? " + " : "");
+                    }
+                    result.innerHTML += `<span>${expr}=${sum}</span>`;
+                    result.innerHTML += "<br>";
+                    if (times_imm.checked) {
+                        result.innerHTML += `<span>(${expr}) * 7.8 = ${sum * 7.8}</span>`;
+                        result.innerHTML += `<br>`;
+                    }
+                }
+            } else {
+                for (var expr of lines) {
+                    try {
+                        var res = eval(expr);
+                        result.innerHTML += `<span>${expr}=${res}</span>`
+                        if (times_imm.checked) {
+                            result.innerHTML += `<br>`
+                            result.innerHTML += `<span>(${expr}) * 7.8 = ${res * 7.8}</span>`;
+                        }
+                    } catch (err) {
+                        result.innerHTML += `<span style="color:red">${expr}=有语法错误</span>`;
+                    }
+                    result.innerHTML += "<br>";
+                }
+            }
+        }
+        
+        function append_space()
+        {
+            var expr_list = document.getElementById("expr_list");
+            console.assert(expr_list != null);
+            expr_list.value += " ";
+        }
+        
+        function on_expr_list_paste()
+        {
+            var add_mode = document.getElementById("add_mode");
+            console.assert(add_mode != null);
+            
+            if (!add_mode.checked) {
+                return;
+            }
+            
+            setTimeout(append_space, 0);
+        }
+    </script>
+</head>
+
+<body>
+    <header></header>
+
+    <main>
+        <article></article>
+    
+        <section>
+            <form>
+                <header>
+                    <h2>表达式计算器</h2>
+                    <!-- <p>作者: <a href="https://github.com/hyan23" target="_blank">@hyan23</a></p> -->
+                </header>
+                
+                <label for="expr_list">在下方输入式子：</label>
+                <!-- https://developer.mozilla.org/en-US/docs/Web/HTML/Element/textarea -->
+                <textarea id="expr_list" rows="10" cols="40" autofocus placeholder="1+1&#10;3+2-5&#10;4*5/10&#10;2**(2*2)"
+                    oninput="on_expr_list_input();" onpaste="on_expr_list_paste();"></textarea>
+                <label for="add_mode">累加模式：</label>
+                <input id="add_mode" type="checkbox" onchange="on_expr_list_input();">
+                <label for="times_imm">结果*7.8：</label>
+                <input id="times_imm" type="checkbox" onchange="on_expr_list_input();">
+                <label for="result"></label>
+                <label id="result"></label>
+            </form>
+        </section>
+    </main>
+
+    <footer></footer>
+</body>
+
+</html>

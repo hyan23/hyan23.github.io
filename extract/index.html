@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="description" content="原文提取">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="icon" href="https://via.placeholder.com/70x70">
+    <link rel="stylesheet" href="/css/mvp.css">
+
+    <title>原文提取</title>
+
+    <script src="/js/handy.js"></script>
+
+    <script type="text/javascript">
+        function on_extract_btn_click() {
+            var input = document.getElementById('input');
+            var result = document.getElementById('result');
+            console.assert(input !== null);
+            console.assert(result !== null);
+
+            var textBlock = /(\n#.*)|<!-- text -->([\w\W\s\S]*?)<!-- endtext -->|(```[\w\W\s\S]*?```)/g;
+            var match;
+            result.value = '';
+            while ((match = textBlock.exec(input.value)) !== null) {
+                result.value += (match[1] || match[2] || match[3] || '') + '\n';
+            }
+        }
+    </script>
+</head>
+
+<body>
+    <header></header>
+
+    <main>
+        <article></article>
+
+        <section>
+            <form>
+                <header>
+                    <h2>原文提取</h2>
+                    <p>作者: <a href="https://github.com/hyan23" target="_blank">@hyan23</a></p>
+                </header>
+
+                <label for="input">Markdown：</label>
+                <!-- https://developer.mozilla.org/en-US/docs/Web/HTML/Element/textarea -->
+                <textarea id="input" rows="10" cols="80" autofocus></textarea>
+                <button type="button" onclick="on_extract_btn_click();">Extract</button>
+                <label for="result">结果：</label>
+                <textarea id="result" rows="10" cols="80" autofocus></textarea>
+            </form>
+        </section>
+    </main>
+
+    <footer></footer>
+</body>
+
+</html>

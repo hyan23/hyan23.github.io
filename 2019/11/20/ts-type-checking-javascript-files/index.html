@@ -1,0 +1,1102 @@
+<!DOCTYPE html>
+
+
+
+
+
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/favicon/apple-touch-icon.png?v=7.4.0">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon/favicon-32x32.png?v=7.4.0">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon/favicon-16x16.png?v=7.4.0">
+  <link rel="mask-icon" href="/images/favicon/safari-pinned-tab.svg?v=7.4.0" color="#222">
+  <link rel="manifest" href="/images/favicon/site.webmanifest">
+  <meta name="msapplication-config" content="/images/favicon/browserconfig.xml">
+  <meta http-equiv="Cache-Control" content="no-transform">
+  <meta http-equiv="Cache-Control" content="no-siteapp">
+
+<link rel="stylesheet" href="/css/main.css?v=7.4.0">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '7.4.0',
+    exturl: false,
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false},
+    copycode: {"enable":false,"show_result":false,"style":null},
+    back2top: {"enable":true,"sidebar":true,"scrollpercent":false},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: true,
+    lazyload: true,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: "",
+      labels: ""
+    },
+    localsearch: {"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: '',
+    motion: {"enable":false},
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="状态: 初稿 TypeScript 2.3 及其后版本支持用 --checkJs 选项类型检查和报告 .js 文件中的错误. 你可以向一些文件添加 // @ts-nocheck 注释跳过对它们的检查; 相反, 你也能选择向一些文件添加 // @ts-check 注释在没设置 --checkJs 时只检查一部分 .js 文件.你也可以添加 // @ts-ignore 于某行之前忽略该行错误.如果你有">
+<meta name="keywords" content="博客,个人博客,日志,在线工具">
+<meta property="og:type" content="article">
+<meta property="og:title" content="类型检查 JavaScript 文件">
+<meta property="og:url" content="https://hyan23.org/2019/11/20/ts-type-checking-javascript-files/index.html">
+<meta property="og:site_name" content="Hyan Lee">
+<meta property="og:description" content="状态: 初稿 TypeScript 2.3 及其后版本支持用 --checkJs 选项类型检查和报告 .js 文件中的错误. 你可以向一些文件添加 // @ts-nocheck 注释跳过对它们的检查; 相反, 你也能选择向一些文件添加 // @ts-check 注释在没设置 --checkJs 时只检查一部分 .js 文件.你也可以添加 // @ts-ignore 于某行之前忽略该行错误.如果你有">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2020-03-02T11:26:16.353Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="类型检查 JavaScript 文件">
+<meta name="twitter:description" content="状态: 初稿 TypeScript 2.3 及其后版本支持用 --checkJs 选项类型检查和报告 .js 文件中的错误. 你可以向一些文件添加 // @ts-nocheck 注释跳过对它们的检查; 相反, 你也能选择向一些文件添加 // @ts-check 注释在没设置 --checkJs 时只检查一部分 .js 文件.你也可以添加 // @ts-ignore 于某行之前忽略该行错误.如果你有">
+  <link rel="canonical" href="https://hyan23.org/2019/11/20/ts-type-checking-javascript-files/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>类型检查 JavaScript 文件 | Hyan Lee</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+  <div class="container">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Hyan Lee</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+      
+      
+      
+        
+        <li class="menu-item menu-item-home">
+      
+    
+      
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-关于-/-留言板">
+      
+    
+      
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于 / 留言板</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-categories">
+      
+    
+      
+      
+        
+      
+        
+          
+        
+      
+        
+      
+    
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类<span class="badge">6</span></a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-archives">
+      
+    
+      
+      
+        
+          
+        
+      
+        
+      
+        
+      
+    
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">31</span></a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-精选-/-系列">
+      
+    
+      
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <a href="/selections/" rel="section"><i class="fa fa-fw fa-book"></i>精选 / 系列</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-摄影">
+      
+    
+      
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <a href="/gallery/" rel="section"><i class="fa fa-fw fa-camera"></i>摄影</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-工具">
+      
+    
+      
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <a href="/tools/" rel="section"><i class="fa fa-fw fa-calculator"></i>工具</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-友情链接">
+      
+    
+      
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <a href="/friends/" rel="section"><i class="fa fa-fw fa-external-link"></i>友情链接</a>
+
+  </li>
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+            
+
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+      <article itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block post">
+    <link itemprop="mainEntityOfPage" href="https://hyan23.org/2019/11/20/ts-type-checking-javascript-files/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Hyan Lee">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar2.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hyan Lee">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">类型检查 JavaScript 文件
+
+          
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              
+                
+              
+
+              <time title="创建时间：2019-11-20 09:34:52" itemprop="dateCreated datePublished" datetime="2019-11-20T09:34:52+08:00">2019-11-20</time>
+            </span>
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-03-02 19:26:16" itemprop="dateModified" datetime="2020-03-02T19:26:16+08:00">2020-03-02</time>
+              </span>
+            
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/翻译稿/" itemprop="url" rel="index"><span itemprop="name">翻译稿</span></a></span>
+
+                
+                
+                  ，
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/翻译稿/TypeScript/" itemprop="url" rel="index"><span itemprop="name">TypeScript</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+          
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">本文字数：</span>
+              
+              <span>3.9k</span>
+            </span>
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <pre><code>状态: 初稿
+</code></pre><div class="translation-block" title="
+TypeScript 2.3 and later support type-checking and reporting errors in `.js` files with `--checkJs`.
+
+You can skip checking some files by adding a `&amp;#x2F;&amp;#x2F; @ts-nocheck` comment to them; conversely, you can choose to check only a few `.js` files by adding a `&amp;#x2F;&amp;#x2F; @ts-check` comment to them without setting `--checkJs`.
+You can also ignore errors on specific lines by adding `&amp;#x2F;&amp;#x2F; @ts-ignore` on the preceding line.
+Note that if you have a `tsconfig.json`, JS checking will respect strict flags like `noImplicitAny`, `strictNullChecks`, etc.
+However, because of the relative looseness of JS checking, combining strict flags with it may be surprising.
+
+Here are some notable differences on how checking works in `.js` files compared to `.ts` files:
+"><p>TypeScript 2.3 及其后版本支持用 <code>--checkJs</code> 选项类型检查和报告 <code>.js</code> 文件中的错误.</p>
+<p>你可以向一些文件添加 <code>// @ts-nocheck</code> 注释跳过对它们的检查; 相反, 你也能选择向一些文件添加 <code>// @ts-check</code> 注释在没设置 <code>--checkJs</code> 时只检查一部分 <code>.js</code> 文件.<br>你也可以添加 <code>// @ts-ignore</code> 于某行之前忽略该行错误.<br>如果你有 <code>tsconfig.json</code> 文件, JS 类型检查会服从 <code>noImplicitAny</code>, <code>strictNullChecks</code> 等严格标志.<br>但是, 由于 JS 类型检查相对的宽松性, 组合严格标志可能会产生出乎意料的结果.</p>
+<p>这里是类型检查 <code>.js</code> 文件对比 <code>.ts</code> 文件的一些显著区别:</p></div>
+<a id="more"></a>
+<h2 id="JSDoc-用以提供类型信息" class="heading-control"><a href="#JSDoc-用以提供类型信息" class="headerlink" title="JSDoc 用以提供类型信息"></a>JSDoc 用以提供类型信息<a class="heading-anchor" href="#JSDoc-用以提供类型信息" aria-hidden="true"></a></h2><!-- ## JSDoc types are used for type information -->
+<div class="translation-block" title="
+In a `.js` file, types can often be inferred just like in `.ts` files.
+Likewise, when types can&amp;#39;t be inferred, they can be specified using JSDoc the same way that type annotations are used in a `.ts` file.
+Just like Typescript, `--noImplicitAny` will give you errors on the places that the compiler could not infer a type.
+(With the exception of open-ended object literals; see below for details.)
+
+JSDoc annotations adorning a declaration will be used to set the type of that declaration. For example:
+"><p>在 <code>.js</code> 文件中, 类型通常按在 <code>.ts</code> 文件中一样被推导.<br>同样地, 如果一个类型无法被推导, 可以以 <code>.ts</code> 文件类型注解相同的方式使用 JSDoc 指明.<br>和 TypeScript 一样, <code>--noImplicitAny</code> 选项在编译器无法推出一个类型的地方产出错误.<br>(开放式对象字面量除外; 阅读后文获得更多信息.)</p>
+<p>装饰一个声明的 JSDoc 注解可以指出那个声明的类型. 举例如下:</p></div>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/** @type &#123;number&#125; */</span></span><br><span class="line"><span class="keyword">var</span> x;</span><br><span class="line"></span><br><span class="line">x = <span class="number">0</span>;      <span class="comment">// OK</span></span><br><span class="line">x = <span class="literal">false</span>;  <span class="comment">// Error: boolean is not assignable to number</span></span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+You can find the full list of supported JSDoc patterns [below](#supported-jsdoc).
+"><p>你可以在<a href="#">后面</a>找到受支持的 JSDoc 形式的完整清单.</p></div>
+<h2 id="由类内部赋值推断属性类型" class="heading-control"><a href="#由类内部赋值推断属性类型" class="headerlink" title="由类内部赋值推断属性类型"></a>由类内部赋值推断属性类型<a class="heading-anchor" href="#由类内部赋值推断属性类型" aria-hidden="true"></a></h2><!-- ## Properties are inferred from assignments in class bodies -->
+<div class="translation-block" title="
+ES2015 does not have a means for declaring properties on classes. Properties are dynamically assigned, just like object literals.
+
+In a `.js` file, the compiler infers properties from property assignments inside the class body.
+The type of a property is the type given in the constructor, unless it&amp;#39;s not defined there, or the type in the constructor is undefined or null.
+In that case, the type is the union of the types of all the right-hand values in these assignments.
+Properties defined in the constructor are always assumed to exist, whereas ones defined just in methods, getters, or setters are considered optional.
+"><p>ES2015 没有为类声明属性的途径. 属性如对象字面量一样被动态指定.</p>
+<p>在 <code>.js</code> 文件中, 编译器由类内部的属性赋值推断属性的类型.<br>属性的类型就是在构造函数给定的类型, 除非这属性没在构造函数定义, 或那里的类型是 undefined 或 null.<br>那样的话, 属性的类型是所有赋值表达式右值类型的自适应类型.<br>我们假定在构造函数定义的属性总是存在, 而认为仅定义在方法, 取方法, 存方法的那些是”可选”的.</p></div>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">C</span> </span>&#123;</span><br><span class="line">    <span class="keyword">constructor</span>() &#123;</span><br><span class="line">        <span class="keyword">this</span>.constructorOnly = <span class="number">0</span></span><br><span class="line">        <span class="keyword">this</span>.constructorUnknown = <span class="literal">undefined</span></span><br><span class="line">    &#125;</span><br><span class="line">    method() &#123;</span><br><span class="line">        <span class="keyword">this</span>.constructorOnly = <span class="literal">false</span> <span class="comment">// error, constructorOnly is a number</span></span><br><span class="line">        <span class="keyword">this</span>.constructorUnknown = <span class="string">"plunkbat"</span> <span class="comment">// ok, constructorUnknown is string | undefined</span></span><br><span class="line">        <span class="keyword">this</span>.methodOnly = <span class="string">'ok'</span>  <span class="comment">// ok, but methodOnly could also be undefined</span></span><br><span class="line">    &#125;</span><br><span class="line">    method2() &#123;</span><br><span class="line">        <span class="keyword">this</span>.methodOnly = <span class="literal">true</span>  <span class="comment">// also, ok, methodOnly's type is string | boolean | undefined</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+If properties are never set in the class body, they are considered unknown.
+If your class has properties that are only read from, add and then annotate a declaration in the constructor with JSDoc to specify the type.
+You don&amp;#39;t even have to give a value if it will be initialised later:
+"><p>从未在类内部设置过的属性被认为是未知的.<br>如果你的类有一个只读不写的属性, 用 JSDoc 在构造函数添加并注解一个声明以指明它的类型.<br>如果它会稍后初始化, 你甚至不用在这里给初值:</p></div>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">C</span> </span>&#123;</span><br><span class="line">    <span class="keyword">constructor</span>() &#123;</span><br><span class="line">        <span class="comment">/** @type &#123;number | undefined&#125; */</span></span><br><span class="line">        <span class="keyword">this</span>.prop = <span class="literal">undefined</span>;</span><br><span class="line">        <span class="comment">/** @type &#123;number | undefined&#125; */</span></span><br><span class="line">        <span class="keyword">this</span>.count;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> c = <span class="keyword">new</span> C();</span><br><span class="line">c.prop = <span class="number">0</span>;          <span class="comment">// OK</span></span><br><span class="line">c.count = <span class="string">"string"</span>;  <span class="comment">// Error: string is not assignable to number|undefined</span></span><br></pre></td></tr></table></figure>
+<h2 id="构造器函数等同于类" class="heading-control"><a href="#构造器函数等同于类" class="headerlink" title="构造器函数等同于类"></a>构造器函数等同于类<a class="heading-anchor" href="#构造器函数等同于类" aria-hidden="true"></a></h2><!-- ## Constructor functions are equivalent to classes -->
+<div class="translation-block" title="
+Before ES2015, Javascript used constructor functions instead of classes.
+The compiler supports this pattern and understands constructor functions as equivalent to ES2015 classes.
+The property inference rules described above work exactly the same way.
+"><p>在 ES2015 之前, JavaScript 用构造函数代替类.<br>编译器支持此模型, 而且理解构造函数和 ES2015 类是等同的.<br>上述属性推导规则照常发挥作用.</p></div>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">C</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">this</span>.constructorOnly = <span class="number">0</span></span><br><span class="line">    <span class="keyword">this</span>.constructorUnknown = <span class="literal">undefined</span></span><br><span class="line">&#125;</span><br><span class="line">C.prototype.method = <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">this</span>.constructorOnly = <span class="literal">false</span> <span class="comment">// error</span></span><br><span class="line">    <span class="keyword">this</span>.constructorUnknown = <span class="string">"plunkbat"</span> <span class="comment">// OK, the type is string | undefined</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="支持-CommonJS-模块" class="heading-control"><a href="#支持-CommonJS-模块" class="headerlink" title="支持 CommonJS 模块"></a>支持 CommonJS 模块<a class="heading-anchor" href="#支持-CommonJS-模块" aria-hidden="true"></a></h2><!-- ## CommonJS modules are supported -->
+<div class="translation-block" title="
+In a `.js` file, Typescript understands the CommonJS module format.
+Assignments to `exports` and `module.exports` are recognized as export declarations.
+Similarly, `require` function calls are recognized as module imports. For example:
+"><p>在 <code>.js</code> 文件中, TypeScript 理解 CommonJS 模块格式.<br>向 <code>exports</code> 和 <code>module.exports</code> 赋值会被识别为导出声明.<br>类似地, <code>require</code> 函数调用会被识别为模块导入. 举个例子:</p></div>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// same as `import module "fs"`</span></span><br><span class="line"><span class="keyword">const</span> fs = <span class="built_in">require</span>(<span class="string">"fs"</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// same as `export function readFile`</span></span><br><span class="line"><span class="built_in">module</span>.exports.readFile = <span class="function"><span class="keyword">function</span>(<span class="params">f</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> fs.readFileSync(f);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+The module support in Javascript is much more syntactically forgiving than Typescript&amp;#39;s module support.
+Most combinations of assignments and declarations are supported.
+"><p>JavaScript 模块支持语法比 TypeScript 宽容得多.<br>大多赋值和声明的组合都受支持.</p></div>
+<h2 id="类-函数-对象字面量都是名字空间" class="heading-control"><a href="#类-函数-对象字面量都是名字空间" class="headerlink" title="类, 函数, 对象字面量都是名字空间"></a>类, 函数, 对象字面量都是名字空间<a class="heading-anchor" href="#类-函数-对象字面量都是名字空间" aria-hidden="true"></a></h2><!-- ## Classes, functions, and object literals are namespaces -->
+<div class="translation-block" title="
+Classes are namespaces in `.js` files.
+This can be used to nest classes, for example:
+"><p><code>.js</code> 文件中类就是名字空间.<br>可以用它嵌套类, 举个例子:</p></div>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">C</span> </span>&#123;</span><br><span class="line">&#125;</span><br><span class="line">C.D = <span class="class"><span class="keyword">class</span> </span>&#123;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+And, for pre-ES2015 code, it can be used to simulate static methods:
+"><p>而且, 针对 pre-ES2015 代码, 可以用它模拟静态方法:</p></div>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">Outer</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="keyword">this</span>.y = <span class="number">2</span></span><br><span class="line">&#125;</span><br><span class="line">Outer.Inner = <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="keyword">this</span>.yy = <span class="number">2</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+It can also be used to create simple namespaces:
+"><p>也可以用它创建简单的名字空间:</p></div>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> ns = &#123;&#125;</span><br><span class="line">ns.C = <span class="class"><span class="keyword">class</span> </span>&#123;</span><br><span class="line">&#125;</span><br><span class="line">ns.func = <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+Other variants are allowed as well:
+"><p>更多其他变体:</p></div>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// IIFE</span></span><br><span class="line"><span class="keyword">var</span> ns = (<span class="function"><span class="keyword">function</span> (<span class="params">n</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> n || &#123;&#125;;</span><br><span class="line">&#125;)();</span><br><span class="line">ns.CONST = <span class="number">1</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// defaulting to global</span></span><br><span class="line"><span class="keyword">var</span> assign = assign || <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="comment">// code goes here</span></span><br><span class="line">&#125;</span><br><span class="line">assign.extra = <span class="number">1</span></span><br></pre></td></tr></table></figure>
+<h2 id="对象字面量是开放式的" class="heading-control"><a href="#对象字面量是开放式的" class="headerlink" title="对象字面量是开放式的"></a>对象字面量是开放式的<a class="heading-anchor" href="#对象字面量是开放式的" aria-hidden="true"></a></h2><!-- ## Object literals are open-ended -->
+<div class="translation-block" title="
+In a `.ts` file, an object literal that initializes a variable declaration gives its type to the declaration.
+No new members can be added that were not specified in the original literal.
+This rule is relaxed in a `.js` file; object literals have an open-ended type (an index signature) that allows adding and looking up properties that were not defined originally.
+For instance:
+"><p>在 <code>.ts</code> 文件中, 初始化一个变量声明的对象字面量也把它的类型赋给声明.<br>不能再添加未在原字面量指定的新成员.<br>此规则在 <code>.js</code> 文件得以放松; 对象字面量类型有一个允许添加和查找非原始属性的开放式类型 (索引签名).<br>例如:</p></div>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> obj = &#123; <span class="attr">a</span>: <span class="number">1</span> &#125;;</span><br><span class="line">obj.b = <span class="number">2</span>;  <span class="comment">// Allowed</span></span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+Object literals behave as if they have an index signature `[x:string]: any` that allows them to be treated as open maps instead of closed objects.
+
+Like other special JS checking behaviors, this behavior can be changed by specifying a JSDoc type for the variable. For example:
+"><p>对象字面量表现得它们好像有一个索引签名 <code>[x:string]: any</code> 一样, 这让它们可被当作开放的图, 而不是封闭对象.</p>
+<p>类同其他特殊 JS 类型检查行为, 该行为可由为变量指定 JSDoc 类型所改变. 例如:</p></div>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/** @type &#123;&#123;a: number&#125;&#125; */</span></span><br><span class="line"><span class="keyword">var</span> obj = &#123; <span class="attr">a</span>: <span class="number">1</span> &#125;;</span><br><span class="line">obj.b = <span class="number">2</span>;  <span class="comment">// Error, type &#123;a: number&#125; does not have property b</span></span><br></pre></td></tr></table></figure>
+<h2 id="null-undefined-空数组初始化器的类型是-any-或-any" class="heading-control"><a href="#null-undefined-空数组初始化器的类型是-any-或-any" class="headerlink" title="null, undefined, 空数组初始化器的类型是 any 或 any[]"></a>null, undefined, 空数组初始化器的类型是 any 或 any[]<a class="heading-anchor" href="#null-undefined-空数组初始化器的类型是-any-或-any" aria-hidden="true"></a></h2><!-- ## null, undefined, and empty array initializers are of type any or any[] -->
+<div class="translation-block" title="
+Any variable, parameter or property that is initialized with null or undefined will have type any, even if strict null checks is turned on.
+Any variable, parameter or property that is initialized with [] will have type any[], even if strict null checks is turned on.
+The only exception is for properties that have multiple initializers as described above.
+"><p>任何以 null 或 undefined 初始化的变量, 参数, 或属性的类型都是 any, 即使严格 null 检查已经打开.<br>任何以 [] 初始化的变量, 参数, 或属性的类型都是 any[], 即使严格 null 检查已经打开.<br>唯一例外是上面提到的拥有多重初始化语句的属性.</p></div>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">Foo</span>(<span class="params">i = null</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (!i) i = <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">var</span> j = <span class="literal">undefined</span>;</span><br><span class="line">    j = <span class="number">2</span>;</span><br><span class="line">    <span class="keyword">this</span>.l = [];</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">var</span> foo = <span class="keyword">new</span> Foo();</span><br><span class="line">foo.l.push(foo.i);</span><br><span class="line">foo.l.push(<span class="string">"end"</span>);</span><br></pre></td></tr></table></figure>
+<h2 id="函数参数默认可选" class="heading-control"><a href="#函数参数默认可选" class="headerlink" title="函数参数默认可选"></a>函数参数默认可选<a class="heading-anchor" href="#函数参数默认可选" aria-hidden="true"></a></h2><!-- ## Function parameters are optional by default -->
+<div class="translation-block" title="
+Since there is no way to specify optionality on parameters in pre-ES2015 Javascript, all function parameters in `.js` file are considered optional.
+Calls with fewer arguments than the declared number of parameters are allowed.
+
+It is important to note that it is an error to call a function with too many arguments.
+
+For instance:
+"><p>由于 pre-ES2015 JavaSciprt 没有为参数指明”可选”性的方法, <code>.js</code> 文件所有的函数参数都被认为是”可选”的.<br>允许用少于声明数量的参数调用一个函数.</p>
+<p>但用过多的参数调用一个函数仍是错误的.</p>
+<p>例如:</p></div>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">bar</span>(<span class="params">a, b</span>) </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(a + <span class="string">" "</span> + b);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">bar(<span class="number">1</span>);       <span class="comment">// OK, second argument considered optional</span></span><br><span class="line">bar(<span class="number">1</span>, <span class="number">2</span>);</span><br><span class="line">bar(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>); <span class="comment">// Error, too many arguments</span></span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+JSDoc annotated functions are excluded from this rule.
+Use JSDoc optional parameter syntax to express optionality. e.g.:
+"><p>有 JSDoc 注解的函数排除于此规则.<br>使用 JSDoc 可选参数语法表达”可选”性. 例如:</p></div>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * @param &#123;string&#125; [somebody] - Somebody's name.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">sayHello</span>(<span class="params">somebody</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (!somebody) &#123;</span><br><span class="line">        somebody = <span class="string">'John Doe'</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">'Hello '</span> + somebody);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">sayHello();</span><br></pre></td></tr></table></figure>
+<h2 id="由-arguments-的使用推断出变长参数声明" class="heading-control"><a href="#由-arguments-的使用推断出变长参数声明" class="headerlink" title="由 arguments 的使用推断出变长参数声明"></a>由 <code>arguments</code> 的使用推断出变长参数声明<a class="heading-anchor" href="#由-arguments-的使用推断出变长参数声明" aria-hidden="true"></a></h2><!-- ## Var-args parameter declaration inferred from use of `arguments` -->
+<div class="translation-block" title="
+A function whose body has a reference to the `arguments` reference is implicitly considered to have a var-arg parameter (i.e. `(...arg: any[]) =&amp;gt; any`). Use JSDoc var-arg syntax to specify the type of the arguments.
+"><p>我们隐式地认为一个函数体引用过 <code>arguments</code> 的函数有一个变长参数 (即: <code>(...arg: any[]) =&gt; any</code>). 使用 JSDoc var-arg 语法指定参数的类型.</p></div>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/** @param &#123;...number&#125; args */</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">sum</span>(<span class="params"><span class="regexp">/* numbers */</span></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> total = <span class="number">0</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">var</span> i = <span class="number">0</span>; i &lt; <span class="built_in">arguments</span>.length; i++) &#123;</span><br><span class="line">      total += <span class="built_in">arguments</span>[i]</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> total</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="未特化类型参数缺省为-any" class="heading-control"><a href="#未特化类型参数缺省为-any" class="headerlink" title="未特化类型参数缺省为 any"></a>未特化类型参数缺省为 <code>any</code><a class="heading-anchor" href="#未特化类型参数缺省为-any" aria-hidden="true"></a></h2><!-- ## Unspecified type parameters default to `any` -->
+<div class="translation-block" title="
+Since there is no natural syntax for specifying generic type parameters in Javascript, an unspecified type parameter defaults to `any`.
+"><p>JavaScript 没有天然的特化泛型类型参数语法, 未特化类型参数缺省为 <code>any</code>.</p></div>
+<h3 id="在-extends-子句中" class="heading-control"><a href="#在-extends-子句中" class="headerlink" title="在 extends 子句中"></a>在 extends 子句中<a class="heading-anchor" href="#在-extends-子句中" aria-hidden="true"></a></h3><!-- ### In extends clause -->
+<div class="translation-block" title="
+For instance, `React.Component` is defined to have two type parameters, `Props` and `State`.
+In a `.js` file, there is no legal way to specify these in the extends clause. By default the type arguments will be `any`:
+"><p>比如, <code>React.Component</code> 有 <code>Props</code> 和 <code>State</code> 两个类型参数.<br>在 <code>.js</code> 文件中, 没有合法的在 extends 子句特化它们的途径. 默认情况下这些类型参数的类型是 <code>any</code>:</p></div>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; Component &#125; <span class="keyword">from</span> <span class="string">"react"</span>;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MyComponent</span> <span class="keyword">extends</span> <span class="title">Component</span> </span>&#123;</span><br><span class="line">    render() &#123;</span><br><span class="line">        <span class="keyword">this</span>.props.b; <span class="comment">// Allowed, since this.props is of type any</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+Use JSDoc `@augments` to specify the types explicitly. for instance:
+"><p>使用 JSDoc <code>@augments</code> 显式指明类型. 例如:</p></div>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; Component &#125; <span class="keyword">from</span> <span class="string">"react"</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * @augments &#123;Component&lt;&#123;a: number&#125;, State&gt;&#125;</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MyComponent</span> <span class="keyword">extends</span> <span class="title">Component</span> </span>&#123;</span><br><span class="line">    render() &#123;</span><br><span class="line">        <span class="keyword">this</span>.props.b; <span class="comment">// Error: b does not exist on &#123;a:number&#125;</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="在-JSDoc-注解中" class="heading-control"><a href="#在-JSDoc-注解中" class="headerlink" title="在 JSDoc 注解中"></a>在 JSDoc 注解中<a class="heading-anchor" href="#在-JSDoc-注解中" aria-hidden="true"></a></h3><!-- ### In JSDoc references -->
+<div class="translation-block" title="
+An unspecified type argument in JSDoc defaults to any:
+"><p>JSDoc 中的未特化类型参数缺省为 any:</p></div>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/** @type&#123;Array&#125; */</span></span><br><span class="line"><span class="keyword">var</span> x = [];</span><br><span class="line"></span><br><span class="line">x.push(<span class="number">1</span>);        <span class="comment">// OK</span></span><br><span class="line">x.push(<span class="string">"string"</span>); <span class="comment">// OK, x is of type Array&lt;any&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">/** @type&#123;Array.&lt;number&gt;&#125; */</span></span><br><span class="line"><span class="keyword">var</span> y = [];</span><br><span class="line"></span><br><span class="line">y.push(<span class="number">1</span>);        <span class="comment">// OK</span></span><br><span class="line">y.push(<span class="string">"string"</span>); <span class="comment">// Error, string is not assignable to number</span></span><br></pre></td></tr></table></figure>
+<h3 id="在函数调用中" class="heading-control"><a href="#在函数调用中" class="headerlink" title="在函数调用中"></a>在函数调用中<a class="heading-anchor" href="#在函数调用中" aria-hidden="true"></a></h3><!-- ### In function calls -->
+<div class="translation-block" title="
+A call to a generic function uses the arguments to infer the type parameters. Sometimes this process fails to infer any types, mainly because of lack of inference sources; in these cases, the type parameters will default to `any`. For example:
+"><p>对泛型函数的调用使用实参推导类型参数. 有时这个过程未能推出任何类型, 主要是因为缺乏推导源; 当这种情况发生, 类型参数也缺省为 <code>any</code>, 例如:</p></div>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> p = <span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function">(<span class="params">resolve, reject</span>) =&gt;</span> &#123; reject() &#125;);</span><br><span class="line"></span><br><span class="line">p; <span class="comment">// Promise&lt;any&gt;;</span></span><br></pre></td></tr></table></figure>
+<h2 id="受支持的-JSDoc" class="heading-control"><a href="#受支持的-JSDoc" class="headerlink" title="受支持的 JSDoc"></a>受支持的 JSDoc<a class="heading-anchor" href="#受支持的-JSDoc" aria-hidden="true"></a></h2><!-- # Supported JSDoc -->
+<div class="translation-block" title="
+The list below outlines which constructs are currently supported when using JSDoc annotations to provide type information in JavaScript files.
+
+Note any tags which are not explicitly listed below (such as `@async`) are not yet supported.
+
+* `@type`
+* `@param` (or `@arg` or `@argument`)
+* `@returns` (or `@return`)
+* `@typedef`
+* `@callback`
+* `@template`
+* `@class` (or `@constructor`)
+* `@this`
+* `@extends` (or `@augments`)
+* `@enum`
+
+The meaning is usually the same, or a superset, of the meaning of the tag given at usejsdoc.org.
+The code below describes the differences and gives some example usage of each tag.
+"><p>下表列出当使用 JSDoc 注解为 JavaScript 文件提供类型信息时, 目前哪些结构是受支持的.</p>
+<p>而任何未显式列出的标签 (如 <code>@async</code>) 都还不受支持.</p>
+<ul>
+<li><code>@type</code></li>
+<li><code>@param</code> (或 <code>@arg</code> 或 <code>@argument</code>)</li>
+<li><code>@returns</code> (或 <code>@return</code>)</li>
+<li><code>@typedef</code></li>
+<li><code>@callback</code></li>
+<li><code>@template</code></li>
+<li><code>@class</code> (或 <code>@constructor</code>)</li>
+<li><code>@this</code></li>
+<li><code>@extends</code> (或 <code>@augments</code>)</li>
+<li><code>@enum</code></li>
+</ul>
+<p>它们的含义一般与在 usejsdoc.org 给出的标签相同, 或可作为它们的超集.<br>下面的代码描述可能差别, 给出每个标签的示例用法.</p></div>
+<h3 id="type" class="heading-control"><a href="#type" class="headerlink" title="@type"></a><code>@type</code><a class="heading-anchor" href="#type" aria-hidden="true"></a></h3><!-- ## `@type` -->
+<div class="translation-block" title="
+You can use the &amp;quot;@type&amp;quot; tag and reference a type name (either primitive, defined in a TypeScript declaration, or in a JSDoc &amp;quot;@typedef&amp;quot; tag).
+You can use any Typescript type, and most JSDoc types.
+"><p>你可以使用 “@type” 标签引用一个类型名 (原始类型, 用 TypeScript 声明的, 或 JSDoc “@typedef” 标签里的).<br>你可以使用任何 TypeScript 类型, 和多数 JSDoc 类型.</p></div>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * @type &#123;string&#125;</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">var</span> s;</span><br><span class="line"></span><br><span class="line"><span class="comment">/** @type &#123;Window&#125; */</span></span><br><span class="line"><span class="keyword">var</span> win;</span><br><span class="line"></span><br><span class="line"><span class="comment">/** @type &#123;PromiseLike&lt;string&gt;&#125; */</span></span><br><span class="line"><span class="keyword">var</span> promisedString;</span><br><span class="line"></span><br><span class="line"><span class="comment">// You can specify an HTML Element with DOM properties</span></span><br><span class="line"><span class="comment">/** @type &#123;HTMLElement&#125; */</span></span><br><span class="line"><span class="keyword">var</span> myElement = <span class="built_in">document</span>.querySelector(selector);</span><br><span class="line">element.dataset.myData = <span class="string">''</span>;</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+`@type` can specify a union type &amp;amp;mdash; for example, something can be either a string or a boolean.
+"><p><code>@type</code> 能够指定自适应类型 &mdash; 比如, 能代表字符串或布尔值的某种东西.</p></div>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * @type &#123;(string | boolean)&#125;</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">var</span> sb;</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+Note that parentheses are optional for union types.
+"><p>自适应类型的括号是可选的.</p></div>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * @type &#123;string | boolean&#125;</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">var</span> sb;</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+You can specify array types using a variety of syntaxes:
+"><p>你可以以多种语法指定数组类型:</p></div>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/** @type &#123;number[]&#125; */</span></span><br><span class="line"><span class="keyword">var</span> ns;</span><br><span class="line"><span class="comment">/** @type &#123;Array.&lt;number&gt;&#125; */</span></span><br><span class="line"><span class="keyword">var</span> nds;</span><br><span class="line"><span class="comment">/** @type &#123;Array&lt;number&gt;&#125; */</span></span><br><span class="line"><span class="keyword">var</span> nas;</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+You can also specify object literal types.
+For example, an object with properties &amp;#39;a&amp;#39; (string) and &amp;#39;b&amp;#39; (number) uses the following syntax:
+"><p>你也可以指定对象字面量类型.<br>例如, 由属性 ‘a’ (字符串) 和 ‘b’ (数值) 构成的对象用到以下语法:</p></div>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/** @type &#123;&#123; a: string, b: number &#125;&#125; */</span></span><br><span class="line"><span class="keyword">var</span> var9;</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+You can specify map-like and array-like objects using string and number index signatures, using either standard JSDoc syntax or Typescript syntax.
+"><p>可以以字符串或数值索引签名指明类图和类数组对象, 根据喜好选择标准 JSDoc 语法或 TypeScript 语法.</p></div>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * A map-like object that maps arbitrary `string` properties to `number`s.</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * @type &#123;Object.&lt;string, number&gt;&#125;</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">var</span> stringToNumber;</span><br><span class="line"></span><br><span class="line"><span class="comment">/** @type &#123;Object.&lt;number, object&gt;&#125; */</span></span><br><span class="line"><span class="keyword">var</span> arrayLike;</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+The preceding two types are equivalent to the Typescript types `{ [x: string]: number }` and `{ [x: number]: any }`. The compiler understands both syntaxes.
+
+You can specify function types using either Typescript or Closure syntax:
+"><p>以上两个类型分别等同于两 TypeScript 类型 <code>{ [x: string]: number }</code> 和 <code>{ [x: number]: any }</code>. 编译器都能理解.</p>
+<p>你可以遵循 TypeScript 或 Closure 语法指明函数类型:</p></div>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/** @type &#123;function(string, boolean): number&#125; Closure syntax */</span></span><br><span class="line"><span class="keyword">var</span> sbn;</span><br><span class="line"><span class="comment">/** @type &#123;(s: string, b: boolean) =&gt; number&#125; Typescript syntax */</span></span><br><span class="line"><span class="keyword">var</span> sbn2;</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+Or you can just use the unspecified `Function` type:
+"><p>你也可以使用不明确 <code>Function</code> 类型:</p></div>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/** @type &#123;Function&#125; */</span></span><br><span class="line"><span class="keyword">var</span> fn7;</span><br><span class="line"><span class="comment">/** @type &#123;function&#125; */</span></span><br><span class="line"><span class="keyword">var</span> fn6;</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+Other types from Closure also work:
+"><p>其他来自 Closure 的类型:</p></div>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * @type &#123;*&#125; - can be 'any' type</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">var</span> star;</span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * @type &#123;?&#125; - unknown type (same as 'any')</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">var</span> question;</span><br></pre></td></tr></table></figure>
+<h3 id="类型转换" class="heading-control"><a href="#类型转换" class="headerlink" title="类型转换"></a>类型转换<a class="heading-anchor" href="#类型转换" aria-hidden="true"></a></h3><!-- ## Casts -->
+<div class="translation-block" title="
+Typescript borrows cast syntax from Closure.
+This lets you cast types to other types by adding a `@type` tag before any parenthesized expression.
+"><p>TypeScripts 借鉴 Closure 的转型语法.<br>允许你通过在括号表达式前添加 <code>@type</code> 标签把一个类型转型成另一个.</p></div>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * @type &#123;number | string&#125;</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">var</span> numberOrString = <span class="built_in">Math</span>.random() &lt; <span class="number">0.5</span> ? <span class="string">"hello"</span> : <span class="number">100</span>;</span><br><span class="line"><span class="keyword">var</span> typeAssertedNumber = <span class="comment">/** @type &#123;number&#125; */</span> (numberOrString)</span><br></pre></td></tr></table></figure>
+<h3 id="导入类型" class="heading-control"><a href="#导入类型" class="headerlink" title="导入类型"></a>导入类型<a class="heading-anchor" href="#导入类型" aria-hidden="true"></a></h3><!-- ## Import types -->
+<div class="translation-block" title="
+You can also import declarations from other files using import types.
+This syntax is Typescript-specific and differs from the JSDoc standard:
+"><p>你也可以使用导入类型从其他文件导入声明.<br>这语法是 TypeScript 特有的, 与 JSDoc 标准不同:</p></div>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * @param p &#123; import("./a").Pet &#125;</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">walk</span>(<span class="params">p</span>) </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">`Walking <span class="subst">$&#123;p.name&#125;</span>...`</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+import types can also be used in type alias declarations:
+"><p>导入类型可以用于类型别名声明:</p></div>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * @typedef &#123; import("./a").Pet &#125; Pet</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * @type &#123;Pet&#125;</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">var</span> myPet;</span><br><span class="line">myPet.name;</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+import types can be used to get the type of a value from a module if you don&amp;#39;t know the type, or if it has a large type that is annoying to type:
+"><p>对一个类型不明确, 或难于声明的来自模块的值, 可以用导入类型获取它的类型:</p></div>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * @type &#123;typeof import("./a").x &#125;</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">var</span> x = <span class="built_in">require</span>(<span class="string">"./a"</span>).x;</span><br></pre></td></tr></table></figure>
+<h3 id="param-和-returns" class="heading-control"><a href="#param-和-returns" class="headerlink" title="@param 和 @returns"></a><code>@param</code> 和 <code>@returns</code><a class="heading-anchor" href="#param-和-returns" aria-hidden="true"></a></h3><!-- ## `@param` and `@returns` -->
+<div class="translation-block" title="
+`@param` uses the same type syntax as `@type`, but adds a parameter name.
+The parameter may also be declared optional by surrounding the name with square brackets:
+"><p><code>@param</code> 在保持与 <code>@type</code> 一致的类型语法基础上多了一个参数名.<br>用方括号环绕一个参数名声明参数是”可选”的:</p></div>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Parameters may be declared in a variety of syntactic forms</span></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * @param &#123;string&#125;  p1 - A string param.</span></span><br><span class="line"><span class="comment"> * @param &#123;string=&#125; p2 - An optional param (Closure syntax)</span></span><br><span class="line"><span class="comment"> * @param &#123;string&#125; [p3] - Another optional param (JSDoc syntax).</span></span><br><span class="line"><span class="comment"> * @param &#123;string&#125; [p4="test"] - An optional param with a default value</span></span><br><span class="line"><span class="comment"> * @return &#123;string&#125; This is the result</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">stringsStringStrings</span>(<span class="params">p1, p2, p3, p4</span>)</span>&#123;</span><br><span class="line">  <span class="comment">// TODO</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+Likewise, for the return type of a function:
+"><p>同样地, 指定函数返回值类型:</p></div>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * @return &#123;PromiseLike&lt;string&gt;&#125;</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">ps</span>(<span class="params"></span>)</span>&#123;&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * @returns &#123;&#123; a: string, b: number &#125;&#125; - May use '@returns' as well as '@return'</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">ab</span>(<span class="params"></span>)</span>&#123;&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="typedef-callback-param" class="heading-control"><a href="#typedef-callback-param" class="headerlink" title="@typedef, @callback, @param"></a><code>@typedef</code>, <code>@callback</code>, <code>@param</code><a class="heading-anchor" href="#typedef-callback-param" aria-hidden="true"></a></h3><!-- ## `@typedef`, `@callback`, and `@param` -->
+<div class="translation-block" title="
+`@typedef` may be used to define complex types.
+Similar syntax works with `@param`.
+"><p>我们用 <code>@typedef</code> 定义复杂类型.<br>同样的语法适用于 <code>@param</code>.</p></div>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * @typedef &#123;Object&#125; SpecialType - creates a new type named 'SpecialType'</span></span><br><span class="line"><span class="comment"> * @property &#123;string&#125; prop1 - a string property of SpecialType</span></span><br><span class="line"><span class="comment"> * @property &#123;number&#125; prop2 - a number property of SpecialType</span></span><br><span class="line"><span class="comment"> * @property &#123;number=&#125; prop3 - an optional number property of SpecialType</span></span><br><span class="line"><span class="comment"> * @prop &#123;number&#125; [prop4] - an optional number property of SpecialType</span></span><br><span class="line"><span class="comment"> * @prop &#123;number&#125; [prop5=42] - an optional number property of SpecialType with default</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="comment">/** @type &#123;SpecialType&#125; */</span></span><br><span class="line"><span class="keyword">var</span> specialTypeObject;</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+You can use either `object` or `Object` on the first line.
+"><p>第一行的 <code>Object</code> 可用 <code>object</code> 替换.</p></div>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * @typedef &#123;object&#125; SpecialType1 - creates a new type named 'SpecialType1'</span></span><br><span class="line"><span class="comment"> * @property &#123;string&#125; prop1 - a string property of SpecialType1</span></span><br><span class="line"><span class="comment"> * @property &#123;number&#125; prop2 - a number property of SpecialType1</span></span><br><span class="line"><span class="comment"> * @property &#123;number=&#125; prop3 - an optional number property of SpecialType1</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="comment">/** @type &#123;SpecialType1&#125; */</span></span><br><span class="line"><span class="keyword">var</span> specialTypeObject1;</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+`@param` allows a similar syntax for one-off type specifications.
+Note that the nested property names must be prefixed with the name of the parameter:
+"><p><code>@param</code> 允许使用相同语法声明一次性类型.<br>注意, 嵌套属性名必须加上参数名前缀.</p></div>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * @param &#123;Object&#125; options - The shape is the same as SpecialType above</span></span><br><span class="line"><span class="comment"> * @param &#123;string&#125; options.prop1</span></span><br><span class="line"><span class="comment"> * @param &#123;number&#125; options.prop2</span></span><br><span class="line"><span class="comment"> * @param &#123;number=&#125; options.prop3</span></span><br><span class="line"><span class="comment"> * @param &#123;number&#125; [options.prop4]</span></span><br><span class="line"><span class="comment"> * @param &#123;number&#125; [options.prop5=42]</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">special</span>(<span class="params">options</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> (options.prop4 || <span class="number">1001</span>) + options.prop5;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+`@callback` is similar to `@typedef`, but it specifies a function type instead of an object type:
+"><p><code>@callback</code> 与 <code>@typedef</code> 相似, 只是它规定的是函数类型, 而不是对象类型.</p></div>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * @callback Predicate</span></span><br><span class="line"><span class="comment"> * @param &#123;string&#125; data</span></span><br><span class="line"><span class="comment"> * @param &#123;number&#125; [index]</span></span><br><span class="line"><span class="comment"> * @returns &#123;boolean&#125;</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="comment">/** @type &#123;Predicate&#125; */</span></span><br><span class="line"><span class="keyword">const</span> ok = <span class="function"><span class="params">s</span> =&gt;</span> !(s.length % <span class="number">2</span>);</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+Of course, any of these types can be declared using Typescript syntax in a single-line `@typedef`:
+"><p>当然, 上面每个类型都可以采用 TypeScript 语法以单行 <code>@typedef</code> 声明:</p></div>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/** @typedef &#123;&#123; prop1: string, prop2: string, prop3?: number &#125;&#125; SpecialType */</span></span><br><span class="line"><span class="comment">/** @typedef &#123;(data: string, index?: number) =&gt; boolean&#125; Predicate */</span></span><br></pre></td></tr></table></figure>
+<h3 id="template" class="heading-control"><a href="#template" class="headerlink" title="@template"></a><code>@template</code><a class="heading-anchor" href="#template" aria-hidden="true"></a></h3><!-- ## `@template` -->
+<div class="translation-block" title="
+You can declare generic types with the `@template` tag:
+"><p>你可以用 <code>@template</code> 标签声明泛型类型:</p></div>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * @template T</span></span><br><span class="line"><span class="comment"> * @param &#123;T&#125; x - A generic parameter that flows through to the return type</span></span><br><span class="line"><span class="comment"> * @return &#123;T&#125;</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">id</span>(<span class="params">x</span>)</span>&#123; <span class="keyword">return</span> x &#125;</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+Use comma or multiple tags to declare multiple type parameters:
+"><p>用逗号或多标签声明多个类型参数:</p></div>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * @template T,U,V</span></span><br><span class="line"><span class="comment"> * @template W,X</span></span><br><span class="line"><span class="comment"> */</span></span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+You can also specify a type constraint before the type parameter name.
+Only the first type parameter in a list is constrained:
+"><p>你也可以在类型参数名前面注明类型限制.<br>限制只对列表第一个类型参数有效:</p></div>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * @template &#123;string&#125; K - K must be a string or string literal</span></span><br><span class="line"><span class="comment"> * @template &#123;&#123; serious(): string &#125;&#125; Seriousalizable - must have a serious method</span></span><br><span class="line"><span class="comment"> * @param &#123;K&#125; key</span></span><br><span class="line"><span class="comment"> * @param &#123;Seriousalizable&#125; object</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">seriousalize</span>(<span class="params">key, object</span>) </span>&#123;</span><br><span class="line">  <span class="comment">// ????</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="constructor-NaN" class="heading-control"><a href="#constructor-NaN" class="headerlink" title="@constructor"></a><code>@constructor</code><a class="heading-anchor" href="#constructor-NaN" aria-hidden="true"></a></h3><!-- ## `@constructor` -->
+<div class="translation-block" title="
+The compiler infers constructor functions based on this-property assignments, but you can make checking stricter and suggestions better if you add a `@constructor` tag:
+"><p>编译器由 this 属性赋值语句推出构造函数, 但你可以添加 <code>@constructor</code> 标签使检查更严格, 建议更准确.</p></div>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * @constructor</span></span><br><span class="line"><span class="comment"> * @param &#123;number&#125; data</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">C</span>(<span class="params">data</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">this</span>.size = <span class="number">0</span>;</span><br><span class="line">  <span class="keyword">this</span>.initialize(data); <span class="comment">// Should error, initializer expects a string</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * @param &#123;string&#125; s</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line">C.prototype.initialize = <span class="function"><span class="keyword">function</span> (<span class="params">s</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">this</span>.size = s.length</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> c = <span class="keyword">new</span> C(<span class="number">0</span>);</span><br><span class="line"><span class="keyword">var</span> result = C(<span class="number">1</span>); <span class="comment">// C should only be called with new</span></span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+With `@constructor`, `this` is checked inside the constructor function `C`, so you will get suggestions for the `initialize` method and an error if you pass it a number. You will also get an error if you call `C` instead of constructing it.
+
+Unfortunately, this means that constructor functions that are also callable cannot use `@constructor`.
+"><p>有了 <code>@constructor</code> 标签, <code>this</code> 在构造函数 <code>C</code> 内部被检查, 于是你会获得对 <code>initialize</code> 方法的建议, 而且, 传给它数值将产生错误. 如果你不构造而是直接调用 <code>C</code>, 也会产生错误.</p>
+<p>不幸的是, 这意味着可调用的构造函数不能使用 <code>@constructor</code>.</p></div>
+<h3 id="this" class="heading-control"><a href="#this" class="headerlink" title="@this"></a><code>@this</code><a class="heading-anchor" href="#this" aria-hidden="true"></a></h3><!-- ## `@this` -->
+<div class="translation-block" title="
+The compiler can usually figure out the type of `this` when it has some context to work with. When it doesn&amp;#39;t, you can explicitly specify the type of `this` with `@this`:
+"><p>借助上下文, 编译器通常能求出 <code>this</code> 的类型. 不然, 你可以用 <code>@this</code> 显式指定 <code>this</code> 的类型.</p></div>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * @this &#123;HTMLElement&#125;</span></span><br><span class="line"><span class="comment"> * @param &#123;*&#125; e</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">callbackForLater</span>(<span class="params">e</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">this</span>.clientHeight = <span class="built_in">parseInt</span>(e) <span class="comment">// should be fine!</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="extends" class="heading-control"><a href="#extends" class="headerlink" title="@extends"></a><code>@extends</code><a class="heading-anchor" href="#extends" aria-hidden="true"></a></h3><!-- ## `@extends` -->
+<div class="translation-block" title="
+When Javascript classes extend a generic base class, there is nowhere to specify what the type parameter should be. The `@extends` tag provides a place for that type parameter:
+"><p>从泛型基类派生 JavaScript 类, 我们没有地方指明类型参数会是什么. <code>@extends</code> 为类型参数提供位置:</p></div>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * @template T</span></span><br><span class="line"><span class="comment"> * @extends &#123;Set&lt;T&gt;&#125;</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">SortableSet</span> <span class="keyword">extends</span> <span class="title">Set</span> </span>&#123;</span><br><span class="line">  <span class="comment">// ...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+Note that `@extends` only works with classes. Currently, there is no way for a constructor function extend a class.
+"><p>目前, <code>@extends</code> 只能用于类, 还没有构造函数继承类的方法.</p></div>
+<h3 id="enum" class="heading-control"><a href="#enum" class="headerlink" title="@enum"></a><code>@enum</code><a class="heading-anchor" href="#enum" aria-hidden="true"></a></h3><!-- ## `@enum` -->
+<div class="translation-block" title="
+The `@enum` tag allows you to create an object literal whose members are all of a specified type. Unlike most object literals in Javascript, it does not allow other members.
+"><p><code>@enum</code> 标签允许你创建一个所有成员都来自特定类型的对象字面量. 不同于多数 JavaScript 对象字面量, 它不接收其他成员.</p></div>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/** @enum &#123;number&#125; */</span></span><br><span class="line"><span class="keyword">const</span> JSDocState = &#123;</span><br><span class="line">  BeginningOfLine: <span class="number">0</span>,</span><br><span class="line">  SawAsterisk: <span class="number">1</span>,</span><br><span class="line">  SavingComments: <span class="number">2</span>,</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+Note that `@enum` is quite different from, and much simpler than, Typescript&amp;#39;s `enum`. However, unlike Typescript&amp;#39;s enums, `@enum` can have any type:
+"><p><code>@enum</code> 明显区别于, 也很大程度地简单于, TypeScript 的 <code>enum</code>. 不过, <code>@enum</code> 可有任意类型:</p></div>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/** @enum &#123;function(number): number&#125; */</span></span><br><span class="line"><span class="keyword">const</span> <span class="built_in">Math</span> = &#123;</span><br><span class="line">  add1: <span class="function"><span class="params">n</span> =&gt;</span> n + <span class="number">1</span>,</span><br><span class="line">  id: <span class="function"><span class="params">n</span> =&gt;</span> -n,</span><br><span class="line">  sub1: <span class="function"><span class="params">n</span> =&gt;</span> n - <span class="number">1</span>,</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="更多实例" class="heading-control"><a href="#更多实例" class="headerlink" title="更多实例"></a>更多实例<a class="heading-anchor" href="#更多实例" aria-hidden="true"></a></h2><!-- ## More examples -->
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> someObj = &#123;</span><br><span class="line">  <span class="comment">/**</span></span><br><span class="line"><span class="comment">   * @param &#123;string&#125; param1 - Docs on property assignments work</span></span><br><span class="line"><span class="comment">   */</span></span><br><span class="line">  x: <span class="function"><span class="keyword">function</span>(<span class="params">param1</span>)</span>&#123;&#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * As do docs on variable assignments</span></span><br><span class="line"><span class="comment"> * @return &#123;Window&#125;</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">let</span> someFunc = <span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * And class methods</span></span><br><span class="line"><span class="comment"> * @param &#123;string&#125; greeting The greeting to use</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line">Foo.prototype.sayHi = <span class="function">(<span class="params">greeting</span>) =&gt;</span> <span class="built_in">console</span>.log(<span class="string">"Hi!"</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * And arrow functions expressions</span></span><br><span class="line"><span class="comment"> * @param &#123;number&#125; x - A multiplier</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">let</span> myArrow = <span class="function"><span class="params">x</span> =&gt;</span> x * x;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Which means it works for stateless function components in JSX too</span></span><br><span class="line"><span class="comment"> * @param &#123;&#123;a: string, b: number&#125;&#125; test - Some param</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">var</span> fc = <span class="function">(<span class="params">test</span>) =&gt;</span> <span class="xml"><span class="tag">&lt;<span class="name">div</span>&gt;</span>&#123;test.a.charAt(0)&#125;<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * A parameter can be a class constructor, using Closure syntax.</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * @param &#123;&#123;new(...args: any[]): object&#125;&#125; C - The class to register</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">registerClass</span>(<span class="params">C</span>) </span>&#123;&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * @param &#123;...string&#125; p1 - A 'rest' arg (array) of strings. (treated as 'any')</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">fn10</span>(<span class="params">p1</span>)</span>&#123;&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * @param &#123;...string&#125; p1 - A 'rest' arg (array) of strings. (treated as 'any')</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">fn9</span>(<span class="params">p1</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> p1.join();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="已知不会受支持的形式" class="heading-control"><a href="#已知不会受支持的形式" class="headerlink" title="已知不会受支持的形式"></a>已知不会受支持的形式<a class="heading-anchor" href="#已知不会受支持的形式" aria-hidden="true"></a></h2><!-- ## Patterns that are known NOT to be supported -->
+<div class="translation-block" title="
+Referring to objects in the value space as types doesn&amp;#39;t work unless the object also creates a type, like a constructor function.
+"><p>在值空间把对象视作类型行不通, 除非这对象创建类型, 如构造器函数.</p></div>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">aNormalFunction</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * @type &#123;aNormalFunction&#125;</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">var</span> wrong;</span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Use 'typeof' instead:</span></span><br><span class="line"><span class="comment"> * @type &#123;typeof aNormalFunction&#125;</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">var</span> right;</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+Postfix equals on a property type in an object literal type doesn&amp;#39;t specify an optional property:
+"><p>在对象字面量类型中为属性的类型添加等号后缀不会声明一个可选属性:</p></div>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * @type &#123;&#123; a: string, b: number= &#125;&#125;</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">var</span> wrong;</span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Use postfix question on the property name instead:</span></span><br><span class="line"><span class="comment"> * @type &#123;&#123; a: string, b?: number &#125;&#125;</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">var</span> right;</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+Nullable types only have meaning if `strictNullChecks` is on:
+"><p>可为空类型仅在 <code>strictNullChecks</code> 打开时有意义:</p></div>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * @type &#123;?number&#125;</span></span><br><span class="line"><span class="comment"> * With strictNullChecks: true -- number | null</span></span><br><span class="line"><span class="comment"> * With strictNullChecks: off  -- number</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">var</span> nullable;</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+Non-nullable types have no meaning and are treated just as their original type:
+"><p>非空类型被当作原类型, 无特殊含义:</p></div>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * @type &#123;!number&#125;</span></span><br><span class="line"><span class="comment"> * Just has type number</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">var</span> normal;</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+Unlike JSDoc&amp;#39;s type system, Typescript only allows you to mark types as containing null or not.
+There is no explicit non-nullability -- if strictNullChecks is on, then `number` is not nullable.
+If it is off, then `number` is nullable.
+"><p>与 JSDoc 类型系统不同, TypeScript 仅允许你标记一个类型是否包含 null.<br>它不存在显式”非空”性 — 如果 strictNullChecks 开启, <code>number</code> 就不是可为空的.<br>如果关闭, <code>number</code> 就是可为空的.</p></div>
+    </div>
+
+    
+    
+    
+        
+      
+        <div id="reward-container">
+  <div>如果这篇文章对您有用，可以考虑打赏:)</div>
+  <button id="reward-button" disable="enable" onclick="var qr = document.getElementById(&quot;qr&quot;); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+        
+      
+      <div style="display: inline-block">
+        <img src="/images/wechatpay.png" alt="Hyan Lee 微信支付">
+        <p>微信支付</p>
+      </div>
+
+  </div>
+</div>
+
+      
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>Hyan Lee</li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://hyan23.org/2019/11/20/ts-type-checking-javascript-files/" title="类型检查 JavaScript 文件">https://hyan23.org/2019/11/20/ts-type-checking-javascript-files/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！</li>
+</ul>
+</div>
+
+      
+
+      <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+              
+                <a href="/2019/11/20/ts-triple-slash-directives/" rel="next" title="三斜线指令">
+                  <i class="fa fa-chevron-left"></i> 三斜线指令
+                </a>
+              
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+              
+                <a href="/2019/11/20/ts-utility-types/" rel="prev" title="实用类型">
+                  实用类型 <i class="fa fa-chevron-right"></i>
+                </a>
+              
+            </div>
+          </div>
+        
+      </footer>
+    
+  </div>
+  
+  
+  
+  </article>
+
+  </div>
+
+
+          </div>
+          
+    
+    <div class="comments" id="gitalk-container"></div>
+  
+
+        </div>
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+        
+        
+        
+        
+      
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#JSDoc-用以提供类型信息"><span class="nav-number">1.</span> <span class="nav-text">JSDoc 用以提供类型信息</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#由类内部赋值推断属性类型"><span class="nav-number">2.</span> <span class="nav-text">由类内部赋值推断属性类型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#构造器函数等同于类"><span class="nav-number">3.</span> <span class="nav-text">构造器函数等同于类</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#支持-CommonJS-模块"><span class="nav-number">4.</span> <span class="nav-text">支持 CommonJS 模块</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#类-函数-对象字面量都是名字空间"><span class="nav-number">5.</span> <span class="nav-text">类, 函数, 对象字面量都是名字空间</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#对象字面量是开放式的"><span class="nav-number">6.</span> <span class="nav-text">对象字面量是开放式的</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#null-undefined-空数组初始化器的类型是-any-或-any"><span class="nav-number">7.</span> <span class="nav-text">null, undefined, 空数组初始化器的类型是 any 或 any[]</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#函数参数默认可选"><span class="nav-number">8.</span> <span class="nav-text">函数参数默认可选</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#由-arguments-的使用推断出变长参数声明"><span class="nav-number">9.</span> <span class="nav-text">由 arguments 的使用推断出变长参数声明</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#未特化类型参数缺省为-any"><span class="nav-number">10.</span> <span class="nav-text">未特化类型参数缺省为 any</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#在-extends-子句中"><span class="nav-number">10.1.</span> <span class="nav-text">在 extends 子句中</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#在-JSDoc-注解中"><span class="nav-number">10.2.</span> <span class="nav-text">在 JSDoc 注解中</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#在函数调用中"><span class="nav-number">10.3.</span> <span class="nav-text">在函数调用中</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#受支持的-JSDoc"><span class="nav-number">11.</span> <span class="nav-text">受支持的 JSDoc</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#type"><span class="nav-number">11.1.</span> <span class="nav-text">@type</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#类型转换"><span class="nav-number">11.2.</span> <span class="nav-text">类型转换</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#导入类型"><span class="nav-number">11.3.</span> <span class="nav-text">导入类型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#param-和-returns"><span class="nav-number">11.4.</span> <span class="nav-text">@param 和 @returns</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#typedef-callback-param"><span class="nav-number">11.5.</span> <span class="nav-text">@typedef, @callback, @param</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#template"><span class="nav-number">11.6.</span> <span class="nav-text">@template</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#constructor-NaN"><span class="nav-number">11.7.</span> <span class="nav-text">@constructor</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#this"><span class="nav-number">11.8.</span> <span class="nav-text">@this</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#extends"><span class="nav-number">11.9.</span> <span class="nav-text">@extends</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#enum"><span class="nav-number">11.10.</span> <span class="nav-text">@enum</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#更多实例"><span class="nav-number">12.</span> <span class="nav-text">更多实例</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#已知不会受支持的形式"><span class="nav-number">13.</span> <span class="nav-text">已知不会受支持的形式</span></a></li></ol></div>
+        
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image"
+      src="/images/avatar2.png"
+      alt="Hyan Lee">
+  <p class="site-author-name" itemprop="name">Hyan Lee</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">31</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-categories">
+        
+          
+            <a href="/categories/">
+          
+        
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">分类</span>
+        </a>
+      </div>
+    
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+      
+      
+        
+      
+      
+        
+      
+        <a href="https://github.com/hyan23" title="GitHub &rarr; https://github.com/hyan23" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+    
+      <span class="links-of-author-item">
+      
+      
+        
+      
+      
+        
+      
+        <a href="mailto:hyan23lee@hotmail.com" title="E-Mail &rarr; mailto:hyan23lee@hotmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+    
+      <span class="links-of-author-item">
+      
+      
+        
+      
+      
+        
+      
+        <a href="https://t.me/hyan23" title="Telegram &rarr; https://t.me/hyan23" rel="noopener" target="_blank"><i class="fa fa-fw fa-telegram"></i>Telegram</a>
+      </span>
+    
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    
+  
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+      
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2017 – <span itemprop="copyrightYear">2020</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Hyan Lee</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    
+    <span title="站点总字数">118k</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v3.9.0</div>
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js?v=3.1.0"></script>
+  <script src="//cdn.jsdelivr.net/npm/medium-zoom@1/dist/medium-zoom.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+<script src="/js/utils.js?v=7.4.0"></script>
+<script src="/js/schemes/pisces.js?v=7.4.0"></script>
+<script src="/js/next-boot.js?v=7.4.0"></script>
+
+
+
+  
+  <script>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+    mermaid.initialize({
+      theme: 'forest',
+      logLevel: 3,
+      flowchart: { curve: 'linear' },
+      gantt: { axisFormat: '%m/%d/%Y' },
+      sequence: { actorMargin: 50 }
+    });
+  }, window.mermaid);
+}
+</script>
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID: '442da4785490db3ece48',
+      clientSecret: '3bfa2829a34371ca37db636917e791d114bd338c',
+      repo: 'blog-comments',
+      owner: 'hyan23',
+      admin: ['hyan23'],
+      id: 'fa375bf21c186885a50f96e10e5dc088',
+        language: window.navigator.language || window.navigator.userLanguage,
+      
+      distractionFreeMode: 'true'
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+</script>
+
+</body>
+</html>

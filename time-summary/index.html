@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="description" content="时间汇总统计">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="icon" href="https://via.placeholder.com/70x70">
+    <link rel="stylesheet" href="/css/mvp.css">
+
+    <title>时间汇总统计</title>
+
+    <script src="/js/handy.js"></script>
+    <script src="/js/time-adder.js"></script>
+
+    <script type="text/javascript">
+        function on_summarize_btn_click() {
+            var output = document.getElementById('output');
+            console.assert(output !== null);
+            var toggle = document.getElementById('show_filtered_lines');
+            console.assert(toggle !== null);
+
+            var lines = get_filtered_lines();
+
+            if (toggle.checked) {
+                output.value = lines.join('\n');
+                return;
+            }
+
+            var synonym_dict = create_synonym_dict();
+
+            var line_group = {};
+            for (var i = 0; i < lines.length; i++) {
+                var trimmed = lines[i].line;
+
+                var space_idx = trimmed.indexOf(' ');
+                var label = '无标签';
+                var time = trimmed;
+
+                // never be at the first position
+                if (space_idx > 0) {
+                    label = trimmed.substring(0, space_idx);
+                    // nor the last position
+                    time = trimmed.substring(space_idx + 1).trim();
+                }
+
+                if (label in synonym_dict) {
+                    label = synonym_dict[label];
+                } else if ('*' in synonym_dict) {
+                    label = synonym_dict['*'];
+                }
+
+                lines[i].line = time;
+                if (!(label in line_group)) {
+                    line_group[label] = [lines[i]];
+                }
+                else {
+                    line_group[label].push(lines[i]);
+                }
+            }
+
+            var errListList = [];
+            for (const label in line_group) {
+                var re = accumulate_times(line_group[label]);
+
+                if ('err' in re) {
+                    errListList.push(re['err']);
+                } else {
+                    var hours = re['hours'];
+                    var minutes = re['minutes'];
+                    var seconds = re['seconds'];
+
+                    var total_time = '' + (hours < 10 ? '0' + hours : hours) + ':' +
+                        (minutes < 10 ? '0' + minutes : minutes) + ':' +
+                        (seconds < 10 ? '0' + seconds : seconds);
+                    line_group[label] = total_time;
+                }
+            }
+
+            output.value = '';
+            if (errListList.length > 0) {
+                for (const errList of errListList) {
+                    output.value += errList.join('\n') + '\n';
+                }
+                output.value += '--------------------\n\n';
+            }
+            for (const label in line_group) {
+                if (typeof line_group[label] == 'string') {
+                    output.value += label + ': ' + line_group[label] + '\n';
+                } else {
+                    output.value += label + ': ' + '有语法错误' + '\n';
+                }
+            }
+        }
+
+        function get_filtered_lines() {
+            var exclude = document.getElementById('exclude');
+            var include = document.getElementById('include');
+            var filter_comments = document.getElementById('filter_comments');
+            console.assert(exclude !== null);
+            console.assert(include !== null);
+            console.assert(filter_comments !== null);
+
+            var excludeReList = [];
+            for (const line of exclude.value.split('\n')) {
+                var trimmed = stripComment(line).trim();
+                if (trimmed.length > 0) {
+                    excludeReList.push(new RegExp(trimmed, 'i'));
+                }
+            }
+            var includeReList = [];
+            for (const line of include.value.split('\n')) {
+                var trimmed = stripComment(line).trim();
+                if (trimmed.length > 0) {
+                    includeReList.push(new RegExp(trimmed, 'i'));
+                }
+            }
+
+            var input = document.getElementById('input');
+            console.assert(input !== null);
+
+            var lines = [];
+            var line_num = 1;
+            for (const line of input.value.split('\n')) {
+                var noComment = stripComment(line);
+
+                var keep = includeReList.length == 0;
+                for (const re of includeReList) {
+                    if (re.test(filter_comments.checked ? line : noComment)) {
+                        keep = true;
+                        break;
+                    }
+                }
+                for (const re of excludeReList) {
+                    if (re.test(filter_comments.checked ? line : noComment)) {
+                        keep = false;
+                        break;
+                    }
+                }
+
+                noComment = noComment.trim();
+                if (noComment.length > 0 && keep) {
+                    lines.push(new Line(line_num, line, noComment));
+                }
+                line_num++;
+            }
+
+            return lines;
+        }
+
+        function create_synonym_dict() {
+            var synonyms = document.getElementById('synonyms');
+            console.assert(synonyms !== null);
+
+            var synonym_dict = {};
+            for (const line of synonyms.value.split('\n')) {
+                var trimmed = stripComment(line).trim();
+                if (trimmed.length > 0) {
+
+                    var words = line.split(' ');
+                    var primary = undefined;
+                    for (const word of words) {
+                        if (word.trim().length > 0) {
+                            if (primary === undefined) {
+                                primary = word;
+                            }
+                            synonym_dict[word] = primary;
+                        }
+                    }
+                }
+            }
+
+            return synonym_dict;
+        }
+
+        function save_config(id) {
+            var textarea = document.getElementById(id);
+            console.assert(textarea !== null);
+
+            setCookie(id, textarea.value);
+        }
+
+        function load_config(id) {
+            var textarea = document.getElementById(id);
+            console.assert(textarea !== null);
+
+            var value = getCookie(id);
+            if (value !== null) {
+                textarea.value = value;
+            }
+        }
+
+        function save_all() {
+            save_config('exclude');
+            save_config('include');
+            save_config('synonyms');
+        }
+
+        function load_all() {
+            load_config('exclude');
+            load_config('include');
+            load_config('synonyms');
+        }
+    </script>
+</head>
+
+<body>
+    <header></header>
+
+    <main>
+        <article></article>
+    
+        <section>
+            <form onreset="setInterval(function() { save_all(); }, 100);">
+                <header>
+                    <h2>时间汇总统计</h2>
+                    <p>作者: <a href="https://github.com/hyan23" target="_blank">@hyan23</a></p>
+                </header>
+
+                <label for="input">输入：</label>
+                <textarea id="input" rows="10" cols="80"
+                    autofocus>2019.11.10 Sun.&#10;&#10;背单词 1 # 新学 20 个，复习 97 个&#10;记单词 20min&#10;写博客 1.1&#10;更新博客 1:30:01&#10;59min</textarea>
+
+                <label for="exclude">排除：(正则表达式)</label>
+                <textarea id="exclude" rows="5" cols="80"
+                    oninput="save_config('exclude');"># 注释&#10;mon\.|tues\.|wed.|wedn.|thur\.|fri\.|sat\.|sun\.&#10;-</textarea>
+
+                <label for="include">包含：(正则表达式)</label>
+                <textarea id="include" rows="5" cols="80" oninput="save_config('include');"># 注释</textarea>
+
+                <label for="synonyms">同义词：</label>
+                <textarea id="synonyms" rows="5" cols="80"
+                    oninput="save_config('synonyms');"># 背单词 记单词 单词&#10;# 写博客 更新博客&#10;其他 *</textarea>
+
+                <label for="output">输出：</label>
+                <textarea id="output" rows="10" cols="80"></textarea>
+
+                <style>
+                    label, input {
+                        display: inline;
+                    }
+                </style>
+                <label for="show_filtered_lines">仅过滤输入</label>
+                <input id="show_filtered_lines" type="checkbox">
+                <label for="filter_comments">过滤注释</label>
+                <input id="filter_comments" type="checkbox">
+                <input type="reset" onclick="return confirm('确认吗?');" value="重置">
+                <input type="button" value="汇总" onclick="on_summarize_btn_click();">
+            </form>
+
+            <script>
+                // https://stackoverflow.com/questions/3708850/is-there-an-onload-event-for-input-elements
+                load_all();
+            </script>
+        </section>
+    </main>
+
+    <footer></footer>
+</body>
+
+</html>

@@ -1,0 +1,1268 @@
+<!DOCTYPE html>
+
+
+
+
+
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/favicon/apple-touch-icon.png?v=7.4.0">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon/favicon-32x32.png?v=7.4.0">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon/favicon-16x16.png?v=7.4.0">
+  <link rel="mask-icon" href="/images/favicon/safari-pinned-tab.svg?v=7.4.0" color="#222">
+  <link rel="manifest" href="/images/favicon/site.webmanifest">
+  <meta name="msapplication-config" content="/images/favicon/browserconfig.xml">
+  <meta http-equiv="Cache-Control" content="no-transform">
+  <meta http-equiv="Cache-Control" content="no-siteapp">
+
+<link rel="stylesheet" href="/css/main.css?v=7.4.0">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '7.4.0',
+    exturl: false,
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false},
+    copycode: {"enable":false,"show_result":false,"style":null},
+    back2top: {"enable":true,"sidebar":true,"scrollpercent":false},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: true,
+    lazyload: true,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: "",
+      labels: ""
+    },
+    localsearch: {"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: '',
+    motion: {"enable":false},
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="状态: 初稿  这一章假定你有关于模块的基础知识.请阅读模块获得更多信息.">
+<meta name="keywords" content="博客,个人博客,日志,在线工具">
+<meta property="og:type" content="article">
+<meta property="og:title" content="模块解析">
+<meta property="og:url" content="https://hyan23.org/2019/11/20/ts-module-resolution/index.html">
+<meta property="og:site_name" content="Hyan Lee">
+<meta property="og:description" content="状态: 初稿  这一章假定你有关于模块的基础知识.请阅读模块获得更多信息.">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2020-02-20T14:17:41.159Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="模块解析">
+<meta name="twitter:description" content="状态: 初稿  这一章假定你有关于模块的基础知识.请阅读模块获得更多信息.">
+  <link rel="canonical" href="https://hyan23.org/2019/11/20/ts-module-resolution/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>模块解析 | Hyan Lee</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+  <div class="container">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Hyan Lee</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+      
+      
+      
+        
+        <li class="menu-item menu-item-home">
+      
+    
+      
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-关于-/-留言板">
+      
+    
+      
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于 / 留言板</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-categories">
+      
+    
+      
+      
+        
+      
+        
+          
+        
+      
+        
+      
+    
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类<span class="badge">6</span></a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-archives">
+      
+    
+      
+      
+        
+          
+        
+      
+        
+      
+        
+      
+    
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">31</span></a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-精选-/-系列">
+      
+    
+      
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <a href="/selections/" rel="section"><i class="fa fa-fw fa-book"></i>精选 / 系列</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-摄影">
+      
+    
+      
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <a href="/gallery/" rel="section"><i class="fa fa-fw fa-camera"></i>摄影</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-工具">
+      
+    
+      
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <a href="/tools/" rel="section"><i class="fa fa-fw fa-calculator"></i>工具</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-友情链接">
+      
+    
+      
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <a href="/friends/" rel="section"><i class="fa fa-fw fa-external-link"></i>友情链接</a>
+
+  </li>
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+            
+
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+      <article itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block post">
+    <link itemprop="mainEntityOfPage" href="https://hyan23.org/2019/11/20/ts-module-resolution/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Hyan Lee">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar2.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hyan Lee">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">模块解析
+
+          
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              
+                
+              
+
+              <time title="创建时间：2019-11-20 09:33:43" itemprop="dateCreated datePublished" datetime="2019-11-20T09:33:43+08:00">2019-11-20</time>
+            </span>
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-02-20 22:17:41" itemprop="dateModified" datetime="2020-02-20T22:17:41+08:00">2020-02-20</time>
+              </span>
+            
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/翻译稿/" itemprop="url" rel="index"><span itemprop="name">翻译稿</span></a></span>
+
+                
+                
+                  ，
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/翻译稿/TypeScript/" itemprop="url" rel="index"><span itemprop="name">TypeScript</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+          
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">本文字数：</span>
+              
+              <span>8.5k</span>
+            </span>
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <pre><code>状态: 初稿
+</code></pre><div class="translation-block" title="
+&amp;gt; This section assumes some basic knowledge about modules.
+Please see the [Modules](.&amp;#x2F;Modules.md) documentation for more information.
+"><blockquote>
+<p>这一章假定你有关于模块的基础知识.<br>请阅读<a href="#">模块</a>获得更多信息.</p>
+</blockquote></div>
+<a id="more"></a>
+<div class="translation-block" title="
+*Module resolution* is the process the compiler uses to figure out what an import refers to.
+Consider an import statement like `import { a } from &amp;quot;moduleA&amp;quot;`;
+in order to check any use of `a`, the compiler needs to know exactly what it represents, and will need to check its definition `moduleA`.
+
+At this point, the compiler will ask &amp;quot;what&amp;#39;s the shape of `moduleA`?&amp;quot;
+While this sounds straightforward, `moduleA` could be defined in one of your own `.ts`&amp;#x2F;`.tsx` files, or in a `.d.ts` that your code depends on.
+"><p><em>模块解析</em>是编译器用来找出<em>一条导入语句引用什么</em>的过程.<br>考虑导入语句 <code>import { a } from &quot;moduleA&quot;</code>;<br>为了编译所有用到 <code>a</code> 的地方, 编译器有必要知道 <code>a</code> 具体代表什么, 而它的定义在模块 <code>moduleA</code> 中.</p>
+<p>到这, 编译器面对的问题是: “<code>moduleA</code> 是什么样的?”<br>解释起来颇为容易, <code>moduleA</code> 可能在一个你自己的 <code>.ts</code>/<code>.tsx</code> 文件中定义, 或在一个依赖文件 <code>.d.ts</code> 中定义.</p></div>
+<div class="translation-block" title="
+First, the compiler will try to locate a file that represents the imported module.
+To do so the compiler follows one of two different strategies: [Classic](#classic) or [Node](#node).
+These strategies tell the compiler *where* to look for `moduleA`.
+
+If that didn&amp;#39;t work and if the module name is non-relative (and in the case of `&amp;quot;moduleA&amp;quot;`, it is), then the compiler will attempt to locate an [ambient module declaration](.&amp;#x2F;Modules.md#ambient-modules).
+We&amp;#39;ll cover non-relative imports next.
+
+Finally, if the compiler could not resolve the module, it will log an error.
+In this case, the error would be something like `error TS2307: Cannot find module &amp;#39;moduleA&amp;#39;.`
+"><p>一开始, 编译器尝试定位代表导入模块的文件.<br>有两种不同的策略, <a href="#">经典</a>, 和 <a href="#">Node</a>, 会帮助编译器完成工作.<br>这两种策略指导编译器在<em>何处</em>查找 <code>ModuleA</code>.</p>
+<p>假设查找未能成功, 而且模块名是非相对的 (此例 <code>moduleA</code> 是相对的), 编译器接着尝试定位一个<a href="#">外部模块声明</a>.<br>我们稍后介绍非相对导入.</p>
+<p>最终, 如果编译器无法解析模块, 便登记一个错误.<br>在这个例子中, 错误信息会像 <code>error TS2307: Cannot find module &#39;moduleA&#39;.</code></p></div>
+<h2 id="相对导入、非相对导入" class="heading-control"><a href="#相对导入、非相对导入" class="headerlink" title="相对导入、非相对导入"></a>相对导入、非相对导入<a class="heading-anchor" href="#相对导入、非相对导入" aria-hidden="true"></a></h2><!-- ## Relative vs. Non-relative module imports -->
+<div class="translation-block" title="
+Module imports are resolved differently based on whether the module reference is relative or non-relative.
+
+A *relative import* is one that starts with `&amp;#x2F;`, `.&amp;#x2F;` or `..&amp;#x2F;`.
+Some examples include:
+"><p>取决于模块路径是相对或非相对的, 模块导入按不同过程解析.</p>
+<p><em>相对导入</em> 的路径以 <code>/</code>, <code>./</code> 或 <code>../</code> 打头.<br>一些例子包括:</p></div>
+<ul>
+<li><code>import Entry from &quot;./components/Entry&quot;;</code></li>
+<li><code>import { DefaultHeaders } from &quot;../constants/http&quot;;</code></li>
+<li><code>import &quot;/mod&quot;;</code></li>
+</ul>
+<div class="translation-block" title="
+Any other import is considered **non-relative**.
+Some examples include:
+"><p>其他导入都被认为是<strong>非相对</strong>的.<br>一些例子包括:</p></div>
+<ul>
+<li><code>import * as $ from &quot;jquery&quot;;</code></li>
+<li><code>import { Component } from &quot;@angular/core&quot;;</code></li>
+</ul>
+<div class="translation-block" title="
+A relative import is resolved relative to the importing file and *cannot* resolve to an ambient module declaration.
+You should use relative imports for your own modules that are guaranteed to maintain their relative location at runtime.
+
+A non-relative import can be resolved relative to `baseUrl`, or through path mapping, which we&amp;#39;ll cover below.
+They can also resolve to [ambient module declarations](.&amp;#x2F;Modules.md#ambient-modules).
+Use non-relative paths when importing any of your external dependencies.
+"><p>顾名思义, 相对导入相对当前文件解析, 它<em>不能</em>解析外部模块声明.<br>你应该用相对导入解析自己的模块, 还要在运行期维护它们之间的相对位置关系.</p>
+<p>非相对导入可以相对 <code>baseUrl</code> 解析, 或依据路径映射, 后面都有涉及.<br>它也可以解析<a href="#">外部模块声明</a>.<br>在导入任何外来依赖时采用非相对路径.</p></div>
+<h2 id="模块解析策略" class="heading-control"><a href="#模块解析策略" class="headerlink" title="模块解析策略"></a>模块解析策略<a class="heading-anchor" href="#模块解析策略" aria-hidden="true"></a></h2><!-- ## Module Resolution Strategies -->
+<div class="translation-block" title="
+There are two possible module resolution strategies: [Node](#node) and [Classic](#classic).
+You can use the `--moduleResolution` flag to specify the module resolution strategy.
+If not specified, the default is [Classic](#classic) for `--module AMD | System | ES2015` or [Node](#node) otherwise.
+"><p>有两种可用的模块解析策略: <a href="#">Node</a> 和 <a href="#">经典</a>.<br>设置 <code>--moduleResolution</code> 选项指定一种模块解析策略.<br>如果没有指定, 缺省策略是 <a href="#">经典</a>, 它针对 <code>--module AMD | System | ES2015</code>, 而 <a href="#">Node</a> 针对其他.</p></div>
+<h3 id="经典" class="heading-control"><a href="#经典" class="headerlink" title="经典"></a>经典<a class="heading-anchor" href="#经典" aria-hidden="true"></a></h3><!-- ### Classic -->
+<div class="translation-block" title="
+This used to be TypeScript&amp;#39;s default resolution strategy.
+Nowadays, this strategy is mainly present for backward compatibility.
+
+A relative import will be resolved relative to the importing file.
+So `import { b } from &amp;quot;.&amp;#x2F;moduleB&amp;quot;` in source file `&amp;#x2F;root&amp;#x2F;src&amp;#x2F;folder&amp;#x2F;A.ts` would result in the following lookups:
+"><p>它曾经是 TypeScript 的缺省解析策略.<br>如今, 该策略主要为向后兼容性服务.</p>
+<p>相对导入相对于当前文件解析.<br>因此, 一条在源文件 <code>/root/src/folder/A.ts</code> 中的导入语句 <code>import { b } from &quot;./moduleB&quot;</code> 会导致下列查找:</p></div>
+<ol>
+<li><code>/root/src/folder/moduleB.ts</code></li>
+<li><code>/root/src/folder/moduleB.d.ts</code></li>
+</ol>
+<div class="translation-block" title="
+For non-relative module imports, however, the compiler walks up the directory tree starting with the directory containing the importing file, trying to locate a matching definition file.
+
+For example:
+
+A non-relative import to `moduleB` such as `import { b } from &amp;quot;moduleB&amp;quot;`, in a source file `&amp;#x2F;root&amp;#x2F;src&amp;#x2F;folder&amp;#x2F;A.ts`, would result in attempting the following locations for locating `&amp;quot;moduleB&amp;quot;`:
+"><p>对非相对模块导入, 则相反, 编译器从当前目录开始, 向上遍历整个目录树, 尝试找到一个匹配的定义文件.</p>
+<p>作为例子:</p>
+<p>在源文件 <code>/root/src/folder/A.ts</code> 中对模块 <code>moduleB</code> 非相对导入的语句如 <code>import { b } from &quot;moduleB&quot;</code>, 会导致下列查找以定位 <code>&quot;moduleB&quot;</code>:</p></div>
+<ol>
+<li><code>/root/src/folder/moduleB.ts</code></li>
+<li><code>/root/src/folder/moduleB.d.ts</code></li>
+<li><code>/root/src/moduleB.ts</code></li>
+<li><code>/root/src/moduleB.d.ts</code></li>
+<li><code>/root/moduleB.ts</code></li>
+<li><code>/root/moduleB.d.ts</code></li>
+<li><code>/moduleB.ts</code></li>
+<li><code>/moduleB.d.ts</code></li>
+</ol>
+<h3 id="Node" class="heading-control"><a href="#Node" class="headerlink" title="Node"></a>Node<a class="heading-anchor" href="#Node" aria-hidden="true"></a></h3><div class="translation-block" title="
+This resolution strategy attempts to mimic the [Node.js](https:&amp;#x2F;&amp;#x2F;nodejs.org&amp;#x2F;) module resolution mechanism at runtime.
+The full Node.js resolution algorithm is outlined in [Node.js module documentation](https:&amp;#x2F;&amp;#x2F;nodejs.org&amp;#x2F;api&amp;#x2F;modules.html#modules_all_together).
+"><p>这种解析策略试图在运行期间模仿 <a href="https://nodejs.org/" target="_blank" rel="noopener">Node.js</a> 的模块解析机制.<br>完整 Node.js 解析算法在 <a href="https://nodejs.org/api/modules.html#modules_all_together" target="_blank" rel="noopener">Node.js 模块文档</a> 列出.</p></div>
+<h4 id="Node-js-如何解析模块" class="heading-control"><a href="#Node-js-如何解析模块" class="headerlink" title="Node.js 如何解析模块"></a>Node.js 如何解析模块<a class="heading-anchor" href="#Node-js-如何解析模块" aria-hidden="true"></a></h4><!-- #### How Node.js resolves modules -->
+<div class="translation-block" title="
+To understand what steps the TS compiler will follow, it is important to shed some light on Node.js modules.
+Traditionally, imports in Node.js are performed by calling a function named `require`.
+The behavior Node.js takes will differ depending on if `require` is given a relative path or a non-relative path.
+
+Relative paths are fairly straightforward.
+As an example, let&amp;#39;s consider a file located at `&amp;#x2F;root&amp;#x2F;src&amp;#x2F;moduleA.js`, which contains the import `var x = require(&amp;quot;.&amp;#x2F;moduleB&amp;quot;);`
+Node.js resolves that import in the following order:
+"><p>要理解 TypeScript 编译器遵循哪些步骤, 我们先从 Node.js 模块取取经.<br>传统上, Node.js 中的导入是通过调用 <code>require</code> 函数完成的.<br>Node.js 采取的行为会因为你传递给 <code>require</code> 一个相对路径或非相对路径而改变.</p>
+<p>解析相对路径颇为简单易行.<br>作为例子, 考虑包含导入语句 <code>var x = require(&quot;./moduleB&quot;);</code> 的文件 <code>/root/src/moduleA.js</code>.<br>Node.js 按下列顺序解析该导入.</p></div>
+<div class="translation-block" title="
+1. Ask the file named `&amp;#x2F;root&amp;#x2F;src&amp;#x2F;moduleB.js`, if it exists.
+
+2. Ask the folder `&amp;#x2F;root&amp;#x2F;src&amp;#x2F;moduleB` if it contains a file named `package.json` that specifies a `&amp;quot;main&amp;quot;` module.
+   In our example, if Node.js found the file `&amp;#x2F;root&amp;#x2F;src&amp;#x2F;moduleB&amp;#x2F;package.json` containing `{ &amp;quot;main&amp;quot;: &amp;quot;lib&amp;#x2F;mainModule.js&amp;quot; }`, then Node.js will refer to `&amp;#x2F;root&amp;#x2F;src&amp;#x2F;moduleB&amp;#x2F;lib&amp;#x2F;mainModule.js`.
+
+3. Ask the folder `&amp;#x2F;root&amp;#x2F;src&amp;#x2F;moduleB` if it contains a file named `index.js`.
+   That file is implicitly considered that folder&amp;#39;s &amp;quot;main&amp;quot; module.
+"><ol>
+<li><p>询问文件 <code>/root/src/moduleB.js</code> 是否存在.</p>
+</li>
+<li><p>询问文件夹 <code>/root/src/moduleB</code> 是否包含指定了 <code>main</code> 模块的文件 <code>package.json</code>.<br>在我们的例子中, 如果 Node.js 发现文件 <code>/root/src/moduleB/package.json</code> 包含 <code>{ &quot;main&quot;: &quot;lib/mainModule.js&quot; }</code>, 它会把导入定位到 <code>/root/src/moduleB/lib/mainModule.js</code>.</p>
+</li>
+<li><p>询问文件夹 <code>/root/src/moduleB</code> 是否包含文件 <code>index.js</code>.<br>此文件隐式地被认为是一个文件夹的 “main” 模块.</p>
+</li>
+</ol></div>
+<div class="translation-block" title="
+You can read more about this in Node.js documentation on [file modules](https:&amp;#x2F;&amp;#x2F;nodejs.org&amp;#x2F;api&amp;#x2F;modules.html#modules_file_modules) and [folder modules](https:&amp;#x2F;&amp;#x2F;nodejs.org&amp;#x2F;api&amp;#x2F;modules.html#modules_folders_as_modules).
+
+However, resolution for a [non-relative module name](#relative-vs-non-relative-module-imports) is performed differently.
+Node will look for your modules in special folders named `node_modules`.
+A `node_modules` folder can be on the same level as the current file, or higher up in the directory chain.
+Node will walk up the directory chain, looking through each `node_modules` until it finds the module you tried to load.
+"><p>你可以在 Node.js 文档的 <a href="https://nodejs.org/api/modules.html#modules_file_modules" target="_blank" rel="noopener">file modules</a> 和 <a href="https://nodejs.org/api/modules.html#modules_folders_as_modules" target="_blank" rel="noopener">folder modules</a> 两节阅读更多内容.</p>
+<p>然而, 对<a href="#">非相对模块名</a>的解析不同于相对模块名.<br>Node.js 会在特殊文件夹 <code>node_modules</code> 查找你的模块.<br><code>node_modules</code> 文件夹可位于当前目录, 或当前目录往上任意一级中.<br>Node.js 向上遍历目录树, 检查每一个 <code>node_modules</code> 文件夹, 直到找到你试图加载的模块.</p></div>
+<div class="translation-block" title="
+Following up our example above, consider if `&amp;#x2F;root&amp;#x2F;src&amp;#x2F;moduleA.js` instead used a non-relative path and had the import `var x = require(&amp;quot;moduleB&amp;quot;);`.
+Node would then try to resolve `moduleB` to each of the locations until one worked.
+
+1. `&amp;#x2F;root&amp;#x2F;src&amp;#x2F;node_modules&amp;#x2F;moduleB.js`
+2. `&amp;#x2F;root&amp;#x2F;src&amp;#x2F;node_modules&amp;#x2F;moduleB&amp;#x2F;package.json` (if it specifies a `&amp;quot;main&amp;quot;` property)
+3. `&amp;#x2F;root&amp;#x2F;src&amp;#x2F;node_modules&amp;#x2F;moduleB&amp;#x2F;index.js`
+   &amp;lt;br &amp;#x2F;&amp;gt;&amp;lt;br &amp;#x2F;&amp;gt;
+4. `&amp;#x2F;root&amp;#x2F;node_modules&amp;#x2F;moduleB.js`
+5. `&amp;#x2F;root&amp;#x2F;node_modules&amp;#x2F;moduleB&amp;#x2F;package.json` (if it specifies a `&amp;quot;main&amp;quot;` property)
+6. `&amp;#x2F;root&amp;#x2F;node_modules&amp;#x2F;moduleB&amp;#x2F;index.js`
+   &amp;lt;br &amp;#x2F;&amp;gt;&amp;lt;br &amp;#x2F;&amp;gt;
+7. `&amp;#x2F;node_modules&amp;#x2F;moduleB.js`
+8. `&amp;#x2F;node_modules&amp;#x2F;moduleB&amp;#x2F;package.json` (if it specifies a `&amp;quot;main&amp;quot;` property)
+9. `&amp;#x2F;node_modules&amp;#x2F;moduleB&amp;#x2F;index.js`
+
+Notice that Node.js jumped up a directory in steps (4) and (7).
+
+You can read more about the process in Node.js documentation on [loading modules from `node_modules`](https:&amp;#x2F;&amp;#x2F;nodejs.org&amp;#x2F;api&amp;#x2F;modules.html#modules_loading_from_node_modules_folders).
+"><p>承接上个例子, 考虑文件 <code>/root/src/moduleA.js</code>, 不同的是, 这次它采用非相对路径导入模块: <code>var x = require(&quot;moduleB&quot;);</code>.<br>Node 尝试如下每个位置直到其中之一完成解析.</p>
+<ol>
+<li><code>/root/src/node_modules/moduleB.js</code></li>
+<li><code>/root/src/node_modules/moduleB/package.json</code> (存在 <code>&quot;main&quot;</code> 属性)</li>
+<li><code>/root/src/node_modules/moduleB/index.js</code><br><br><br></li>
+<li><code>/root/node_modules/moduleB.js</code></li>
+<li><code>/root/node_modules/moduleB/package.json</code> (存在 <code>&quot;main&quot;</code> 属性)</li>
+<li><code>/root/node_modules/moduleB/index.js</code><br><br><br></li>
+<li><code>/node_modules/moduleB.js</code></li>
+<li><code>/node_modules/moduleB/package.json</code> (存在 <code>&quot;main&quot;</code> 属性)</li>
+<li><code>/node_modules/moduleB/index.js</code></li>
+</ol>
+<p>注意在第 4, 7 步, Node.js 切换到目录树的更高层级.</p>
+<p>你可以在 Node.js 文档的 <a href="https://nodejs.org/api/modules.html#modules_loading_from_node_modules_folders" target="_blank" rel="noopener">loading modules from <code>node_modules</code></a> 一节阅读该过程的更多内容.</p></div>
+<h4 id="TypeScript-如何解析模块" class="heading-control"><a href="#TypeScript-如何解析模块" class="headerlink" title="TypeScript 如何解析模块"></a>TypeScript 如何解析模块<a class="heading-anchor" href="#TypeScript-如何解析模块" aria-hidden="true"></a></h4><!-- #### How TypeScript resolves modules -->
+<div class="translation-block" title="
+TypeScript will mimic the Node.js run-time resolution strategy in order to locate definition files for modules at compile-time.
+To accomplish this, TypeScript overlays the TypeScript source file extensions (`.ts`, `.tsx`, and `.d.ts`) over Node&amp;#39;s resolution logic.
+TypeScript will also use a field in `package.json` named `&amp;quot;types&amp;quot;` to mirror the purpose of `&amp;quot;main&amp;quot;` - the compiler will use it to find the &amp;quot;main&amp;quot; definition file to consult.
+
+For example, an import statement like `import { b } from &amp;quot;.&amp;#x2F;moduleB&amp;quot;` in  `&amp;#x2F;root&amp;#x2F;src&amp;#x2F;moduleA.ts` would result in attempting the following locations for locating `&amp;quot;.&amp;#x2F;moduleB&amp;quot;`:
+
+1. `&amp;#x2F;root&amp;#x2F;src&amp;#x2F;moduleB.ts`
+2. `&amp;#x2F;root&amp;#x2F;src&amp;#x2F;moduleB.tsx`
+3. `&amp;#x2F;root&amp;#x2F;src&amp;#x2F;moduleB.d.ts`
+4. `&amp;#x2F;root&amp;#x2F;src&amp;#x2F;moduleB&amp;#x2F;package.json` (if it specifies a `&amp;quot;types&amp;quot;` property)
+5. `&amp;#x2F;root&amp;#x2F;src&amp;#x2F;moduleB&amp;#x2F;index.ts`
+6. `&amp;#x2F;root&amp;#x2F;src&amp;#x2F;moduleB&amp;#x2F;index.tsx`
+7. `&amp;#x2F;root&amp;#x2F;src&amp;#x2F;moduleB&amp;#x2F;index.d.ts`
+"><p>TypeScript 模仿 Node.js 运行期解析策略在编译期定位模块源文件.<br>为达成目的, TypeScript 把自己的源文件文件扩展名 <code>.ts</code>, <code>.tsx</code>, 和 <code>.d.ts</code> 代入 Node.js 解析逻辑.<br>TypeScript 也在 <code>package.json</code> 设置字段 <code>&quot;types&quot;</code> 以取得 <code>&quot;main&quot;</code> 的用途 - 编译器利用它找到 “主” 定义文件以查阅.</p>
+<p>来看例子, 源文件 <code>/root/src/moduleA.ts</code> 一条导入语句如 <code>import { b } from &quot;./moduleB&quot;</code> 会导致尝试如下位置以定位 <code>&quot;./moduleB&quot;</code>:</p>
+<ol>
+<li><code>/root/src/moduleB.ts</code></li>
+<li><code>/root/src/moduleB.tsx</code></li>
+<li><code>/root/src/moduleB.d.ts</code></li>
+<li><code>/root/src/moduleB/package.json</code> (存在 <code>&quot;types&quot;</code> 属性)</li>
+<li><code>/root/src/moduleB/index.ts</code></li>
+<li><code>/root/src/moduleB/index.tsx</code></li>
+<li><code>/root/src/moduleB/index.d.ts</code></li>
+</ol></div>
+<div class="translation-block" title="
+Recall that Node.js looked for a file named `moduleB.js`, then an applicable `package.json`, and then for an `index.js`.
+
+Similarly, a non-relative import will follow the Node.js resolution logic, first looking up a file, then looking up an applicable folder.
+So `import { b } from &amp;quot;moduleB&amp;quot;` in source file `&amp;#x2F;root&amp;#x2F;src&amp;#x2F;moduleA.ts` would result in the following lookups:
+
+1. `&amp;#x2F;root&amp;#x2F;src&amp;#x2F;node_modules&amp;#x2F;moduleB.ts`
+2. `&amp;#x2F;root&amp;#x2F;src&amp;#x2F;node_modules&amp;#x2F;moduleB.tsx`
+3. `&amp;#x2F;root&amp;#x2F;src&amp;#x2F;node_modules&amp;#x2F;moduleB.d.ts`
+4. `&amp;#x2F;root&amp;#x2F;src&amp;#x2F;node_modules&amp;#x2F;moduleB&amp;#x2F;package.json` (if it specifies a `&amp;quot;types&amp;quot;` property)
+5. `&amp;#x2F;root&amp;#x2F;src&amp;#x2F;node_modules&amp;#x2F;@types&amp;#x2F;moduleB.d.ts`
+6. `&amp;#x2F;root&amp;#x2F;src&amp;#x2F;node_modules&amp;#x2F;moduleB&amp;#x2F;index.ts`
+7. `&amp;#x2F;root&amp;#x2F;src&amp;#x2F;node_modules&amp;#x2F;moduleB&amp;#x2F;index.tsx`
+8. `&amp;#x2F;root&amp;#x2F;src&amp;#x2F;node_modules&amp;#x2F;moduleB&amp;#x2F;index.d.ts`
+   &amp;lt;br &amp;#x2F;&amp;gt;&amp;lt;br &amp;#x2F;&amp;gt;
+9. `&amp;#x2F;root&amp;#x2F;node_modules&amp;#x2F;moduleB.ts`
+10. `&amp;#x2F;root&amp;#x2F;node_modules&amp;#x2F;moduleB.tsx`
+11. `&amp;#x2F;root&amp;#x2F;node_modules&amp;#x2F;moduleB.d.ts`
+12. `&amp;#x2F;root&amp;#x2F;node_modules&amp;#x2F;moduleB&amp;#x2F;package.json` (if it specifies a `&amp;quot;types&amp;quot;` property)
+13. `&amp;#x2F;root&amp;#x2F;node_modules&amp;#x2F;@types&amp;#x2F;moduleB.d.ts`
+14. `&amp;#x2F;root&amp;#x2F;node_modules&amp;#x2F;moduleB&amp;#x2F;index.ts`
+15. `&amp;#x2F;root&amp;#x2F;node_modules&amp;#x2F;moduleB&amp;#x2F;index.tsx`
+16. `&amp;#x2F;root&amp;#x2F;node_modules&amp;#x2F;moduleB&amp;#x2F;index.d.ts`
+    &amp;lt;br &amp;#x2F;&amp;gt;&amp;lt;br &amp;#x2F;&amp;gt;
+17. `&amp;#x2F;node_modules&amp;#x2F;moduleB.ts`
+18. `&amp;#x2F;node_modules&amp;#x2F;moduleB.tsx`
+19. `&amp;#x2F;node_modules&amp;#x2F;moduleB.d.ts`
+20. `&amp;#x2F;node_modules&amp;#x2F;moduleB&amp;#x2F;package.json` (if it specifies a `&amp;quot;types&amp;quot;` property)
+21. `&amp;#x2F;node_modules&amp;#x2F;@types&amp;#x2F;moduleB.d.ts`
+22. `&amp;#x2F;node_modules&amp;#x2F;moduleB&amp;#x2F;index.ts`
+23. `&amp;#x2F;node_modules&amp;#x2F;moduleB&amp;#x2F;index.tsx`
+24. `&amp;#x2F;node_modules&amp;#x2F;moduleB&amp;#x2F;index.d.ts`
+"><p>回顾一下, Node.js 首先查找文件 <code>moduleB.js</code>, 然后是可用的 <code>package.json</code>, 再然后是 <code>index.js</code>.</p>
+<p>同样, TypeScript 解析非相对导入会参照 Node.js 解析逻辑, 首先查找一个文件, 再查找可用的文件夹.<br>因此, <code>/root/src/moduleA.ts</code> 中的 <code>import { b } from &quot;moduleB&quot;</code> 语句导致下列尝试:</p>
+<ol>
+<li><code>/root/src/node_modules/moduleB.ts</code></li>
+<li><code>/root/src/node_modules/moduleB.tsx</code></li>
+<li><code>/root/src/node_modules/moduleB.d.ts</code></li>
+<li><code>/root/src/node_modules/moduleB/package.json</code> (存在 <code>&quot;types&quot;</code> 属性)</li>
+<li><code>/root/src/node_modules/@types/moduleB.d.ts</code></li>
+<li><code>/root/src/node_modules/moduleB/index.ts</code></li>
+<li><code>/root/src/node_modules/moduleB/index.tsx</code></li>
+<li><code>/root/src/node_modules/moduleB/index.d.ts</code><br><br><br></li>
+<li><code>/root/node_modules/moduleB.ts</code></li>
+<li><code>/root/node_modules/moduleB.tsx</code></li>
+<li><code>/root/node_modules/moduleB.d.ts</code></li>
+<li><code>/root/node_modules/moduleB/package.json</code> (存在 <code>&quot;types&quot;</code> 属性)</li>
+<li><code>/root/node_modules/@types/moduleB.d.ts</code></li>
+<li><code>/root/node_modules/moduleB/index.ts</code></li>
+<li><code>/root/node_modules/moduleB/index.tsx</code></li>
+<li><code>/root/node_modules/moduleB/index.d.ts</code><br><br><br></li>
+<li><code>/node_modules/moduleB.ts</code></li>
+<li><code>/node_modules/moduleB.tsx</code></li>
+<li><code>/node_modules/moduleB.d.ts</code></li>
+<li><code>/node_modules/moduleB/package.json</code> (存在 <code>&quot;types&quot;</code> 属性)</li>
+<li><code>/node_modules/@types/moduleB.d.ts</code></li>
+<li><code>/node_modules/moduleB/index.ts</code></li>
+<li><code>/node_modules/moduleB/index.tsx</code></li>
+<li><code>/node_modules/moduleB/index.d.ts</code></li>
+</ol></div>
+<div class="translation-block" title="
+Don&amp;#39;t be intimidated by the number of steps here - TypeScript is still only jumping up directories twice at steps (9) and (17).
+This is really no more complex than what Node.js itself is doing.
+"><p>别被这里的步骤数吓到了 - TypeScript 仍然只是在第 9, 17 步向上切换了两次目录.<br>其实没有比 Node.js 所做的更复杂.</p></div>
+<h2 id="附加模块解析标志" class="heading-control"><a href="#附加模块解析标志" class="headerlink" title="附加模块解析标志"></a>附加模块解析标志<a class="heading-anchor" href="#附加模块解析标志" aria-hidden="true"></a></h2><!-- ## Additional module resolution flags -->
+<div class="translation-block" title="
+A project source layout sometimes does not match that of the output.
+Usually a set of build steps result in generating the final output.
+These include compiling `.ts` files into `.js`, and copying dependencies from different source locations to a single output location.
+The net result is that modules at runtime may have different names than the source files containing their definitions.
+Or module paths in the final output may not match their corresponding source file paths at compile time.
+
+The TypeScript compiler has a set of additional flags to *inform* the compiler of transformations that are expected to happen to the sources to generate the final output.
+
+It is important to note that the compiler will *not* perform any of these transformations;
+it just uses these pieces of information to guide the process of resolving a module import to its definition file.
+"><p>一个项目源文件的布局有时与输出不同.<br>通常, 生成最终输出要经历一系列构建步骤.<br>它们包括: 把 <code>.ts</code> 文件编译成 <code>.js</code> 文件, 从不同源目录拷贝依赖文件至单一的输出目录.<br>可以说, 运行期的模块名可能与包含它们定义的源文件名不同.<br>最终输出模块的路径也可能与编译期对应源文件的路径不同.</p>
+<p>TypeScript 有一组附加标志<em>通知</em>编译器为了生成最终输出要对源文件执行的转换过程.</p>
+<p>但要注意编译器<em>不</em>执行任何具体转换;<br>它只是利用这些信息指导从模块导入到对应定义文件的解析过程.</p></div>
+<h3 id="baseUrl" class="heading-control"><a href="#baseUrl" class="headerlink" title="baseUrl"></a>baseUrl<a class="heading-anchor" href="#baseUrl" aria-hidden="true"></a></h3><!-- ### Base URL -->
+<div class="translation-block" title="
+Using a `baseUrl` is a common practice in applications using AMD module loaders where modules are &amp;quot;deployed&amp;quot; to a single folder at run-time.
+The sources of these modules can live in different directories, but a build script will put them all together.
+
+Setting `baseUrl` informs the compiler where to find modules.
+All module imports with non-relative names are assumed to be relative to the `baseUrl`.
+"><p>使用在运行期把所有模块”部署”到单个文件夹的 AMD 模块加载器的应用经常运用 <code>baseUrl</code> 标志.<br>这些模块的源文件可以存放在不同目录, 但一个构建脚本会把它们汇集到一起.</p>
+<p>设置 <code>baseUrl</code> 通知编译器在哪里寻找模块.<br>编译器假定所有非相对模块名导入都相对 <code>baseUrl</code>.</p></div>
+<div class="translation-block" title="
+Value of *baseUrl* is determined as either:
+
+* value of *baseUrl* command line argument (if given path is relative, it is computed based on current directory)
+* value of *baseUrl* property in &amp;#39;tsconfig.json&amp;#39; (if given path is relative, it is computed based on the location of &amp;#39;tsconfig.json&amp;#39;)
+
+Note that relative module imports are not impacted by setting the baseUrl, as they are always resolved relative to their importing files.
+
+You can find more documentation on baseUrl in [RequireJS](http:&amp;#x2F;&amp;#x2F;requirejs.org&amp;#x2F;docs&amp;#x2F;api.html#config-baseUrl) and [SystemJS](https:&amp;#x2F;&amp;#x2F;github.com&amp;#x2F;systemjs&amp;#x2F;systemjs&amp;#x2F;blob&amp;#x2F;master&amp;#x2F;docs&amp;#x2F;config-api.md#baseurl) documentation.
+"><p><em>baseUrl</em> 的值由下列之一确定:</p>
+<ol>
+<li><em>baseUrl</em> 命令行参数的值 (如果给定路径是相对的, 根据当前目录计算)</li>
+<li>‘tsconfig.json’ 文件中的 <em>baseUrl</em> 属性的值 (如果给定路径是相对的, 根据 ‘tsconfig.json’ 的位置计算)</li>
+</ol>
+<p>注: 因为相对模块导入总是相对当前文件解析, 所以不受设置 baseUrl 影响.</p>
+<p>你可以在 <a href="http://requirejs.org/docs/api.html#config-baseUrl" target="_blank" rel="noopener">RequireJS</a> 和 <a href="https://github.com/systemjs/systemjs/blob/master/docs/config-api.md#baseurl" target="_blank" rel="noopener">SystemJS</a> 文档找到更多关于 baseUrl 的资料.</p></div>
+<h3 id="路径映射" class="heading-control"><a href="#路径映射" class="headerlink" title="路径映射"></a>路径映射<a class="heading-anchor" href="#路径映射" aria-hidden="true"></a></h3><!-- ### Path mapping -->
+<div class="translation-block" title="
+Sometimes modules are not directly located under *baseUrl*.
+For instance, an import to a module `&amp;quot;jquery&amp;quot;` would be translated at runtime to `&amp;quot;node_modules&amp;#x2F;jquery&amp;#x2F;dist&amp;#x2F;jquery.slim.min.js&amp;quot;`.
+Loaders use a mapping configuration to map module names to files at run-time, see [RequireJs documentation](http:&amp;#x2F;&amp;#x2F;requirejs.org&amp;#x2F;docs&amp;#x2F;api.html#config-paths) and [SystemJS documentation](https:&amp;#x2F;&amp;#x2F;github.com&amp;#x2F;systemjs&amp;#x2F;systemjs&amp;#x2F;blob&amp;#x2F;master&amp;#x2F;docs&amp;#x2F;config-api.md#paths).
+
+The TypeScript compiler supports the declaration of such mappings using `&amp;quot;paths&amp;quot;` property in `tsconfig.json` files.
+Here is an example for how to specify the `&amp;quot;paths&amp;quot;` property for `jquery`.
+"><p>有时模块不直接位于 <em>baseUrl</em> 目录内.<br>例如, 一个对模块 <code>&quot;jquery&quot;</code> 的导入可能会在运行期指向 <code>&quot;node_modules/jquery/dist/jquery.slim.min.js&quot;</code>.<br>加载器在运行期根据配置信息把模块名映射至文件, 具体可查看 <a href="http://requirejs.org/docs/api.html#config-paths" target="_blank" rel="noopener">RequireJs 文档相关章节</a> 和 <a href="https://github.com/systemjs/systemjs/blob/master/docs/config-api.md#paths" target="_blank" rel="noopener">SystemJS 文档相关章节</a>.</p>
+<p>TypeScript 编译器支持通过 <code>tsconfig.json</code> 文件中的 <code>&quot;paths&quot;</code> 属性定义的这类映射.<br>以下给出一个为 <code>jquery</code> 指定 <code>paths</code> 属性的例子.</p></div>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="attr">"compilerOptions"</span>: &#123;</span><br><span class="line">    "baseUrl": ".", // This must be specified if "paths" is.</span><br><span class="line">    "paths": &#123;</span><br><span class="line">      "jquery": ["node_modules/jquery/dist/jquery"] // This mapping is relative to "baseUrl"</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+Please notice that `&amp;quot;paths&amp;quot;` are resolved relative to `&amp;quot;baseUrl&amp;quot;`.
+When setting `&amp;quot;baseUrl&amp;quot;` to another value than `&amp;quot;.&amp;quot;`, i.e. the directory of `tsconfig.json`, the mappings must be changed accordingly.
+Say, you set `&amp;quot;baseUrl&amp;quot;: &amp;quot;.&amp;#x2F;src&amp;quot;` in the above example, then jquery should be mapped to `&amp;quot;..&amp;#x2F;node_modules&amp;#x2F;jquery&amp;#x2F;dist&amp;#x2F;jquery&amp;quot;`.
+
+Using `&amp;quot;paths&amp;quot;` also allows for more sophisticated mappings including multiple fall back locations.
+Consider a project configuration where only some modules are available in one location, and the rest are in another.
+A build step would put them all together in one place.
+The project layout may look like:
+"><p>特别注意, <code>&quot;paths&quot;</code> 也相对于 <code>&quot;baseUrl&quot;</code> 解析.<br>如果设置 <code>&quot;baseUrl&quot;</code> 为 <code>&quot;.&quot;</code> (即 <code>tsconfig.json</code> 所处目录) 以外的值, 定义的映射也必须相应做出调整.<br>比如, 在上例设置 <code>&quot;baseUrl&quot;: &quot;./src&quot;</code>, jquery 就应重映射到 <code>&quot;../node_modules/jquery/dist/jquery&quot;</code>.</p>
+<p>对 <code>&quot;paths&quot;</code> 的使用还能实现更复杂的映射, 包括多重回退位置.<br>考虑这样一个项目配置, 一部分模块存放在一个位置, 其他模块存放在另一位置.<br>一个构建步骤会将它们汇集到一个地方.<br>项目布局看起来像这样:</p></div>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">projectRoot</span><br><span class="line">├── folder1</span><br><span class="line">│   ├── file1.ts (imports &apos;folder1/file2&apos; and &apos;folder2/file3&apos;)</span><br><span class="line">│   └── file2.ts</span><br><span class="line">├── generated</span><br><span class="line">│   ├── folder1</span><br><span class="line">│   └── folder2</span><br><span class="line">│       └── file3.ts</span><br><span class="line">└── tsconfig.json</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+The corresponding `tsconfig.json` would look like:
+"><p>相关的 <code>tsconfig.json</code> 看起来像这样:</p></div>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="attr">"compilerOptions"</span>: &#123;</span><br><span class="line">    <span class="attr">"baseUrl"</span>: <span class="string">"."</span>,</span><br><span class="line">    <span class="attr">"paths"</span>: &#123;</span><br><span class="line">      <span class="attr">"*"</span>: [</span><br><span class="line">        <span class="string">"*"</span>,</span><br><span class="line">        <span class="string">"generated/*"</span></span><br><span class="line">      ]</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+This tells the compiler for any module import that matches the pattern `&amp;quot;*&amp;quot;` (i.e. all values), to look in two locations:
+
+ 1. `&amp;quot;*&amp;quot;`: meaning the same name unchanged, so map `&amp;lt;moduleName&amp;gt;` =&amp;gt; `&amp;lt;baseUrl&amp;gt;&amp;#x2F;&amp;lt;moduleName&amp;gt;`
+ 2. `&amp;quot;generated&amp;#x2F;*&amp;quot;` meaning the module name with an appended prefix &amp;quot;generated&amp;quot;, so map `&amp;lt;moduleName&amp;gt;` =&amp;gt; `&amp;lt;baseUrl&amp;gt;&amp;#x2F;generated&amp;#x2F;&amp;lt;moduleName&amp;gt;`
+
+Following this logic, the compiler will attempt to resolve the two imports as such:
+"><p>它告诉编译器, 针对所有匹配模式 <code>&quot;*&quot;</code> (即: 所有值) 的模块导入, 都去如下两个位置寻找:</p>
+<ol>
+<li><code>&quot;*&quot;</code>: 表示模块名不变, 有映射 <code>&lt;moduleName&gt;</code> =&gt; <code>&lt;baseUrl&gt;/&lt;moduleName&gt;</code></li>
+<li><code>&quot;generated/*&quot;</code> 表示模块名附加前缀 “generated”, 有映射 <code>&lt;moduleName&gt;</code> =&gt; <code>&lt;baseUrl&gt;/generated/&lt;moduleName&gt;</code></li>
+</ol>
+<p>遵照此逻辑, 编译器按如下步骤尝试解析 file1.ts 的两个导入:</p></div>
+<div class="translation-block" title="
+import &amp;#39;folder1&amp;#x2F;file2&amp;#39;:
+ 1. pattern &amp;#39;*&amp;#39; is matched and wildcard captures the whole module name
+ 2. try first substitution in the list: &amp;#39;*&amp;#39; -&amp;gt; `folder1&amp;#x2F;file2`
+ 3. result of substitution is non-relative name - combine it with *baseUrl* -&amp;gt; `projectRoot&amp;#x2F;folder1&amp;#x2F;file2.ts`.
+ 4. File exists. Done.
+
+import &amp;#39;folder2&amp;#x2F;file3&amp;#39;:
+ 1. pattern &amp;#39;*&amp;#39; is matched and wildcard captures the whole module name
+ 2. try first substitution in the list: &amp;#39;*&amp;#39; -&amp;gt; `folder2&amp;#x2F;file3`
+ 3. result of substitution is non-relative name - combine it with *baseUrl* -&amp;gt; `projectRoot&amp;#x2F;folder2&amp;#x2F;file3.ts`.
+ 4. File does not exist, move to the second substitution
+ 5. second substitution &amp;#39;generated&amp;#x2F;*&amp;#39; -&amp;gt; `generated&amp;#x2F;folder2&amp;#x2F;file3`
+ 6. result of substitution is non-relative name - combine it with *baseUrl* -&amp;gt; `projectRoot&amp;#x2F;generated&amp;#x2F;folder2&amp;#x2F;file3.ts`.
+ 7. File exists. Done.
+"><p>导入 ‘folder1/file2’:</p>
+<ol>
+<li>模式 ‘*’ 被匹配, 通配符捕获整个模块名</li>
+<li>尝试列表中第一种替换: ‘*’ -&gt; <code>folder1/file2</code></li>
+<li>替换结果是一个非相对模块名 — 将它与 <em>baseUrl</em> 组合 -&gt; <code>projectRoot/folder1/file2.ts</code>.</li>
+<li>文件存在, 解析完成.</li>
+</ol>
+<p>导入 ‘folder2/file3’:</p>
+<ol>
+<li>模式 ‘*’ 被匹配, 通配符捕获整个模块名</li>
+<li>尝试列表中第一种替换: “*” -&gt; <code>folder2/file3</code></li>
+<li>替换结果是非相对模块名 - 将它与 <em>baseUrl</em> 组合 -&gt; <code>projectRoot/folder2/file3.ts</code>.</li>
+<li>文件不存在, 移动到第二种替换</li>
+<li>第二种替换 ‘generated/*’ -&gt; <code>generated/folder2/file3</code></li>
+<li>替换结果是非相对模块名 - 将它与 <em>baseUrl</em> 组合 -&gt; <code>projectRoot/generated/folder2/file3.ts</code>.</li>
+<li>文件存在, 解析完成.</li>
+</ol></div>
+<h3 id="用-rootDirs-建立虚拟目录" class="heading-control"><a href="#用-rootDirs-建立虚拟目录" class="headerlink" title="用 rootDirs 建立虚拟目录"></a>用 <code>rootDirs</code> 建立虚拟目录<a class="heading-anchor" href="#用-rootDirs-建立虚拟目录" aria-hidden="true"></a></h3><!-- ### Virtual Directories with `rootDirs` -->
+<div class="translation-block" title="
+Sometimes the project sources from multiple directories at compile time are all combined to generate a single output directory.
+This can be viewed as a set of source directories create a &amp;quot;virtual&amp;quot; directory.
+
+Using &amp;#39;rootDirs&amp;#39;, you can inform the compiler of the *roots* making up this &amp;quot;virtual&amp;quot; directory;
+and thus the compiler can resolve relative modules imports within these &amp;quot;virtual&amp;quot; directories *as if* were merged together in one directory.
+
+For example consider this project structure:
+"><p>有时候来自多个目录的项目源文件在编译期合并组成一个单一输出目录.<br>可以视作一组源目录共同创建了一个”虚拟”目录.</p>
+<p>借助 ‘rootDirs’, 你可以告知编译器组成该”虚拟”目录的所有<em>根目录</em>;<br>是以, 编译器可以在这些”虚拟”目录内解析相对模块导入, <em>好像</em>它们是一个事实上的整体.</p>
+<p>考虑这个项目结构:</p></div>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">src</span><br><span class="line">└── views</span><br><span class="line">    └── view1.ts (imports &apos;./template1&apos;)</span><br><span class="line">    └── view2.ts</span><br><span class="line"></span><br><span class="line">generated</span><br><span class="line">└── templates</span><br><span class="line">        └── views</span><br><span class="line">            └── template1.ts (imports &apos;./view2&apos;)</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+Files in `src&amp;#x2F;views` are user code for some UI controls.
+Files in `generated&amp;#x2F;templates` are UI template binding code auto-generated by a template generator as part of the build.
+A build step will copy the files in `&amp;#x2F;src&amp;#x2F;views` and `&amp;#x2F;generated&amp;#x2F;templates&amp;#x2F;views` to the same directory in the output.
+At run-time, a view can expect its template to exist next to it, and thus should import it using a relative name as `&amp;quot;.&amp;#x2F;template&amp;quot;`.
+
+To specify this relationship to the compiler, use`&amp;quot;rootDirs&amp;quot;`.
+`&amp;quot;rootDirs&amp;quot;` specify a list of *roots* whose contents are expected to merge at run-time.
+So following our example, the `tsconfig.json` file should look like:
+"><p><code>src/views</code> 中的文件是一些界面控件的用户代码.<br><code>generated/templates</code> 中的文件是由模板生成器作为构建的一部分自动生成的界面模板绑定代码.<br>一个构建步骤会把 <code>/src/views</code> 和 <code>/generated/templates/views</code> 中的文件拷贝到同一个输出目录.<br>在运行期间, 一个视图就能期待其模板与它同目录, 所以应该采用相对模块名 <code>&quot;./template</code> 导入.</p>
+<p>向编译器说明这种关系, 使用 <code>&quot;rootDirs&quot;</code>.<br><code>&quot;rootDirs&quot;</code> 指定一个<em>根目录名</em>的列表, 这些目录的内容会在运行期合并.<br>接续我们的例子, <code>tsconfig.json</code> 文件看起来像:</p></div>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="attr">"compilerOptions"</span>: &#123;</span><br><span class="line">    <span class="attr">"rootDirs"</span>: [</span><br><span class="line">      <span class="string">"src/views"</span>,</span><br><span class="line">      <span class="string">"generated/templates/views"</span></span><br><span class="line">    ]</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+Every time the compiler sees a relative module import in a subfolder of one of the `rootDirs`, it will attempt to look for this import in each of the entries of `rootDirs`.
+
+The flexibility of `rootDirs` is not limited to specifying a list of physical source directories that are logically merged. The supplied array may include any number of ad hoc, arbitrary directory names, regardless of whether they exist or not. This allows the compiler to capture sophisticated bundling and runtime features such as conditional inclusion and project specific loader plugins in a type safe way.
+
+Consider an internationalization scenario where a build tool automatically generates locale specific bundles by interpolating a special path token, say `#{locale}`, as part of a relative module path such as `.&amp;#x2F;#{locale}&amp;#x2F;messages`. In this hypothetical setup the tool enumerates supported locales, mapping the abstracted path into `.&amp;#x2F;zh&amp;#x2F;messages`, `.&amp;#x2F;de&amp;#x2F;messages`, and so forth.
+
+Assume that each of these modules exports an array of strings. For example `.&amp;#x2F;zh&amp;#x2F;messages` might contain:
+"><p>每当编译器看到一个 <code>rootDirs</code> 其中一项的子目录中的相对模块导入, 它会试图在 <code>rootDirs</code> 每个入口查找该导入.</p>
+<p><code>rootDirs</code> 的灵活性不局限于指定一个逻辑上是一个整体的物理源文件目录的列表. 用户提供的数组可以包含若干特设, 不存在的目录名. 这使得编译器可以类型安全地获得复杂打包技术以及运行时特性, 例如条件包含和项目特有加载器插件.</p>
+<p>考虑一个国际化方案, 构建工具为了自动生成地区特有安装包, 会向路径插入特殊符号, 如 <code>#{locale}</code>, 作为相对模块路径如 <code>./#{locale}/messages</code> 的一部分. 在这个假想设定中, 该工具遍历受支持的地区, 把抽象路径映射至 <code>./zh/messages</code>, <code>./de/messages</code>, 等等.</p>
+<p>假定每个模块都导出一个字符串数组. 那么 <code>./zh/messages</code> 可能包含:</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> [</span><br><span class="line">    <span class="string">"您好吗"</span>,</span><br><span class="line">    <span class="string">"很高兴认识你"</span></span><br><span class="line">];</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+By leveraging `rootDirs` we can inform the compiler of this mapping and thereby allow it to safely resolve `.&amp;#x2F;#{locale}&amp;#x2F;messages`, even though the directory will never exist. For example, with the following `tsconfig.json`:
+"><p>借助 <code>rootDirs</code> 配置此映射, 即使目录不存在, 编译器也可以安全地解析 <code>./#{locale}/messages</code>. 例如, 使用以下 <code>tsconfig.json</code>:</p></div>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="attr">"compilerOptions"</span>: &#123;</span><br><span class="line">    <span class="attr">"rootDirs"</span>: [</span><br><span class="line">      <span class="string">"src/zh"</span>,</span><br><span class="line">      <span class="string">"src/de"</span>,</span><br><span class="line">      <span class="string">"src/#&#123;locale&#125;"</span></span><br><span class="line">    ]</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+The compiler will now resolve `import messages from &amp;#39;.&amp;#x2F;#{locale}&amp;#x2F;messages&amp;#39;` to `import messages from &amp;#39;.&amp;#x2F;zh&amp;#x2F;messages&amp;#39;` for tooling purposes, allowing development in a locale agnostic manner without compromising design time support.
+"><p>编译器现在为工具用途把 <code>import messages from &#39;./#{locale}/messages&#39;</code> 解析为 <code>import messages from &#39;./zh/messages&#39;</code>, 允许以地区无关的方式进行开发, 而不损失设计时间支持.</p></div>
+<h2 id="追踪解析过程" class="heading-control"><a href="#追踪解析过程" class="headerlink" title="追踪解析过程"></a>追踪解析过程<a class="heading-anchor" href="#追踪解析过程" aria-hidden="true"></a></h2><!-- ## Tracing module resolution -->
+<div class="translation-block" title="
+As discussed earlier, the compiler can visit files outside the current folder when resolving a module.
+This can be hard when diagnosing why a module is not resolved, or is resolved to an incorrect definition.
+Enabling the compiler module resolution tracing using `--traceResolution` provides insight in what happened during the module resolution process.
+
+Let&amp;#39;s say we have a sample application that uses the `typescript` module.
+`app.ts` has an import like `import * as ts from &amp;quot;typescript&amp;quot;`.
+"><p>如前所述, 在解析模块时编译器可以访问当前文件夹外的文件.<br>这使诊断模块未能解析或解析到不正确的定义等问题变得困难.<br>用 <code>--traceResolution</code> 启用编译器的模块解析追踪, 它能提供模块解析过程中发生了什么的见解.</p>
+<p>假设我们有一个使用 <code>typescript</code> 模块的示例应用.<br><code>app.ts</code> 包含导入语句如 <code>import * as ts from &quot;typescript&quot;</code>.</p></div>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">│   tsconfig.json</span><br><span class="line">├───node_modules</span><br><span class="line">│   └───typescript</span><br><span class="line">│       └───lib</span><br><span class="line">│               typescript.d.ts</span><br><span class="line">└───src</span><br><span class="line">        app.ts</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+Invoking the compiler with `--traceResolution`
+"><p>随 <code>--traceResolution</code> 运行编译器</p></div>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tsc --traceResolution</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+Results in an output such as:
+"><p>会产生下列输出:</p></div>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">======== Resolving module &apos;typescript&apos; from &apos;src/app.ts&apos;. ========</span><br><span class="line">Module resolution kind is not specified, using &apos;NodeJs&apos;.</span><br><span class="line">Loading module &apos;typescript&apos; from &apos;node_modules&apos; folder.</span><br><span class="line">File &apos;src/node_modules/typescript.ts&apos; does not exist.</span><br><span class="line">File &apos;src/node_modules/typescript.tsx&apos; does not exist.</span><br><span class="line">File &apos;src/node_modules/typescript.d.ts&apos; does not exist.</span><br><span class="line">File &apos;src/node_modules/typescript/package.json&apos; does not exist.</span><br><span class="line">File &apos;node_modules/typescript.ts&apos; does not exist.</span><br><span class="line">File &apos;node_modules/typescript.tsx&apos; does not exist.</span><br><span class="line">File &apos;node_modules/typescript.d.ts&apos; does not exist.</span><br><span class="line">Found &apos;package.json&apos; at &apos;node_modules/typescript/package.json&apos;.</span><br><span class="line">&apos;package.json&apos; has &apos;types&apos; field &apos;./lib/typescript.d.ts&apos; that references &apos;node_modules/typescript/lib/typescript.d.ts&apos;.</span><br><span class="line">File &apos;node_modules/typescript/lib/typescript.d.ts&apos; exist - use it as a module resolution result.</span><br><span class="line">======== Module name &apos;typescript&apos; was successfully resolved to &apos;node_modules/typescript/lib/typescript.d.ts&apos;. ========</span><br></pre></td></tr></table></figure>
+<h4 id="可供监视的信息" class="heading-control"><a href="#可供监视的信息" class="headerlink" title="可供监视的信息"></a>可供监视的信息<a class="heading-anchor" href="#可供监视的信息" aria-hidden="true"></a></h4><!-- #### Things to look out for -->
+<div class="translation-block" title="
+* Name and location of the import
+
+ &amp;gt; ======== Resolving module **&amp;#39;typescript&amp;#39;** from **&amp;#39;src&amp;#x2F;app.ts&amp;#39;**. ========
+
+* The strategy the compiler is following
+
+ &amp;gt; Module resolution kind is not specified, using **&amp;#39;NodeJs&amp;#39;**.
+
+* Loading of types from npm packages
+
+ &amp;gt; &amp;#39;package.json&amp;#39; has **&amp;#39;types&amp;#39;** field &amp;#39;.&amp;#x2F;lib&amp;#x2F;typescript.d.ts&amp;#39; that references &amp;#39;node_modules&amp;#x2F;typescript&amp;#x2F;lib&amp;#x2F;typescript.d.ts&amp;#39;.
+
+* Final result
+
+ &amp;gt; ======== Module name &amp;#39;typescript&amp;#39; was **successfully resolved** to &amp;#39;node_modules&amp;#x2F;typescript&amp;#x2F;lib&amp;#x2F;typescript.d.ts&amp;#39;. ========
+"><ul>
+<li><p>导入名和位置</p>
+<blockquote>
+<p>======== Resolving module <strong>‘typescript’</strong> from <strong>‘src/app.ts’</strong>. ========</p>
+</blockquote>
+</li>
+<li><p>编译器采用的解析策略</p>
+<blockquote>
+<p>Module resolution kind is not specified, using <strong>‘NodeJs’</strong>.</p>
+</blockquote>
+</li>
+<li><p>从 npm 包载入类型</p>
+<blockquote>
+<p>‘package.json’ has <strong>‘types’</strong> field ‘./lib/typescript.d.ts’ that references ‘node_modules/typescript/lib/typescript.d.ts’.</p>
+</blockquote>
+</li>
+<li><p>最终结果</p>
+<blockquote>
+<p>======== Module name ‘typescript’ was <strong>successfully resolved</strong> to ‘node_modules/typescript/lib/typescript.d.ts’. ========</p>
+</blockquote>
+</li>
+</ul></div>
+<h2 id="使用-noResolve" class="heading-control"><a href="#使用-noResolve" class="headerlink" title="使用 --noResolve"></a>使用 <code>--noResolve</code><a class="heading-anchor" href="#使用-noResolve" aria-hidden="true"></a></h2><!-- ## Using `--noResolve` -->
+<div class="translation-block" title="
+Normally the compiler will attempt to resolve all module imports before it starts the compilation process.
+Every time it successfully resolves an `import` to a file, the file is added to the set of files the compiler will process later on.
+
+The `--noResolve` compiler options instructs the compiler not to &amp;quot;add&amp;quot; any files to the compilation that were not passed on the command line.
+It will still try to resolve the module to files, but if the file is not specified, it will not be included.
+
+For instance:
+"><p>通常, 在编译正式开始前, 编译器尝试解析所有导入模块.<br>每当它成功解析一个 <code>import</code> 到文件, 就把该文件添加到编译器随后将处理的文件列表.</p>
+<p><code>--noResolve</code> 编译器选项指示编译器不要<em>添加</em>任何不是从命令行传入的文件参加编译.<br>编译器依然要解析模块文件, 但如果一个文件没在命令行指定, 就不会被包括在内.</p>
+<p>举例:</p></div>
+<h4 id="app-ts" class="heading-control"><a href="#app-ts" class="headerlink" title="app.ts"></a>app.ts<a class="heading-anchor" href="#app-ts" aria-hidden="true"></a></h4><figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> * <span class="keyword">as</span> A <span class="keyword">from</span> <span class="string">"moduleA"</span> <span class="comment">// OK, 'moduleA' passed on the command-line</span></span><br><span class="line"><span class="keyword">import</span> * <span class="keyword">as</span> B <span class="keyword">from</span> <span class="string">"moduleB"</span> <span class="comment">// Error TS2307: Cannot find module 'moduleB'.</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tsc app.ts moduleA.ts --noResolve</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+Compiling `app.ts` using `--noResolve` should result in:
+
+* Correctly finding `moduleA` as it was passed on the command-line.
+* Error for not finding `moduleB` as it was not passed.
+"><p>用 <code>--noResolve</code> 编译 <code>app.ts</code> 的结果是:</p>
+<ul>
+<li><code>moduleA</code> 由命令行传入, 正确解析.</li>
+<li><code>moduleB</code> 未由命令行传入, 解析错误.</li>
+</ul></div>
+<h2 id="常见问题" class="heading-control"><a href="#常见问题" class="headerlink" title="常见问题"></a>常见问题<a class="heading-anchor" href="#常见问题" aria-hidden="true"></a></h2><!-- ## Common Questions -->
+<h3 id="为什么编译器仍会处理排除列表中的模块" class="heading-control"><a href="#为什么编译器仍会处理排除列表中的模块" class="headerlink" title="为什么编译器仍会处理排除列表中的模块?"></a>为什么编译器仍会处理排除列表中的模块?<a class="heading-anchor" href="#为什么编译器仍会处理排除列表中的模块" aria-hidden="true"></a></h3><!-- ### Why does a module in the exclude list still get picked up by the compiler? -->
+<div class="translation-block" title="
+`tsconfig.json` turns a folder into a “project”.
+Without specifying any `“exclude”` or `“files”` entries, all files in the folder containing the `tsconfig.json` and all its sub-directories are included in your compilation.
+If you want to exclude some of the files use `“exclude”`, if you would rather specify all the files instead of letting the compiler look them up, use `“files”`.
+
+That was `tsconfig.json` automatic inclusion.
+That does not embed module resolution as discussed above.
+If the compiler identified a file as a target of a module import, it will be included in the compilation regardless if it was excluded in the previous steps.
+
+So to exclude a file from the compilation, you need to exclude it and **all** files that have an `import` or `&amp;#x2F;&amp;#x2F;&amp;#x2F; &amp;lt;reference path=&amp;quot;...&amp;quot; &amp;#x2F;&amp;gt;` directive to it.
+"><p><code>tsconfig.json</code> 把普通文件夹转换成”项目”.<br>不指定任何 <code>&quot;exclude&quot;</code> 或 <code>&quot;files&quot;</code> 属性, 所有 <code>tsconfig.json</code> 所属目录中的文件和子目录都参与编译.<br>如果你想用排除一些文件, 设置 <code>&quot;exclude&quot;</code> 属性, 如果你想手动指定所有文件, 而不是让编译器搜索, 设置 <code>&quot;files&quot;</code> 属性.</p>
+<p>这即是 <code>tsconfig.json</code> 自动包含.<br>它不影响以上讨论的模块解析.<br>如果编译器确定一个文件是模块导入的目标, 无论它有没有事先被排除, 都会加入编译.</p>
+<p>因此, 要从编译排除一个文件, 你不仅要排除它, 还有排除采用 <code>import</code> 关键字导入或 <code>/// &lt;reference path=&quot;...&quot; /&gt;</code> 指令引用它的<strong>所有</strong>文件.</p></div>
+    </div>
+
+    
+    
+    
+        
+      
+        <div id="reward-container">
+  <div>如果这篇文章对您有用，可以考虑打赏:)</div>
+  <button id="reward-button" disable="enable" onclick="var qr = document.getElementById(&quot;qr&quot;); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+        
+      
+      <div style="display: inline-block">
+        <img src="/images/wechatpay.png" alt="Hyan Lee 微信支付">
+        <p>微信支付</p>
+      </div>
+
+  </div>
+</div>
+
+      
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>Hyan Lee</li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://hyan23.org/2019/11/20/ts-module-resolution/" title="模块解析">https://hyan23.org/2019/11/20/ts-module-resolution/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！</li>
+</ul>
+</div>
+
+      
+
+      <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+              
+                <a href="/2019/11/20/ts-namespaces-and-modules/" rel="next" title="名字空间和模块">
+                  <i class="fa fa-chevron-left"></i> 名字空间和模块
+                </a>
+              
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+              
+                <a href="/2019/11/20/ts-declaration-merging/" rel="prev" title="定义合并">
+                  定义合并 <i class="fa fa-chevron-right"></i>
+                </a>
+              
+            </div>
+          </div>
+        
+      </footer>
+    
+  </div>
+  
+  
+  
+  </article>
+
+  </div>
+
+
+          </div>
+          
+    
+    <div class="comments" id="gitalk-container"></div>
+  
+
+        </div>
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+        
+        
+        
+        
+      
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#相对导入、非相对导入"><span class="nav-number">1.</span> <span class="nav-text">相对导入、非相对导入</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#模块解析策略"><span class="nav-number">2.</span> <span class="nav-text">模块解析策略</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#经典"><span class="nav-number">2.1.</span> <span class="nav-text">经典</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Node"><span class="nav-number">2.2.</span> <span class="nav-text">Node</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#附加模块解析标志"><span class="nav-number">3.</span> <span class="nav-text">附加模块解析标志</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#baseUrl"><span class="nav-number">3.1.</span> <span class="nav-text">baseUrl</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#路径映射"><span class="nav-number">3.2.</span> <span class="nav-text">路径映射</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#用-rootDirs-建立虚拟目录"><span class="nav-number">3.3.</span> <span class="nav-text">用 rootDirs 建立虚拟目录</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#追踪解析过程"><span class="nav-number">4.</span> <span class="nav-text">追踪解析过程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#使用-noResolve"><span class="nav-number">5.</span> <span class="nav-text">使用 --noResolve</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#常见问题"><span class="nav-number">6.</span> <span class="nav-text">常见问题</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#为什么编译器仍会处理排除列表中的模块"><span class="nav-number">6.1.</span> <span class="nav-text">为什么编译器仍会处理排除列表中的模块?</span></a></li></ol></li></ol></div>
+        
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image"
+      src="/images/avatar2.png"
+      alt="Hyan Lee">
+  <p class="site-author-name" itemprop="name">Hyan Lee</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">31</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-categories">
+        
+          
+            <a href="/categories/">
+          
+        
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">分类</span>
+        </a>
+      </div>
+    
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+      
+      
+        
+      
+      
+        
+      
+        <a href="https://github.com/hyan23" title="GitHub &rarr; https://github.com/hyan23" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+    
+      <span class="links-of-author-item">
+      
+      
+        
+      
+      
+        
+      
+        <a href="mailto:hyan23lee@hotmail.com" title="E-Mail &rarr; mailto:hyan23lee@hotmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+    
+      <span class="links-of-author-item">
+      
+      
+        
+      
+      
+        
+      
+        <a href="https://t.me/hyan23" title="Telegram &rarr; https://t.me/hyan23" rel="noopener" target="_blank"><i class="fa fa-fw fa-telegram"></i>Telegram</a>
+      </span>
+    
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    
+  
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+      
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2017 – <span itemprop="copyrightYear">2020</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Hyan Lee</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    
+    <span title="站点总字数">118k</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v3.9.0</div>
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js?v=3.1.0"></script>
+  <script src="//cdn.jsdelivr.net/npm/medium-zoom@1/dist/medium-zoom.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+<script src="/js/utils.js?v=7.4.0"></script>
+<script src="/js/schemes/pisces.js?v=7.4.0"></script>
+<script src="/js/next-boot.js?v=7.4.0"></script>
+
+
+
+  
+  <script>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+    mermaid.initialize({
+      theme: 'forest',
+      logLevel: 3,
+      flowchart: { curve: 'linear' },
+      gantt: { axisFormat: '%m/%d/%Y' },
+      sequence: { actorMargin: 50 }
+    });
+  }, window.mermaid);
+}
+</script>
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID: '442da4785490db3ece48',
+      clientSecret: '3bfa2829a34371ca37db636917e791d114bd338c',
+      repo: 'blog-comments',
+      owner: 'hyan23',
+      admin: ['hyan23'],
+      id: '33e402d78418223dc3d641917ec8b8c5',
+        language: window.navigator.language || window.navigator.userLanguage,
+      
+      distractionFreeMode: 'true'
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+</script>
+
+</body>
+</html>

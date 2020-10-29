@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+
+
+
+
+
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/favicon/apple-touch-icon.png?v=7.4.0">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon/favicon-32x32.png?v=7.4.0">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon/favicon-16x16.png?v=7.4.0">
+  <link rel="mask-icon" href="/images/favicon/safari-pinned-tab.svg?v=7.4.0" color="#222">
+  <link rel="manifest" href="/images/favicon/site.webmanifest">
+  <meta name="msapplication-config" content="/images/favicon/browserconfig.xml">
+  <meta http-equiv="Cache-Control" content="no-transform">
+  <meta http-equiv="Cache-Control" content="no-siteapp">
+
+<link rel="stylesheet" href="/css/main.css?v=7.4.0">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '7.4.0',
+    exturl: false,
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false},
+    copycode: {"enable":false,"show_result":false,"style":null},
+    back2top: {"enable":true,"sidebar":true,"scrollpercent":false},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: true,
+    lazyload: true,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: "",
+      labels: ""
+    },
+    localsearch: {"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: '',
+    motion: {"enable":false},
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="hexo 使用速查手册">
+<meta name="keywords" content="博客,个人博客,日志,在线工具">
+<meta property="og:type" content="article">
+<meta property="og:title" content="hexo 使用速查手册">
+<meta property="og:url" content="https://hyan23.org/2019/10/19/hexo/index.html">
+<meta property="og:site_name" content="Hyan Lee">
+<meta property="og:description" content="hexo 使用速查手册">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2019-12-11T12:45:08.411Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="hexo 使用速查手册">
+<meta name="twitter:description" content="hexo 使用速查手册">
+  <link rel="canonical" href="https://hyan23.org/2019/10/19/hexo/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>hexo 使用速查手册 | Hyan Lee</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+  <div class="container">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Hyan Lee</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+      
+      
+      
+        
+        <li class="menu-item menu-item-home">
+      
+    
+      
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-关于-/-留言板">
+      
+    
+      
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于 / 留言板</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-categories">
+      
+    
+      
+      
+        
+      
+        
+          
+        
+      
+        
+      
+    
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类<span class="badge">6</span></a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-archives">
+      
+    
+      
+      
+        
+          
+        
+      
+        
+      
+        
+      
+    
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">31</span></a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-精选-/-系列">
+      
+    
+      
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <a href="/selections/" rel="section"><i class="fa fa-fw fa-book"></i>精选 / 系列</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-摄影">
+      
+    
+      
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <a href="/gallery/" rel="section"><i class="fa fa-fw fa-camera"></i>摄影</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-工具">
+      
+    
+      
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <a href="/tools/" rel="section"><i class="fa fa-fw fa-calculator"></i>工具</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-友情链接">
+      
+    
+      
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <a href="/friends/" rel="section"><i class="fa fa-fw fa-external-link"></i>友情链接</a>
+
+  </li>
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+            
+
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+      <article itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block post">
+    <link itemprop="mainEntityOfPage" href="https://hyan23.org/2019/10/19/hexo/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Hyan Lee">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar2.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hyan Lee">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">hexo 使用速查手册
+
+          
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              
+                
+              
+
+              <time title="创建时间：2019-10-19 17:32:03" itemprop="dateCreated datePublished" datetime="2019-10-19T17:32:03+08:00">2019-10-19</time>
+            </span>
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2019-12-11 20:45:08" itemprop="dateModified" datetime="2019-12-11T20:45:08+08:00">2019-12-11</time>
+              </span>
+            
+          
+
+          
+          
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">本文字数：</span>
+              
+              <span>3.3k</span>
+            </span>
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>hexo 使用速查手册</p>
+<a id="more"></a>
+<p>markdown 行末两个空格插入空行</p>
+<h1 id="系统篇" class="heading-control"><a href="#系统篇" class="headerlink" title="系统篇"></a>系统篇<a class="heading-anchor" href="#系统篇" aria-hidden="true"></a></h1><h2 id="源文件" class="heading-control"><a href="#源文件" class="headerlink" title="源文件"></a>源文件<a class="heading-anchor" href="#源文件" aria-hidden="true"></a></h2><p><a href="https://hexo.io/docs/setup#source" target="_blank" rel="noopener">https://hexo.io/docs/setup#source</a></p>
+<h2 id="Front-Matter" class="heading-control"><a href="#Front-Matter" class="headerlink" title="Front Matter"></a>Front Matter<a class="heading-anchor" href="#Front-Matter" aria-hidden="true"></a></h2><p>layout: false    don’t process my post<br>title:<br>date:<br>updated:<br>comments:<br>tags:<br>categories:<br>permalink:<br>keywords:<br>excerpt: ‘’</p>
+<p>toc_max_depth<br>reward<br>mathjax</p>
+<h2 id="资源文件夹" class="heading-control"><a href="#资源文件夹" class="headerlink" title="资源文件夹"></a>资源文件夹<a class="heading-anchor" href="#资源文件夹" aria-hidden="true"></a></h2><p>asset folder  <a href="https://hexo.io/docs/asset-folders" target="_blank" rel="noopener">https://hexo.io/docs/asset-folders</a></p>
+<h2 id="自动化部署" class="heading-control"><a href="#自动化部署" class="headerlink" title="自动化部署"></a>自动化部署<a class="heading-anchor" href="#自动化部署" aria-hidden="true"></a></h2><p>deployment: npm install hexo-deployer-git —save</p>
+<h1 id="写作篇" class="heading-control"><a href="#写作篇" class="headerlink" title="写作篇"></a>写作篇<a class="heading-anchor" href="#写作篇" aria-hidden="true"></a></h1><h2 id="创建新页面" class="heading-control"><a href="#创建新页面" class="headerlink" title="创建新页面"></a>创建新页面<a class="heading-anchor" href="#创建新页面" aria-hidden="true"></a></h2><p>new command</p>
+<p>scaffold</p>
+<p>read more</p>
+<h2 id="插入公式" class="heading-control"><a href="#插入公式" class="headerlink" title="插入公式"></a>插入公式<a class="heading-anchor" href="#插入公式" aria-hidden="true"></a></h2><p>math</p>
+<h2 id="Emoji" class="heading-control"><a href="#Emoji" class="headerlink" title="Emoji"></a>Emoji<a class="heading-anchor" href="#Emoji" aria-hidden="true"></a></h2><p>emoji</p>
+<h2 id="标签" class="heading-control"><a href="#标签" class="headerlink" title="标签"></a>标签<a class="heading-anchor" href="#标签" aria-hidden="true"></a></h2><h3 id="官方标签" class="heading-control"><a href="#官方标签" class="headerlink" title="官方标签"></a>官方标签<a class="heading-anchor" href="#官方标签" aria-hidden="true"></a></h3><p><a href="https://hexo.io/docs/tag-plugins" target="_blank" rel="noopener">https://hexo.io/docs/tag-plugins</a></p>
+<p>block quote   <a href="https://hexo.io/docs/tag-plugins#Block-Quote" target="_blank" rel="noopener">https://hexo.io/docs/tag-plugins#Block-Quote</a></p>
+<p>code block <a href="https://hexo.io/docs/tag-plugins#Code-Block" target="_blank" rel="noopener">https://hexo.io/docs/tag-plugins#Code-Block</a></p>
+<p>iframe <a href="https://hexo.io/docs/tag-plugins#iframe" target="_blank" rel="noopener">https://hexo.io/docs/tag-plugins#iframe</a></p>
+<p>image <a href="https://hexo.io/docs/tag-plugins#Image" target="_blank" rel="noopener">https://hexo.io/docs/tag-plugins#Image</a></p>
+<p>link  <a href="https://hexo.io/docs/tag-plugins#Link" target="_blank" rel="noopener">https://hexo.io/docs/tag-plugins#Link</a></p>
+<p>include code <a href="https://hexo.io/docs/tag-plugins#Include-Code" target="_blank" rel="noopener">https://hexo.io/docs/tag-plugins#Include-Code</a></p>
+<p>include posts  <a href="https://hexo.io/docs/tag-plugins#Include-Posts" target="_blank" rel="noopener">https://hexo.io/docs/tag-plugins#Include-Posts</a></p>
+<p>include assets <a href="https://hexo.io/docs/tag-plugins#Include-Assets" target="_blank" rel="noopener">https://hexo.io/docs/tag-plugins#Include-Assets</a></p>
+<p>raw <a href="https://hexo.io/docs/tag-plugins#Raw" target="_blank" rel="noopener">https://hexo.io/docs/tag-plugins#Raw</a></p>
+<p>post excerpt  <a href="https://hexo.io/docs/tag-plugins#Post-Excerpt" target="_blank" rel="noopener">https://hexo.io/docs/tag-plugins#Post-Excerpt</a></p>
+<h2 id="主题标签" class="heading-control"><a href="#主题标签" class="headerlink" title="主题标签"></a>主题标签<a class="heading-anchor" href="#主题标签" aria-hidden="true"></a></h2><p>next</p>
+<p><a href="https://theme-next.org/docs/tag-plugins/" target="_blank" rel="noopener">https://theme-next.org/docs/tag-plugins/</a><br>centered quote   <a href="https://theme-next.org/docs/tag-plugins/#Centered-Quote" target="_blank" rel="noopener">https://theme-next.org/docs/tag-plugins/#Centered-Quote</a><br>include raw <a href="https://theme-next.org/docs/tag-plugins/#Include-Raw" target="_blank" rel="noopener">https://theme-next.org/docs/tag-plugins/#Include-Raw</a></p>
+<p>pdf <a href="https://github.com/theme-next/theme-next-pdf" target="_blank" rel="noopener">https://github.com/theme-next/theme-next-pdf</a><br>tabs <a href="https://theme-next.org/docs/tag-plugins/tabs" target="_blank" rel="noopener">https://theme-next.org/docs/tag-plugins/tabs</a><br>note <a href="https://theme-next.org/docs/tag-plugins/note" target="_blank" rel="noopener">https://theme-next.org/docs/tag-plugins/note</a><br>label <a href="https://theme-next.org/docs/tag-plugins/label" target="_blank" rel="noopener">https://theme-next.org/docs/tag-plugins/label</a><br>button <a href="https://theme-next.org/docs/tag-plugins/button" target="_blank" rel="noopener">https://theme-next.org/docs/tag-plugins/button</a><br>mermaid <a href="https://theme-next.org/docs/tag-plugins/mermaid" target="_blank" rel="noopener">https://theme-next.org/docs/tag-plugins/mermaid</a><br>group picture <a href="https://theme-next.org/docs/tag-plugins/group-pictures" target="_blank" rel="noopener">https://theme-next.org/docs/tag-plugins/group-pictures</a><br>github-emoji <a href="https://github.com/theme-next/hexo-filter-emoji" target="_blank" rel="noopener">https://github.com/theme-next/hexo-filter-emoji</a></p>
+<h1 id="附录1-hexo-命令行参数" class="heading-control"><a href="#附录1-hexo-命令行参数" class="headerlink" title="附录1 hexo 命令行参数"></a>附录1 hexo 命令行参数<a class="heading-anchor" href="#附录1-hexo-命令行参数" aria-hidden="true"></a></h1><blockquote><p>Usage: hexo \<command></p>
+<p>Commands:<br>  clean     Remove generated files and cache.</p>
+<p>  deploy    Deploy your website.<br>    Options:<br>    —setup         Setup without deployment<br>    -g, —generate  Generate before deployment</p>
+<p>  generate  Generate static files.<br>    Options:<br>    -b, —bail    Raise an error if any unhandled exception is thrown during generation<br>    -d, —deploy  Deploy after generated<br>    -f, —force   Force regenerate<br>    -w, —watch   Watch file changes</p>
+<p>  new       Create a new post.<br>    Arguments:<br>    layout  Post layout. Use post, page, draft or whatever you want.<br>    title   Post title. Wrap it with quotations to escape.</p>
+<pre><code>Options:
+-p, --path     Post path. Customize the path of the post.
+-r, --replace  Replace the current post if existed.
+-s, --slug     Post slug. Customize the URL of the post.
+</code></pre><p>  init      Create a new Hexo folder.<br>    Arguments:<br>    destination  Folder path. Initialize in current folder if not specified</p>
+<pre><code>Options:
+--no-clone    Copy files instead of cloning from GitHub
+--no-install  Skip npm install
+</code></pre><p>  server    Start the server.<br>    Options:<br>    -i, —ip            Override the default server IP. Bind to all IP address by default.<br>    -l, —log [format]  Enable logger. Override log format.<br>    -o, —open          Immediately open the server url in your default web browser.<br>    -p, —port          Override the default port.<br>    -s, —static        Only serve static files.</p>
+<p>BELOW ARE NOW VERY USEFUL</p>
+<p>  config    Get or set configurations.<br>    Arguments:<br>    name   Setting name. Leave it blank if you want to show all configurations.<br>    value  New value of a setting. Leave it blank if you just want to show a single configuration.</p>
+<p>  help      Get help on a command.</p>
+<p>  list      List the information of the site<br>    Arguments:<br>    type  Available types: page, post, route, tag, category</p>
+<p>  migrate   Migrate your site from other system to Hexo.<br>    Arguments:<br>    type  Migrator type.</p>
+<p>  publish   Moves a draft post from _drafts to _posts folder.<br>    Arguments:<br>    filename  Draft filename. “hello-world” for example.<br>    layout    Post layout. Use post, page, draft or whatever you want.</p>
+<p>  render    Render files with renderer plugins.<br>    Options:<br>    —engine  Specify render engine<br>    —output  Output destination. Result will be printed in the terminal if the output destination is not set.<br>    —pretty  Prettify JSON output</p>
+<p>  version   Display version information.</p>
+</blockquote>
+<h1 id="附录2-TroubleShooting" class="heading-control"><a href="#附录2-TroubleShooting" class="headerlink" title="附录2 TroubleShooting"></a>附录2 TroubleShooting<a class="heading-anchor" href="#附录2-TroubleShooting" aria-hidden="true"></a></h1><ol>
+<li>tag 未关闭</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">FATAL Something&apos;s wrong. Maybe you can find the solution here: https://hexo.io/docs/troubleshooting.html</span><br><span class="line">Template render error: (unknown path)</span><br><span class="line">  unexpected end of file</span><br><span class="line">    at Object._prettifyError (C:\Users\v-haiyli\Desktop\GitHub\hexo-blog\node_modules\nunjucks\src\lib.js:36:11)</span><br><span class="line">    at Template.render (C:\Users\v-haiyli\Desktop\GitHub\hexo-blog\node_modules\nunjucks\src\environment.js:542:21)</span><br><span class="line">    at Environment.renderString (C:\Users\v-haiyli\Desktop\GitHub\hexo-blog\node_modules\nunjucks\src\environment.js:380:17)</span><br><span class="line">    at Promise.fromCallback.cb (C:\Users\v-haiyli\Desktop\GitHub\hexo-blog\node_modules\hexo\lib\extend\tag.js:123:48)</span><br><span class="line">    at tryCatcher (C:\Users\v-haiyli\Desktop\GitHub\hexo-blog\node_modules\bluebird\js\release\util.js:16:23)</span><br><span class="line">    at Function.Promise.fromNode.Promise.fromCallback (C:\Users\v-haiyli\Desktop\GitHub\hexo-blog\node_modules\bluebird\js\release\promise.js:209:30)</span><br><span class="line">    at Tag.render (C:\Users\v-haiyli\Desktop\GitHub\hexo-blog\node_modules\hexo\lib\extend\tag.js:123:18)</span><br><span class="line">    at Object.onRenderEnd (C:\Users\v-haiyli\Desktop\GitHub\hexo-blog\node_modules\hexo\lib\hexo\post.js:280:20)</span><br><span class="line">    at Promise.then.then.result (C:\Users\v-haiyli\Desktop\GitHub\hexo-blog\node_modules\hexo\lib\hexo\render.js:64:19)</span><br><span class="line">    at tryCatcher (C:\Users\v-haiyli\Desktop\GitHub\hexo-blog\node_modules\bluebird\js\release\util.js:16:23)</span><br><span class="line">    at Promise._settlePromiseFromHandler (C:\Users\v-haiyli\Desktop\GitHub\hexo-blog\node_modules\bluebird\js\release\promise.js:547:31)</span><br><span class="line">    at Promise._settlePromise (C:\Users\v-haiyli\Desktop\GitHub\hexo-blog\node_modules\bluebird\js\release\promise.js:604:18)</span><br><span class="line">    at Promise._settlePromise0 (C:\Users\v-haiyli\Desktop\GitHub\hexo-blog\node_modules\bluebird\js\release\promise.js:649:10)</span><br><span class="line">    at Promise._settlePromises (C:\Users\v-haiyli\Desktop\GitHub\hexo-blog\node_modules\bluebird\js\release\promise.js:729:18)</span><br><span class="line">    at _drainQueueStep (C:\Users\v-haiyli\Desktop\GitHub\hexo-blog\node_modules\bluebird\js\release\async.js:93:12)</span><br><span class="line">    at _drainQueue (C:\Users\v-haiyli\Desktop\GitHub\hexo-blog\node_modules\bluebird\js\release\async.js:86:9)</span><br><span class="line">    at Async._drainQueues (C:\Users\v-haiyli\Desktop\GitHub\hexo-blog\node_modules\bluebird\js\release\async.js:102:5)</span><br><span class="line">    at Immediate.Async.drainQueues (C:\Users\v-haiyli\Desktop\GitHub\hexo-blog\node_modules\bluebird\js\release\async.js:15:14)</span><br><span class="line">    at runCallback (timers.js:705:18)</span><br><span class="line">    at tryOnImmediate (timers.js:676:5)</span><br><span class="line">    at processImmediate (timers.js:658:5)</span><br></pre></td></tr></table></figure>
+    </div>
+
+    
+    
+    
+        
+      
+        <div id="reward-container">
+  <div>如果这篇文章对您有用，可以考虑打赏:)</div>
+  <button id="reward-button" disable="enable" onclick="var qr = document.getElementById(&quot;qr&quot;); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+        
+      
+      <div style="display: inline-block">
+        <img src="/images/wechatpay.png" alt="Hyan Lee 微信支付">
+        <p>微信支付</p>
+      </div>
+
+  </div>
+</div>
+
+      
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>Hyan Lee</li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://hyan23.org/2019/10/19/hexo/" title="hexo 使用速查手册">https://hyan23.org/2019/10/19/hexo/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！</li>
+</ul>
+</div>
+
+      
+
+      <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+              
+                <a href="/2018/12/03/a-tour-of-the-c-sharp-language/" rel="next" title="A Tour Of the C# Language">
+                  <i class="fa fa-chevron-left"></i> A Tour Of the C# Language
+                </a>
+              
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+              
+                <a href="/2019/11/05/ts-ts-in-5mins/" rel="prev" title="五分钟了解 TypeScript">
+                  五分钟了解 TypeScript <i class="fa fa-chevron-right"></i>
+                </a>
+              
+            </div>
+          </div>
+        
+      </footer>
+    
+  </div>
+  
+  
+  
+  </article>
+
+  </div>
+
+
+          </div>
+          
+    
+    <div class="comments" id="gitalk-container"></div>
+  
+
+        </div>
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+        
+        
+        
+        
+      
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#系统篇"><span class="nav-number">1.</span> <span class="nav-text">系统篇</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#源文件"><span class="nav-number">1.1.</span> <span class="nav-text">源文件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Front-Matter"><span class="nav-number">1.2.</span> <span class="nav-text">Front Matter</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#资源文件夹"><span class="nav-number">1.3.</span> <span class="nav-text">资源文件夹</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#自动化部署"><span class="nav-number">1.4.</span> <span class="nav-text">自动化部署</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#写作篇"><span class="nav-number">2.</span> <span class="nav-text">写作篇</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#创建新页面"><span class="nav-number">2.1.</span> <span class="nav-text">创建新页面</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#插入公式"><span class="nav-number">2.2.</span> <span class="nav-text">插入公式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Emoji"><span class="nav-number">2.3.</span> <span class="nav-text">Emoji</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#标签"><span class="nav-number">2.4.</span> <span class="nav-text">标签</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#官方标签"><span class="nav-number">2.4.1.</span> <span class="nav-text">官方标签</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#主题标签"><span class="nav-number">2.5.</span> <span class="nav-text">主题标签</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#附录1-hexo-命令行参数"><span class="nav-number">3.</span> <span class="nav-text">附录1 hexo 命令行参数</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#附录2-TroubleShooting"><span class="nav-number">4.</span> <span class="nav-text">附录2 TroubleShooting</span></a></li></ol></div>
+        
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image"
+      src="/images/avatar2.png"
+      alt="Hyan Lee">
+  <p class="site-author-name" itemprop="name">Hyan Lee</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">31</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-categories">
+        
+          
+            <a href="/categories/">
+          
+        
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">分类</span>
+        </a>
+      </div>
+    
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+      
+      
+        
+      
+      
+        
+      
+        <a href="https://github.com/hyan23" title="GitHub &rarr; https://github.com/hyan23" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+    
+      <span class="links-of-author-item">
+      
+      
+        
+      
+      
+        
+      
+        <a href="mailto:hyan23lee@hotmail.com" title="E-Mail &rarr; mailto:hyan23lee@hotmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+    
+      <span class="links-of-author-item">
+      
+      
+        
+      
+      
+        
+      
+        <a href="https://t.me/hyan23" title="Telegram &rarr; https://t.me/hyan23" rel="noopener" target="_blank"><i class="fa fa-fw fa-telegram"></i>Telegram</a>
+      </span>
+    
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    
+  
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+      
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2017 – <span itemprop="copyrightYear">2020</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Hyan Lee</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    
+    <span title="站点总字数">118k</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v3.9.0</div>
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js?v=3.1.0"></script>
+  <script src="//cdn.jsdelivr.net/npm/medium-zoom@1/dist/medium-zoom.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+<script src="/js/utils.js?v=7.4.0"></script>
+<script src="/js/schemes/pisces.js?v=7.4.0"></script>
+<script src="/js/next-boot.js?v=7.4.0"></script>
+
+
+
+  
+  <script>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+    mermaid.initialize({
+      theme: 'forest',
+      logLevel: 3,
+      flowchart: { curve: 'linear' },
+      gantt: { axisFormat: '%m/%d/%Y' },
+      sequence: { actorMargin: 50 }
+    });
+  }, window.mermaid);
+}
+</script>
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID: '442da4785490db3ece48',
+      clientSecret: '3bfa2829a34371ca37db636917e791d114bd338c',
+      repo: 'blog-comments',
+      owner: 'hyan23',
+      admin: ['hyan23'],
+      id: '25b004872c18b47a8925b17a1a78a273',
+        language: window.navigator.language || window.navigator.userLanguage,
+      
+      distractionFreeMode: 'true'
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+</script>
+
+</body>
+</html>

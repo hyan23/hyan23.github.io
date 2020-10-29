@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="description" content="考研倒计时">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="icon" href="https://via.placeholder.com/70x70">
+
+    <title>考研倒计时</title>
+
+    <style>
+        body {
+            background-color: red;
+        }
+
+        b {
+            padding: 10px;
+            color: rgb(255, 255, 255);
+        }
+
+        article {
+            position: absolute;
+            width: 100%;
+            top: 40%;
+            transform: translate(0, -50%);
+            text-align: center;
+            font-size: 300%;
+            color: rgb(255, 255, 0);
+        }
+    </style>
+
+    <script>
+        window.onload = function () {
+            var today = new Date();
+            var y = today.getFullYear();
+
+            var ky = new Date(y, 12 - 1, 23);
+            if (today >= ky) {
+                y += 1;
+                ky = new Date(y, 12 - 1, 23);
+            }
+
+            document.getElementById('y').innerHTML = y + 1;
+
+            var t = ky - today;
+            var d = t / 1000 / 60 / 60 / 24;
+            document.getElementById('d').innerHTML = d.toFixed(6);
+        }
+        setInterval(window.onload, 100);
+    </script>
+</head>
+
+<body>
+    <header></header>
+
+    <main>
+        <article>
+            <p>距<b id="y"></b>年考研还剩<b id="d"></b>天！</p>
+        </article>
+    </main>
+
+    <footer></footer>
+</body>
+
+</html>

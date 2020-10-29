@@ -1,0 +1,977 @@
+<!DOCTYPE html>
+
+
+
+
+
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/favicon/apple-touch-icon.png?v=7.4.0">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon/favicon-32x32.png?v=7.4.0">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon/favicon-16x16.png?v=7.4.0">
+  <link rel="mask-icon" href="/images/favicon/safari-pinned-tab.svg?v=7.4.0" color="#222">
+  <link rel="manifest" href="/images/favicon/site.webmanifest">
+  <meta name="msapplication-config" content="/images/favicon/browserconfig.xml">
+  <meta http-equiv="Cache-Control" content="no-transform">
+  <meta http-equiv="Cache-Control" content="no-siteapp">
+
+<link rel="stylesheet" href="/css/main.css?v=7.4.0">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '7.4.0',
+    exturl: false,
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false},
+    copycode: {"enable":false,"show_result":false,"style":null},
+    back2top: {"enable":true,"sidebar":true,"scrollpercent":false},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: true,
+    lazyload: true,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: "",
+      labels: ""
+    },
+    localsearch: {"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: '',
+    motion: {"enable":false},
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="状态: 初稿 介绍 TypeScript 一些独特概念在类型层面描述 JavaScript 对象的形体.这其中尤其特殊的一个便是 TypeScript ‘定义合并’ 的概念.理解此概念不仅有助于你与现有 JavaScript 代码协作.它同时打开了通往更高级抽象的大门.">
+<meta name="keywords" content="博客,个人博客,日志,在线工具">
+<meta property="og:type" content="article">
+<meta property="og:title" content="定义合并">
+<meta property="og:url" content="https://hyan23.org/2019/11/20/ts-declaration-merging/index.html">
+<meta property="og:site_name" content="Hyan Lee">
+<meta property="og:description" content="状态: 初稿 介绍 TypeScript 一些独特概念在类型层面描述 JavaScript 对象的形体.这其中尤其特殊的一个便是 TypeScript ‘定义合并’ 的概念.理解此概念不仅有助于你与现有 JavaScript 代码协作.它同时打开了通往更高级抽象的大门.">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2020-02-24T11:14:52.524Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="定义合并">
+<meta name="twitter:description" content="状态: 初稿 介绍 TypeScript 一些独特概念在类型层面描述 JavaScript 对象的形体.这其中尤其特殊的一个便是 TypeScript ‘定义合并’ 的概念.理解此概念不仅有助于你与现有 JavaScript 代码协作.它同时打开了通往更高级抽象的大门.">
+  <link rel="canonical" href="https://hyan23.org/2019/11/20/ts-declaration-merging/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>定义合并 | Hyan Lee</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+  <div class="container">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Hyan Lee</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+      
+      
+      
+        
+        <li class="menu-item menu-item-home">
+      
+    
+      
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-关于-/-留言板">
+      
+    
+      
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于 / 留言板</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-categories">
+      
+    
+      
+      
+        
+      
+        
+          
+        
+      
+        
+      
+    
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类<span class="badge">6</span></a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-archives">
+      
+    
+      
+      
+        
+          
+        
+      
+        
+      
+        
+      
+    
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">31</span></a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-精选-/-系列">
+      
+    
+      
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <a href="/selections/" rel="section"><i class="fa fa-fw fa-book"></i>精选 / 系列</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-摄影">
+      
+    
+      
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <a href="/gallery/" rel="section"><i class="fa fa-fw fa-camera"></i>摄影</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-工具">
+      
+    
+      
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <a href="/tools/" rel="section"><i class="fa fa-fw fa-calculator"></i>工具</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-友情链接">
+      
+    
+      
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <a href="/friends/" rel="section"><i class="fa fa-fw fa-external-link"></i>友情链接</a>
+
+  </li>
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+            
+
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+      <article itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block post">
+    <link itemprop="mainEntityOfPage" href="https://hyan23.org/2019/11/20/ts-declaration-merging/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Hyan Lee">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar2.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hyan Lee">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">定义合并
+
+          
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              
+                
+              
+
+              <time title="创建时间：2019-11-20 09:33:56" itemprop="dateCreated datePublished" datetime="2019-11-20T09:33:56+08:00">2019-11-20</time>
+            </span>
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-02-24 19:14:52" itemprop="dateModified" datetime="2020-02-24T19:14:52+08:00">2020-02-24</time>
+              </span>
+            
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/翻译稿/" itemprop="url" rel="index"><span itemprop="name">翻译稿</span></a></span>
+
+                
+                
+                  ，
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/翻译稿/TypeScript/" itemprop="url" rel="index"><span itemprop="name">TypeScript</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+          
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">本文字数：</span>
+              
+              <span>2k</span>
+            </span>
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <pre><code>状态: 初稿
+</code></pre><h1 id="介绍" class="heading-control"><a href="#介绍" class="headerlink" title="介绍"></a>介绍<a class="heading-anchor" href="#介绍" aria-hidden="true"></a></h1><!-- # Introduction -->
+<div class="translation-block" title="
+Some of the unique concepts in TypeScript describe the shape of JavaScript objects at the type level.
+One example that is especially unique to TypeScript is the concept of &amp;#39;declaration merging&amp;#39;.
+Understanding this concept will give you an advantage when working with existing JavaScript.
+It also opens the door to more advanced abstraction concepts.
+"><p>TypeScript 一些独特概念在类型层面描述 JavaScript 对象的形体.<br>这其中尤其特殊的一个便是 TypeScript ‘定义合并’ 的概念.<br>理解此概念不仅有助于你与现有 JavaScript 代码协作.<br>它同时打开了通往更高级抽象的大门.</p></div>
+<a id="more"></a>
+<div class="translation-block" title="
+For the purposes of this article, &amp;quot;declaration merging&amp;quot; means that the compiler merges two separate declarations declared with the same name into a single definition.
+This merged definition has the features of both of the original declarations.
+Any number of declarations can be merged; it&amp;#39;s not limited to just two declarations.
+"><p>在本章, “定义合并”特指编译器把两个名字相同但各自独立的定义合并到一起.<br>合并后的定义具有来自两个独立定义的所有功能.<br>任何数量的定义都能合并; 不限于两个.</p></div>
+<h1 id="基础知识" class="heading-control"><a href="#基础知识" class="headerlink" title="基础知识"></a>基础知识<a class="heading-anchor" href="#基础知识" aria-hidden="true"></a></h1><!-- # Basic Concepts -->
+<div class="translation-block" title="
+In TypeScript, a declaration creates entities in at least one of three groups: namespace, type, or value.
+Namespace-creating declarations create a namespace, which contains names that are accessed using a dotted notation.
+Type-creating declarations do just that: they create a type that is visible with the declared shape and bound to the given name.
+Lastly, value-creating declarations create values that are visible in the output JavaScript.
+
+| Declaration Type | Namespace | Type | Value |
+|------------------|:---------:|:----:|:-----:|
+| Namespace        |     X     |      |   X   |
+| Class            |           |   X  |   X   |
+| Enum             |           |   X  |   X   |
+| Interface        |           |   X  |       |
+| Type Alias       |           |   X  |       |
+| Function         |           |      |   X   |
+| Variable         |           |      |   X   |
+
+Understanding what is created with each declaration will help you understand what is merged when you perform a declaration merge.
+"><p>在 TypeScript 中, 每个声明创建的实体都归于以下三组: 名字空间, 类型, 和值.<br>名字空间声明创建一个名字空间, 它包含通过点运算符才能访问的标识符.<br>类型声明创建形体符合声明的类型并绑定到给定名字上.<br>最后, 值声明创建在输出 JavaScript 可见的值.</p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>声明类型</th>
+<th style="text-align:center">名字空间</th>
+<th style="text-align:center">类型</th>
+<th style="text-align:center">值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>名字空间</td>
+<td style="text-align:center">X</td>
+<td style="text-align:center"></td>
+<td style="text-align:center">X</td>
+</tr>
+<tr>
+<td>类</td>
+<td style="text-align:center"></td>
+<td style="text-align:center">X</td>
+<td style="text-align:center">X</td>
+</tr>
+<tr>
+<td>枚举</td>
+<td style="text-align:center"></td>
+<td style="text-align:center">X</td>
+<td style="text-align:center">X</td>
+</tr>
+<tr>
+<td>接口</td>
+<td style="text-align:center"></td>
+<td style="text-align:center">X</td>
+<td style="text-align:center"></td>
+</tr>
+<tr>
+<td>类型别名</td>
+<td style="text-align:center"></td>
+<td style="text-align:center">X</td>
+<td style="text-align:center"></td>
+</tr>
+<tr>
+<td>函数</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center">X</td>
+</tr>
+<tr>
+<td>变量</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center">X</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>理解每种声明创建了什么是理解定义合并合并哪些东西的前提.</p></div>
+<h1 id="接口合并" class="heading-control"><a href="#接口合并" class="headerlink" title="接口合并"></a>接口合并<a class="heading-anchor" href="#接口合并" aria-hidden="true"></a></h1><!-- # Merging Interfaces -->
+<div class="translation-block" title="
+The simplest, and perhaps most common, type of declaration merging is interface merging.
+At the most basic level, the merge mechanically joins the members of both declarations into a single interface with the same name.
+"><p>最简单, 可能也是最常见的定义合并是接口合并.<br>作为最基础的一级, 接口合并机械地把两个接口的成员加入名字相同的单个接口.</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">interface</span> Box &#123;</span><br><span class="line">    height: <span class="built_in">number</span>;</span><br><span class="line">    width: <span class="built_in">number</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">interface</span> Box &#123;</span><br><span class="line">    scale: <span class="built_in">number</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> box: Box = &#123;height: <span class="number">5</span>, width: <span class="number">6</span>, scale: <span class="number">10</span>&#125;;</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+Non-function members of the interfaces should be unique.
+If they are not unique, they must be of the same type.
+The compiler will issue an error if the interfaces both declare a non-function member of the same name, but of different types.
+
+For function members, each function member of the same name is treated as describing an overload of the same function.
+Of note, too, is that in the case of interface `A` merging with later interface `A`, the second interface will have a higher precedence than the first.
+
+That is, in the example:
+"><p>各个接口的非函数成员必须唯一.<br>如果它们不唯一(译注: 名字), 就要求类型一致.<br>如果两接口声明了名字相同, 但类型不同的非函数成员, 编译器会报错.</p>
+<p>对函数成员, 每个名字相同的函数成员都视为是对同一函数重载的描述.<br>同时值得提醒, 假定接口 <code>A</code> 与后来的 <code>A</code> 合并, 第二个接口优先级更高.</p>
+<p>下例体现这点:</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">interface</span> Cloner &#123;</span><br><span class="line">    clone(animal: Animal): Animal;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">interface</span> Cloner &#123;</span><br><span class="line">    clone(animal: Sheep): Sheep;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">interface</span> Cloner &#123;</span><br><span class="line">    clone(animal: Dog): Dog;</span><br><span class="line">    clone(animal: Cat): Cat;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+The three interfaces will merge to create a single declaration as so:
+"><p>这三个接口会合并, 产生如下单一接口声明:</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">interface</span> Cloner &#123;</span><br><span class="line">    clone(animal: Dog): Dog;</span><br><span class="line">    clone(animal: Cat): Cat;</span><br><span class="line">    clone(animal: Sheep): Sheep;</span><br><span class="line">    clone(animal: Animal): Animal;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+Notice that the elements of each group maintains the same order, but the groups themselves are merged with later overload sets ordered first.
+
+One exception to this rule is specialized signatures.
+If a signature has a parameter whose type is a *single* string literal type (e.g. not a union of string literals), then it will be bubbled toward the top of its merged overload list.
+
+For instance, the following interfaces will merge together:
+"><p>可以看到每个组成员顺序保持不变, 但组本身按照越后(来)的组越靠前的顺序合并.</p>
+<p>此规则唯一例外是特化签名.<br>如果一个签名有<em>单个</em>字符串字面量类型(例如: 不是字符串字面量自适应类型)的参数, 那么这个签名会浮动到合并后的重载签名列表最上方.</p>
+<p>举个例子, 以下三个接口会合并:</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">interface</span> Document &#123;</span><br><span class="line">    createElement(tagName: <span class="built_in">any</span>): Element;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">interface</span> Document &#123;</span><br><span class="line">    createElement(tagName: <span class="string">"div"</span>): HTMLDivElement;</span><br><span class="line">    createElement(tagName: <span class="string">"span"</span>): HTMLSpanElement;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">interface</span> Document &#123;</span><br><span class="line">    createElement(tagName: <span class="built_in">string</span>): HTMLElement;</span><br><span class="line">    createElement(tagName: <span class="string">"canvas"</span>): HTMLCanvasElement;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+The resulting merged declaration of `Document` will be the following:
+"><p><code>Document</code> 接口合并后结果如下:</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">interface</span> Document &#123;</span><br><span class="line">    createElement(tagName: <span class="string">"canvas"</span>): HTMLCanvasElement;</span><br><span class="line">    createElement(tagName: <span class="string">"div"</span>): HTMLDivElement;</span><br><span class="line">    createElement(tagName: <span class="string">"span"</span>): HTMLSpanElement;</span><br><span class="line">    createElement(tagName: <span class="built_in">string</span>): HTMLElement;</span><br><span class="line">    createElement(tagName: <span class="built_in">any</span>): Element;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="名字空间合并" class="heading-control"><a href="#名字空间合并" class="headerlink" title="名字空间合并"></a>名字空间合并<a class="heading-anchor" href="#名字空间合并" aria-hidden="true"></a></h1><!-- # Merging Namespaces -->
+<div class="translation-block" title="
+Similarly to interfaces, namespaces of the same name will also merge their members.
+Since namespaces create both a namespace and a value, we need to understand how both merge.
+
+To merge the namespaces, type definitions from exported interfaces declared in each namespace are themselves merged, forming a single namespace with merged interface definitions inside.
+
+To merge the namespace value, at each declaration site, if a namespace already exists with the given name, it is further extended by taking the existing namespace and adding the exported members of the second namespace to the first.
+
+The declaration merge of `Animals` in this example:
+"><p>与接口一样, 名字相同的名字空间也会合并它们的成员.<br>由于名字空间声明同时创建名字空间和值, 我们需要理解两者分别是怎样合并的.</p>
+<p>要合并名字空间中的名字空间, 来自在每个名字空间中声明的导出名字空间的类型定义自行合并, 形成一个包含合并后的接口定义的单一名字空间.</p>
+<p>要合并名字空间中的值, 在每个声明点, 如果给定名字的名字空间已存在, 它会进一步接收已存在的名字空间, 添加它的导出成员以扩充自身.</p>
+<p>下例是名字空间 <code>Animals</code> 的定义合并:</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">namespace</span> Animals &#123;</span><br><span class="line">    <span class="keyword">export</span> <span class="keyword">class</span> Zebra &#123; &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">namespace</span> Animals &#123;</span><br><span class="line">    <span class="keyword">export</span> <span class="keyword">interface</span> Legged &#123; numberOfLegs: <span class="built_in">number</span>; &#125;</span><br><span class="line">    <span class="keyword">export</span> <span class="keyword">class</span> Dog &#123; &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+is equivalent to:
+"><p>等同于:</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">namespace</span> Animals &#123;</span><br><span class="line">    <span class="keyword">export</span> <span class="keyword">interface</span> Legged &#123; numberOfLegs: <span class="built_in">number</span>; &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">export</span> <span class="keyword">class</span> Zebra &#123; &#125;</span><br><span class="line">    <span class="keyword">export</span> <span class="keyword">class</span> Dog &#123; &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+This model of namespace merging is a helpful starting place, but we also need to understand what happens with non-exported members.
+Non-exported members are only visible in the original (un-merged) namespace. This means that after merging, merged members that came from other declarations cannot see non-exported members.
+
+We can see this more clearly in this example:
+"><p>理解这种名字空间合并模型是一个不错的开始, 但我们有必要了解非导出成员去了哪里.<br>非导出成员只在源(未经合并的)名字空间可见. 意味着合并以后, 来自其他声明的合并成员不能看见一个源名字空间的非导出成员.</p>
+<p>下例更清晰地显示这点:</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">namespace</span> Animal &#123;</span><br><span class="line">    <span class="keyword">let</span> haveMuscles = <span class="literal">true</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">export</span> <span class="function"><span class="keyword">function</span> <span class="title">animalsHaveMuscles</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> haveMuscles;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">namespace</span> Animal &#123;</span><br><span class="line">    <span class="keyword">export</span> <span class="function"><span class="keyword">function</span> <span class="title">doAnimalsHaveMuscles</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> haveMuscles;  <span class="comment">// Error, because haveMuscles is not accessible here</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+Because `haveMuscles` is not exported, only the `animalsHaveMuscles` function that shares the same un-merged namespace can see the symbol.
+The `doAnimalsHaveMuscles` function, even though it&amp;#39;s part of the merged `Animal` namespace can not see this un-exported member.
+"><p>因为 <code>haveMuscles</code> 没有被导出, 只有共享同一未合并名字空间的 <code>animalsHaveMuscles</code> 函数可以看到这个标识符.<br>即使 <code>doAnimalsHaveMuscles</code> 函数是合并后 <code>Animal</code> 名字空间的一部分, 也无法看到这个非导出成员.</p></div>
+<h1 id="名字空间与类-函数-枚举合并" class="heading-control"><a href="#名字空间与类-函数-枚举合并" class="headerlink" title="名字空间与类, 函数, 枚举合并"></a>名字空间与类, 函数, 枚举合并<a class="heading-anchor" href="#名字空间与类-函数-枚举合并" aria-hidden="true"></a></h1><!-- # Merging Namespaces with Classes, Functions, and Enums -->
+<div class="translation-block" title="
+Namespaces are flexible enough to also merge with other types of declarations.
+To do so, the namespace declaration must follow the declaration it will merge with. The resulting declaration has properties of both declaration types.
+TypeScript uses this capability to model some of the patterns in JavaScript as well as other programming languages.
+"><p>名字空间足够灵活, 以至于可以与其他类型的声明合并.<br>它是前提条件是, 名字空间声明必须尾随待合并声明. 结果声明具有两种声明类型的属性.<br>TypeScript 借助此能力模拟 JavaScript 和其他语言中的一些模式.</p></div>
+<h2 id="与类合并" class="heading-control"><a href="#与类合并" class="headerlink" title="与类合并"></a>与类合并<a class="heading-anchor" href="#与类合并" aria-hidden="true"></a></h2><!-- ## Merging Namespaces with Classes -->
+<div class="translation-block" title="
+This gives the user a way of describing inner classes.
+"><p>与类合并赋予用户以表达内部类的方法.</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> Album &#123;</span><br><span class="line">    label: Album.AlbumLabel;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">namespace</span> Album &#123;</span><br><span class="line">    <span class="keyword">export</span> <span class="keyword">class</span> AlbumLabel &#123; &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+The visibility rules for merged members is the same as described in the &amp;#39;Merging Namespaces&amp;#39; section, so we must export the `AlbumLabel` class for the merged class to see it.
+The end result is a class managed inside of another class.
+You can also use namespaces to add more static members to an existing class.
+
+In addition to the pattern of inner classes, you may also be familiar with the JavaScript practice of creating a function and then extending the function further by adding properties onto the function.
+TypeScript uses declaration merging to build up definitions like this in a type-safe way.
+"><p>合并成员的可见性规则与在’名字空间合并’一节描述的一致, 为了对合并后的类可见, 我们必须导出 <code>AlbumLabel</code> 类.<br>最终结果是管理内部另一个类的类.<br>你也可以用名字空间为现有类添加更多静态成员.</p>
+<p>除内部类外, 你或许熟悉 JavaScript 创建一个函数然后通过为函数添加属性扩充它的做法.<br>TypeScript 借助定义合并以类型安全的形式构建这样的定义.</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">buildLabel</span>(<span class="params">name: <span class="built_in">string</span></span>): <span class="title">string</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> buildLabel.prefix + name + buildLabel.suffix;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">namespace</span> buildLabel &#123;</span><br><span class="line">    <span class="keyword">export</span> <span class="keyword">let</span> suffix = <span class="string">""</span>;</span><br><span class="line">    <span class="keyword">export</span> <span class="keyword">let</span> prefix = <span class="string">"Hello, "</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="built_in">console</span>.log(buildLabel(<span class="string">"Sam Smith"</span>));</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+Similarly, namespaces can be used to extend enums with static members:
+"><p>同样, 名字空间可以为枚举添加静态成员:</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">enum</span> Color &#123;</span><br><span class="line">    red = <span class="number">1</span>,</span><br><span class="line">    green = <span class="number">2</span>,</span><br><span class="line">    blue = <span class="number">4</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">namespace</span> Color &#123;</span><br><span class="line">    <span class="keyword">export</span> <span class="function"><span class="keyword">function</span> <span class="title">mixColor</span>(<span class="params">colorName: <span class="built_in">string</span></span>) </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (colorName == <span class="string">"yellow"</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span> Color.red + Color.green;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span> <span class="keyword">if</span> (colorName == <span class="string">"white"</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span> Color.red + Color.green + Color.blue;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span> <span class="keyword">if</span> (colorName == <span class="string">"magenta"</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span> Color.red + Color.blue;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span> <span class="keyword">if</span> (colorName == <span class="string">"cyan"</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span> Color.green + Color.blue;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="不允许的合并" class="heading-control"><a href="#不允许的合并" class="headerlink" title="不允许的合并"></a>不允许的合并<a class="heading-anchor" href="#不允许的合并" aria-hidden="true"></a></h1><!-- # Disallowed Merges -->
+<div class="translation-block" title="
+Not all merges are allowed in TypeScript.
+Currently, classes can not merge with other classes or with variables.
+For information on mimicking class merging, see the [Mixins in TypeScript](.&amp;#x2F;Mixins.md) section.
+"><p>并不是所有可能的合并都被允许.<br>目前, 类不能与其他类, 或变量合并.<br>想获取模拟类合并的信息, 参看<a href="#">TypeScript 中的 Minxin</a>一章.</p></div>
+<h1 id="模块增强" class="heading-control"><a href="#模块增强" class="headerlink" title="模块增强"></a>模块增强<a class="heading-anchor" href="#模块增强" aria-hidden="true"></a></h1><!-- # Module Augmentation -->
+<div class="translation-block" title="
+Although JavaScript modules do not support merging, you can patch existing objects by importing and then updating them.
+Let&amp;#39;s look at a toy Observable example:
+"><p>虽然 JavaScript 模块不支持合并, 但你可以通过导入, 更新它们来补充现有对象.<br>请看这个朴素的 Observable 类:</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// observable.ts</span></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">class</span> Observable&lt;T&gt; &#123;</span><br><span class="line">    <span class="comment">// ... implementation left as an exercise for the reader ...</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// map.ts</span></span><br><span class="line"><span class="keyword">import</span> &#123; Observable &#125; <span class="keyword">from</span> <span class="string">"./observable"</span>;</span><br><span class="line">Observable.prototype.map = <span class="function"><span class="keyword">function</span> (<span class="params">f</span>) </span>&#123;</span><br><span class="line">    <span class="comment">// ... another exercise for the reader</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+This works fine in TypeScript too, but the compiler doesn&amp;#39;t know about `Observable.prototype.map`.
+You can use module augmentation to tell the compiler about it:
+"><p>这是合法的 TypeScript 程序, 但编译器还不了解其中的 <code>Observable.prototype.map</code>.<br>你可以利用模块增强告知编译器更多信息:</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// observable.ts</span></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">class</span> Observable&lt;T&gt; &#123;</span><br><span class="line">    <span class="comment">// ... implementation left as an exercise for the reader ...</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// map.ts</span></span><br><span class="line"><span class="keyword">import</span> &#123; Observable &#125; <span class="keyword">from</span> <span class="string">"./observable"</span>;</span><br><span class="line"><span class="keyword">declare</span> <span class="keyword">module</span> "./observable" &#123;</span><br><span class="line">    <span class="keyword">interface</span> Observable&lt;T&gt; &#123;</span><br><span class="line">        map&lt;U&gt;<span class="function">(<span class="params">f: (<span class="params">x: T</span>) =&gt; U</span>): <span class="params">Observable</span>&lt;<span class="params">U</span>&gt;;</span></span><br><span class="line"><span class="function">    &#125;</span></span><br><span class="line"><span class="function">&#125;</span></span><br><span class="line"><span class="function"><span class="params">Observable</span>.<span class="params">prototype</span>.<span class="params">map</span> = <span class="params">function</span> (<span class="params">f</span>) &#123;</span></span><br><span class="line"><span class="function">    // ... <span class="params">another</span> <span class="params">exercise</span> <span class="params">for</span> <span class="params">the</span> <span class="params">reader</span></span></span><br><span class="line"><span class="function">&#125;</span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function">// <span class="params">consumer</span>.<span class="params">ts</span></span></span><br><span class="line"><span class="function"><span class="params">import</span> &#123; <span class="params">Observable</span> &#125; <span class="params">from</span> "./<span class="params">observable</span>";</span></span><br><span class="line"><span class="function"><span class="params">import</span> "./<span class="params">map</span>";</span></span><br><span class="line"><span class="function"><span class="params">let</span> <span class="params">o</span>: <span class="params">Observable</span>&lt;<span class="params">number</span>&gt;;</span></span><br><span class="line"><span class="function"><span class="params">o</span>.<span class="params">map</span>(<span class="params">x =&gt; x.toFixed(<span class="params"></span>)</span>);</span></span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+The module name is resolved the same way as module specifiers in `import`&amp;#x2F;`export`.
+See [Modules](.&amp;#x2F;Modules.md) for more information.
+Then the declarations in an augmentation are merged as if they were declared in the same file as the original.
+
+However, there are two limitations to keep in mind: 
+
+1. You can&amp;#39;t declare new top-level declarations in the augmentation -- just patches to existing declarations.
+2. Default exports also cannot be augmented, only named exports (since you need to augment an export by its exported name, and `default` is a reserved word - see [#14080](https:&amp;#x2F;&amp;#x2F;github.com&amp;#x2F;Microsoft&amp;#x2F;TypeScript&amp;#x2F;issues&amp;#x2F;14080) for details)
+"><p>模块名按照与 <code>import</code>/<code>export</code> 模块标识符相同的方式解析.<br>阅读<a href="#">模块</a>一节获得更多信息.<br>于是增强中的声明被合并, 如同它们直接声明在源文件中.</p>
+<p>模块有两条需牢记的限制:</p>
+<ol>
+<li>你不可以在增强中声明新的顶层声明 — 只能补充现有声明.</li>
+<li>默认导出也不能增强, 只能增强命名导出 (因为导出名对增强来说是不可少的, 而 <code>default</code> 是个关键字 - 查看 <a href="https://github.com/Microsoft/TypeScript/issues/14080" target="_blank" rel="noopener">#14080</a> 了解细节)</li>
+</ol></div>
+<h2 id="全局增强" class="heading-control"><a href="#全局增强" class="headerlink" title="全局增强"></a>全局增强<a class="heading-anchor" href="#全局增强" aria-hidden="true"></a></h2><!-- ## Global augmentation -->
+<div class="translation-block" title="
+You can also add declarations to the global scope from inside a module:
+"><p>你可以在模块内部往全局空间添加声明:</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// observable.ts</span></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">class</span> Observable&lt;T&gt; &#123;</span><br><span class="line">    <span class="comment">// ... still no implementation ...</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">declare</span> global &#123;</span><br><span class="line">    <span class="keyword">interface</span> Array&lt;T&gt; &#123;</span><br><span class="line">        toObservable(): Observable&lt;T&gt;;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="built_in">Array</span>.prototype.toObservable = <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+Global augmentations have the same behavior and limits as module augmentations.
+"><p>全局增强存在与模块增强一样的行为和限制.</p></div>
+    </div>
+
+    
+    
+    
+        
+      
+        <div id="reward-container">
+  <div>如果这篇文章对您有用，可以考虑打赏:)</div>
+  <button id="reward-button" disable="enable" onclick="var qr = document.getElementById(&quot;qr&quot;); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+        
+      
+      <div style="display: inline-block">
+        <img src="/images/wechatpay.png" alt="Hyan Lee 微信支付">
+        <p>微信支付</p>
+      </div>
+
+  </div>
+</div>
+
+      
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>Hyan Lee</li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://hyan23.org/2019/11/20/ts-declaration-merging/" title="定义合并">https://hyan23.org/2019/11/20/ts-declaration-merging/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！</li>
+</ul>
+</div>
+
+      
+
+      <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+              
+                <a href="/2019/11/20/ts-module-resolution/" rel="next" title="模块解析">
+                  <i class="fa fa-chevron-left"></i> 模块解析
+                </a>
+              
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+              
+                <a href="/2019/11/20/ts-jsx/" rel="prev" title="JSX">
+                  JSX <i class="fa fa-chevron-right"></i>
+                </a>
+              
+            </div>
+          </div>
+        
+      </footer>
+    
+  </div>
+  
+  
+  
+  </article>
+
+  </div>
+
+
+          </div>
+          
+    
+    <div class="comments" id="gitalk-container"></div>
+  
+
+        </div>
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+        
+        
+        
+        
+      
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#介绍"><span class="nav-number">1.</span> <span class="nav-text">介绍</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#基础知识"><span class="nav-number">2.</span> <span class="nav-text">基础知识</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#接口合并"><span class="nav-number">3.</span> <span class="nav-text">接口合并</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#名字空间合并"><span class="nav-number">4.</span> <span class="nav-text">名字空间合并</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#名字空间与类-函数-枚举合并"><span class="nav-number">5.</span> <span class="nav-text">名字空间与类, 函数, 枚举合并</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#与类合并"><span class="nav-number">5.1.</span> <span class="nav-text">与类合并</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#不允许的合并"><span class="nav-number">6.</span> <span class="nav-text">不允许的合并</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#模块增强"><span class="nav-number">7.</span> <span class="nav-text">模块增强</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#全局增强"><span class="nav-number">7.1.</span> <span class="nav-text">全局增强</span></a></li></ol></li></ol></div>
+        
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image"
+      src="/images/avatar2.png"
+      alt="Hyan Lee">
+  <p class="site-author-name" itemprop="name">Hyan Lee</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">31</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-categories">
+        
+          
+            <a href="/categories/">
+          
+        
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">分类</span>
+        </a>
+      </div>
+    
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+      
+      
+        
+      
+      
+        
+      
+        <a href="https://github.com/hyan23" title="GitHub &rarr; https://github.com/hyan23" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+    
+      <span class="links-of-author-item">
+      
+      
+        
+      
+      
+        
+      
+        <a href="mailto:hyan23lee@hotmail.com" title="E-Mail &rarr; mailto:hyan23lee@hotmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+    
+      <span class="links-of-author-item">
+      
+      
+        
+      
+      
+        
+      
+        <a href="https://t.me/hyan23" title="Telegram &rarr; https://t.me/hyan23" rel="noopener" target="_blank"><i class="fa fa-fw fa-telegram"></i>Telegram</a>
+      </span>
+    
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    
+  
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+      
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2017 – <span itemprop="copyrightYear">2020</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Hyan Lee</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    
+    <span title="站点总字数">118k</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v3.9.0</div>
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js?v=3.1.0"></script>
+  <script src="//cdn.jsdelivr.net/npm/medium-zoom@1/dist/medium-zoom.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+<script src="/js/utils.js?v=7.4.0"></script>
+<script src="/js/schemes/pisces.js?v=7.4.0"></script>
+<script src="/js/next-boot.js?v=7.4.0"></script>
+
+
+
+  
+  <script>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+    mermaid.initialize({
+      theme: 'forest',
+      logLevel: 3,
+      flowchart: { curve: 'linear' },
+      gantt: { axisFormat: '%m/%d/%Y' },
+      sequence: { actorMargin: 50 }
+    });
+  }, window.mermaid);
+}
+</script>
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID: '442da4785490db3ece48',
+      clientSecret: '3bfa2829a34371ca37db636917e791d114bd338c',
+      repo: 'blog-comments',
+      owner: 'hyan23',
+      admin: ['hyan23'],
+      id: 'd3622eb7475e71c907160b6ecc66e910',
+        language: window.navigator.language || window.navigator.userLanguage,
+      
+      distractionFreeMode: 'true'
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+</script>
+
+</body>
+</html>

@@ -1,0 +1,872 @@
+<!DOCTYPE html>
+
+
+
+
+
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/favicon/apple-touch-icon.png?v=7.4.0">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon/favicon-32x32.png?v=7.4.0">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon/favicon-16x16.png?v=7.4.0">
+  <link rel="mask-icon" href="/images/favicon/safari-pinned-tab.svg?v=7.4.0" color="#222">
+  <link rel="manifest" href="/images/favicon/site.webmanifest">
+  <meta name="msapplication-config" content="/images/favicon/browserconfig.xml">
+  <meta http-equiv="Cache-Control" content="no-transform">
+  <meta http-equiv="Cache-Control" content="no-siteapp">
+
+<link rel="stylesheet" href="/css/main.css?v=7.4.0">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '7.4.0',
+    exturl: false,
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false},
+    copycode: {"enable":false,"show_result":false,"style":null},
+    back2top: {"enable":true,"sidebar":true,"scrollpercent":false},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: true,
+    lazyload: true,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: "",
+      labels: ""
+    },
+    localsearch: {"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: '',
+    motion: {"enable":false},
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="状态: 初稿 我们从用 TypeScript 构建一个简单的 Web 应用程序开始.">
+<meta name="keywords" content="博客,个人博客,日志,在线工具">
+<meta property="og:type" content="article">
+<meta property="og:title" content="五分钟了解 TypeScript">
+<meta property="og:url" content="https://hyan23.org/2019/11/05/ts-ts-in-5mins/index.html">
+<meta property="og:site_name" content="Hyan Lee">
+<meta property="og:description" content="状态: 初稿 我们从用 TypeScript 构建一个简单的 Web 应用程序开始.">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2020-03-06T11:55:23.118Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="五分钟了解 TypeScript">
+<meta name="twitter:description" content="状态: 初稿 我们从用 TypeScript 构建一个简单的 Web 应用程序开始.">
+  <link rel="canonical" href="https://hyan23.org/2019/11/05/ts-ts-in-5mins/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>五分钟了解 TypeScript | Hyan Lee</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+  <div class="container">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Hyan Lee</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+      
+      
+      
+        
+        <li class="menu-item menu-item-home">
+      
+    
+      
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-关于-/-留言板">
+      
+    
+      
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于 / 留言板</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-categories">
+      
+    
+      
+      
+        
+      
+        
+          
+        
+      
+        
+      
+    
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类<span class="badge">6</span></a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-archives">
+      
+    
+      
+      
+        
+          
+        
+      
+        
+      
+        
+      
+    
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">31</span></a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-精选-/-系列">
+      
+    
+      
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <a href="/selections/" rel="section"><i class="fa fa-fw fa-book"></i>精选 / 系列</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-摄影">
+      
+    
+      
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <a href="/gallery/" rel="section"><i class="fa fa-fw fa-camera"></i>摄影</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-工具">
+      
+    
+      
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <a href="/tools/" rel="section"><i class="fa fa-fw fa-calculator"></i>工具</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-友情链接">
+      
+    
+      
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <a href="/friends/" rel="section"><i class="fa fa-fw fa-external-link"></i>友情链接</a>
+
+  </li>
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+            
+
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+      <article itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block post">
+    <link itemprop="mainEntityOfPage" href="https://hyan23.org/2019/11/05/ts-ts-in-5mins/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Hyan Lee">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar2.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hyan Lee">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">五分钟了解 TypeScript
+
+          
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              
+                
+              
+
+              <time title="创建时间：2019-11-05 12:36:37" itemprop="dateCreated datePublished" datetime="2019-11-05T12:36:37+08:00">2019-11-05</time>
+            </span>
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-03-06 19:55:23" itemprop="dateModified" datetime="2020-03-06T19:55:23+08:00">2020-03-06</time>
+              </span>
+            
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/翻译稿/" itemprop="url" rel="index"><span itemprop="name">翻译稿</span></a></span>
+
+                
+                
+                  ，
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/翻译稿/TypeScript/" itemprop="url" rel="index"><span itemprop="name">TypeScript</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+          
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">本文字数：</span>
+              
+              <span>1.3k</span>
+            </span>
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <pre><code>状态: 初稿
+</code></pre><div class="translation-block" title="
+Let&amp;#39;s get started by building a simple web application with TypeScript.
+"><p>我们从用 TypeScript 构建一个简单的 Web 应用程序开始.</p></div>
+<a id="more"></a>
+<h1 id="安装-TypeScript" class="heading-control"><a href="#安装-TypeScript" class="headerlink" title="安装 TypeScript"></a>安装 TypeScript<a class="heading-anchor" href="#安装-TypeScript" aria-hidden="true"></a></h1><!-- ## Installing TypeScript -->
+<div class="translation-block" title="
+There are two main ways to get the TypeScript tools:
+
+* Via npm (the Node.js package manager)
+* By installing TypeScript&amp;#39;s Visual Studio plugins
+
+Visual Studio 2017 and Visual Studio 2015 Update 3 include TypeScript by default.
+If you didn&amp;#39;t install TypeScript with Visual Studio, you can still [download it](&amp;#x2F;#download-links).
+
+For NPM users:
+"><p>主要有两种安装 TypeScript 的方式:</p>
+<ul>
+<li>通过 NPM（Node.js 包管理器）</li>
+<li>通过安装 Visual Studio 的 TypeScript 插件</li>
+</ul>
+<p>Visual Studio 2017 和 Visual Studio 2015 Update 3 已经默认附带 TypeScript.<br>如果 TypeScript 没有随你的 Visual Studio 一起安装, 你可随时从<a href="https://www.typescriptlang.org/#download-links" target="_blank" rel="noopener">此链接</a>下载.</p>
+<p>NPM 用户:</p></div>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;</span><span class="bash"> npm install -g typescript</span></span><br></pre></td></tr></table></figure>
+<h1 id="第一个-TypeScript-文件" class="heading-control"><a href="#第一个-TypeScript-文件" class="headerlink" title="第一个 TypeScript 文件"></a>第一个 TypeScript 文件<a class="heading-anchor" href="#第一个-TypeScript-文件" aria-hidden="true"></a></h1><!-- ## Building your first TypeScript file -->
+<div class="translation-block" title="
+In your editor, type the following JavaScript code in `greeter.ts`:
+"><p>打开你的编辑器, 键入以下内容, 并保存为 <code>greeter.ts</code>:</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">greeter</span>(<span class="params">person</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="string">"Hello, "</span> + person;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> user = <span class="string">"Jane User"</span>;</span><br><span class="line"></span><br><span class="line"><span class="built_in">document</span>.body.textContent = greeter(user);</span><br></pre></td></tr></table></figure>
+<h1 id="编译-TypeScript-源程序" class="heading-control"><a href="#编译-TypeScript-源程序" class="headerlink" title="编译 TypeScript 源程序"></a>编译 TypeScript 源程序<a class="heading-anchor" href="#编译-TypeScript-源程序" aria-hidden="true"></a></h1><!-- ## Compiling your code -->
+<div class="translation-block" title="
+We used a `.ts` extension, but this code is just JavaScript.
+You could have copy&amp;#x2F;pasted this straight out of an existing JavaScript app.
+
+At the command line, run the TypeScript compiler:
+"><p>我们选用了 <code>.ts</code> 扩展名, 但其实那个程序只是 JavaScript.<br>与你在现有 JavaScript 应用中看到的没有区别.</p>
+<p>打开命令行终端, 运行 TypeScript 编译器:</p></div>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tsc greeter.ts</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+The result will be a file `greeter.js` which contains the same JavaScript that you fed in.
+We&amp;#39;re up and running using TypeScript in our JavaScript app!
+"><p>编译生成的文件是 <code>greeter.js</code>, 它的内容和输入的 <code>.ts</code> 文件并无二致.<br>我们在用 TypeScript 编译 JavaScript!</p></div>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">greeter</span>(<span class="params">person</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="string">"Hello, "</span> + person;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">var</span> user = <span class="string">"Jane User"</span>;</span><br><span class="line"><span class="built_in">document</span>.body.textContent = greeter(user);</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+Now we can start taking advantage of some of the new tools TypeScript offers.
+Add a `: string` type annotation to the &amp;#39;person&amp;#39; function argument as shown here:
+"><p>来试试 TypeScript 带来的新东西吧.<br>在函数参数 <code>person</code> 后面添加 <code>: string</code> 类型注解, 就像这样：</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">greeter</span>(<span class="params">person: <span class="built_in">string</span></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="string">"Hello, "</span> + person;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> user = <span class="string">"Jane User"</span>;</span><br><span class="line"></span><br><span class="line"><span class="built_in">document</span>.body.textContent = greeter(user);</span><br></pre></td></tr></table></figure>
+<h1 id="类型注解" class="heading-control"><a href="#类型注解" class="headerlink" title="类型注解"></a>类型注解<a class="heading-anchor" href="#类型注解" aria-hidden="true"></a></h1><!-- ## Type annotations -->
+<div class="translation-block" title="
+Type annotations in TypeScript are lightweight ways to record the intended contract of the function or variable.
+In this case, we intend the greeter function to be called with a single string parameter.
+We can try changing the call greeter to pass an array instead:
+"><p>TypeScript 借助类型注解来记录和约束变量, 函数的类型.<br>上例, 我们希望调用者传入一个 <code>string</code> 类型的参数 <code>person</code> 来调用被调函数 <code>greeter</code>.<br>我们尝试传入数组, 看看会发生什么:</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">greeter</span>(<span class="params">person: <span class="built_in">string</span></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="string">"Hello, "</span> + person;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> user = [<span class="number">0</span>, <span class="number">1</span>, <span class="number">2</span>];</span><br><span class="line"></span><br><span class="line"><span class="built_in">document</span>.body.textContent = greeter(user);</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+Re-compiling, you&amp;#39;ll now see an error:
+"><p>重新编译, 你会看到一个错误：</p></div>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">error TS2345: Argument of type 'number[]' is not assignable to parameter of type 'string'.</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+Similarly, try removing all the arguments to the greeter call.
+TypeScript will let you know that you have called this function with an unexpected number of parameters.
+In both cases, TypeScript can offer static analysis based on both the structure of your code, and the type annotations you provide.
+
+Notice that although there were errors, the `greeter.js` file is still created.
+You can use TypeScript even if there are errors in your code. But in this case, TypeScript is warning that your code will likely not run as expected.
+"><p>同样地, 试着移除 <code>greeter</code> 调用的所有参数.<br>总之, 如果传给函数的参数数量不对, TypeScript 会让你知道.<br>无论如何, TypeScript 都根据程序结构, 所有类型注解对程序执行静态分析.</p>
+<p>注意编译器始终会创建 <code>greeter.js</code>, 而不管程序是否存在错误.<br>你可以编译包含错误的程序. 但 TypeScript 会提醒你程序可能不按你预期那样工作.</p></div>
+<h1 id="接口" class="heading-control"><a href="#接口" class="headerlink" title="接口"></a>接口<a class="heading-anchor" href="#接口" aria-hidden="true"></a></h1><!-- ## Interfaces -->
+<div class="translation-block" title="
+Let&amp;#39;s develop our sample further. Here we use an interface that describes objects that have a firstName and lastName field.
+In TypeScript, two types are compatible if their internal structure is compatible.
+This allows us to implement an interface just by having the shape the interface requires, without an explicit `implements` clause.
+"><p>在这一节, 我们创建一个名为 <code>Person</code> 的接口, 它这样描述一个类：拥有 <code>firstName</code>, <code>lastName</code> 两个成员变量.<br>在 TypeScript 中, 如果两个类型的内部结构(shape, 形体)是相容的, 它们自身也是相容的.<br>我们可以照接口要求的形体实现一个接口, 不需要显式 <code>implements</code> 子句.</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">interface</span> Person &#123;</span><br><span class="line">    firstName: <span class="built_in">string</span>;</span><br><span class="line">    lastName: <span class="built_in">string</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">greeter</span>(<span class="params">person: Person</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="string">"Hello, "</span> + person.firstName + <span class="string">" "</span> + person.lastName;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> user = &#123; firstName: <span class="string">"Jane"</span>, lastName: <span class="string">"User"</span> &#125;;</span><br><span class="line"></span><br><span class="line"><span class="built_in">document</span>.body.textContent = greeter(user);</span><br></pre></td></tr></table></figure>
+<h1 id="类" class="heading-control"><a href="#类" class="headerlink" title="类"></a>类<a class="heading-anchor" href="#类" aria-hidden="true"></a></h1><!-- ## Classes -->
+<div class="translation-block" title="
+Finally, let&amp;#39;s extend the example one last time with classes.
+TypeScript supports new features in JavaScript, like support for class-based object-oriented programming.
+
+Here we&amp;#39;re going to create a `Student` class with a constructor and a few public fields.
+Notice that classes and interfaces play well together, letting the programmer decide on the right level of abstraction.
+
+Also of note, the use of `public` on arguments to the constructor is a shorthand that allows us to automatically create properties with that name.
+"><p>TypeScript 同样支持 JavaScript 的新功能, 比如基于类的面向对象编程.<br>最后, 让我们为 <code>Person</code> 接口加入一个实现类.</p>
+<p>该实现类名为 <code>Student</code>, 包含一个构造器和两个成员变量.<br>可以看到类和接口结合良好, 编程人员容易正确建立抽象层次.</p>
+<blockquote>
+<p>注: <code>public</code> 修饰构造函数的参数自动在类中创建一个同名成员变量.</p>
+</blockquote></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> Student &#123;</span><br><span class="line">    fullName: <span class="built_in">string</span>;</span><br><span class="line">    <span class="keyword">constructor</span>(<span class="params"><span class="keyword">public</span> firstName: <span class="built_in">string</span>, <span class="keyword">public</span> middleInitial: <span class="built_in">string</span>, <span class="keyword">public</span> lastName: <span class="built_in">string</span></span>) &#123;</span><br><span class="line">        <span class="keyword">this</span>.fullName = firstName + <span class="string">" "</span> + middleInitial + <span class="string">" "</span> + lastName;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">interface</span> Person &#123;</span><br><span class="line">    firstName: <span class="built_in">string</span>;</span><br><span class="line">    lastName: <span class="built_in">string</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">greeter</span>(<span class="params">person: Person</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="string">"Hello, "</span> + person.firstName + <span class="string">" "</span> + person.lastName;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> user = <span class="keyword">new</span> Student(<span class="string">"Jane"</span>, <span class="string">"M."</span>, <span class="string">"User"</span>);</span><br><span class="line"></span><br><span class="line"><span class="built_in">document</span>.body.textContent = greeter(user);</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+Re-run `tsc greeter.ts` and you&amp;#39;ll see the generated JavaScript is the same as the earlier code.
+Classes in TypeScript are just a shorthand for the same prototype-based OO that is frequently used in JavaScript.
+"><p>再次编译 <code>greeter.ts</code>, 你会看到 TypeScript 中的类模型被编译成了 JavaScript 常用的面向对象编程模式.</p></div>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> Student = <span class="comment">/** @class */</span> (<span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">function</span> <span class="title">Student</span>(<span class="params">firstName, middleInitial, lastName</span>) </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.firstName = firstName;</span><br><span class="line">        <span class="keyword">this</span>.middleInitial = middleInitial;</span><br><span class="line">        <span class="keyword">this</span>.lastName = lastName;</span><br><span class="line">        <span class="keyword">this</span>.fullName = firstName + <span class="string">" "</span> + middleInitial + <span class="string">" "</span> + lastName;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> Student;</span><br><span class="line">&#125;());</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">greeter</span>(<span class="params">person</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="string">"Hello, "</span> + person.firstName + <span class="string">" "</span> + person.lastName;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">var</span> user = <span class="keyword">new</span> Student(<span class="string">"Jane"</span>, <span class="string">"M."</span>, <span class="string">"User"</span>);</span><br><span class="line"><span class="built_in">document</span>.body.textContent = greeter(user);</span><br></pre></td></tr></table></figure>
+<h1 id="运行-TypeScript-应用" class="heading-control"><a href="#运行-TypeScript-应用" class="headerlink" title="运行 TypeScript 应用"></a>运行 TypeScript 应用<a class="heading-anchor" href="#运行-TypeScript-应用" aria-hidden="true"></a></h1><!-- ## Running your TypeScript web app -->
+<div class="translation-block" title="
+Now type the following in `greeter.html`:
+"><p>在 <code>greeter.js</code> 所在目录创建一个新 HTML 文件, 命名为 <code>greeter.html</code>, 键入以下内容：</p></div>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;!DOCTYPE html&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">html</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">head</span>&gt;</span><span class="tag">&lt;<span class="name">title</span>&gt;</span>TypeScript Greeter<span class="tag">&lt;/<span class="name">title</span>&gt;</span><span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">script</span> <span class="attr">src</span>=<span class="string">"greeter.js"</span>&gt;</span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+Open `greeter.html` in the browser to run your first simple TypeScript web application!
+
+Optional: Open `greeter.ts` in Visual Studio, or copy the code into the TypeScript playground.
+You can hover over identifiers to see their types.
+Notice that in some cases these types are inferred automatically for you.
+Re-type the last line, and see completion lists and parameter help based on the types of the DOM elements.
+Put your cursor on the reference to the greeter function, and hit F12 to go to its definition.
+Notice, too, that you can right-click on a symbol and use refactoring to rename it.
+
+The type information provided works together with the tools to work with JavaScript at application scale.
+For more examples of what&amp;#39;s possible in TypeScript, see the Samples section of the website.
+
+![Visual Studio picture](&amp;#x2F;assets&amp;#x2F;images&amp;#x2F;docs&amp;#x2F;greet_person.png)
+"><p>现在, 你可以在浏览器中打开 <code>greeter.html</code>, 运行你第一个 TypeScript 应用！</p>
+<blockquote>
+<p>注：用 Visual Studio 或 <a href="https://www.typescriptlang.org/play/index.html" target="_blank" rel="noopener">TypeScript playground</a> 编辑 <code>greeter.ts</code>.<br>将鼠标指针悬停在标识符上, 就可以查看它们的类型信息.</p>
+</blockquote>
+<p><img alt="greet_person.png" data-src="/images/ts-in-5mins/greet_person.png"></p></div>
+    </div>
+
+    
+    
+    
+        
+      
+        <div id="reward-container">
+  <div>如果这篇文章对您有用，可以考虑打赏:)</div>
+  <button id="reward-button" disable="enable" onclick="var qr = document.getElementById(&quot;qr&quot;); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+        
+      
+      <div style="display: inline-block">
+        <img src="/images/wechatpay.png" alt="Hyan Lee 微信支付">
+        <p>微信支付</p>
+      </div>
+
+  </div>
+</div>
+
+      
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>Hyan Lee</li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://hyan23.org/2019/11/05/ts-ts-in-5mins/" title="五分钟了解 TypeScript">https://hyan23.org/2019/11/05/ts-ts-in-5mins/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！</li>
+</ul>
+</div>
+
+      
+
+      <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+              
+                <a href="/2019/10/19/hexo/" rel="next" title="hexo 使用速查手册">
+                  <i class="fa fa-chevron-left"></i> hexo 使用速查手册
+                </a>
+              
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+              
+                <a href="/2019/11/05/ts-basic-types/" rel="prev" title="基本数据类型">
+                  基本数据类型 <i class="fa fa-chevron-right"></i>
+                </a>
+              
+            </div>
+          </div>
+        
+      </footer>
+    
+  </div>
+  
+  
+  
+  </article>
+
+  </div>
+
+
+          </div>
+          
+    
+    <div class="comments" id="gitalk-container"></div>
+  
+
+        </div>
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+        
+        
+        
+        
+      
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#安装-TypeScript"><span class="nav-number">1.</span> <span class="nav-text">安装 TypeScript</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#第一个-TypeScript-文件"><span class="nav-number">2.</span> <span class="nav-text">第一个 TypeScript 文件</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#编译-TypeScript-源程序"><span class="nav-number">3.</span> <span class="nav-text">编译 TypeScript 源程序</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#类型注解"><span class="nav-number">4.</span> <span class="nav-text">类型注解</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#接口"><span class="nav-number">5.</span> <span class="nav-text">接口</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#类"><span class="nav-number">6.</span> <span class="nav-text">类</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#运行-TypeScript-应用"><span class="nav-number">7.</span> <span class="nav-text">运行 TypeScript 应用</span></a></li></ol></div>
+        
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image"
+      src="/images/avatar2.png"
+      alt="Hyan Lee">
+  <p class="site-author-name" itemprop="name">Hyan Lee</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">31</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-categories">
+        
+          
+            <a href="/categories/">
+          
+        
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">分类</span>
+        </a>
+      </div>
+    
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+      
+      
+        
+      
+      
+        
+      
+        <a href="https://github.com/hyan23" title="GitHub &rarr; https://github.com/hyan23" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+    
+      <span class="links-of-author-item">
+      
+      
+        
+      
+      
+        
+      
+        <a href="mailto:hyan23lee@hotmail.com" title="E-Mail &rarr; mailto:hyan23lee@hotmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+    
+      <span class="links-of-author-item">
+      
+      
+        
+      
+      
+        
+      
+        <a href="https://t.me/hyan23" title="Telegram &rarr; https://t.me/hyan23" rel="noopener" target="_blank"><i class="fa fa-fw fa-telegram"></i>Telegram</a>
+      </span>
+    
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    
+  
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+      
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2017 – <span itemprop="copyrightYear">2020</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Hyan Lee</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    
+    <span title="站点总字数">118k</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v3.9.0</div>
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js?v=3.1.0"></script>
+  <script src="//cdn.jsdelivr.net/npm/medium-zoom@1/dist/medium-zoom.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+<script src="/js/utils.js?v=7.4.0"></script>
+<script src="/js/schemes/pisces.js?v=7.4.0"></script>
+<script src="/js/next-boot.js?v=7.4.0"></script>
+
+
+
+  
+  <script>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+    mermaid.initialize({
+      theme: 'forest',
+      logLevel: 3,
+      flowchart: { curve: 'linear' },
+      gantt: { axisFormat: '%m/%d/%Y' },
+      sequence: { actorMargin: 50 }
+    });
+  }, window.mermaid);
+}
+</script>
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID: '442da4785490db3ece48',
+      clientSecret: '3bfa2829a34371ca37db636917e791d114bd338c',
+      repo: 'blog-comments',
+      owner: 'hyan23',
+      admin: ['hyan23'],
+      id: 'd6ac0c5ac6c8171b3ddb2eddaad828fc',
+        language: window.navigator.language || window.navigator.userLanguage,
+      
+      distractionFreeMode: 'true'
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+</script>
+
+</body>
+</html>

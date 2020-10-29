@@ -1,0 +1,970 @@
+<!DOCTYPE html>
+
+
+
+
+
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/favicon/apple-touch-icon.png?v=7.4.0">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon/favicon-32x32.png?v=7.4.0">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon/favicon-16x16.png?v=7.4.0">
+  <link rel="mask-icon" href="/images/favicon/safari-pinned-tab.svg?v=7.4.0" color="#222">
+  <link rel="manifest" href="/images/favicon/site.webmanifest">
+  <meta name="msapplication-config" content="/images/favicon/browserconfig.xml">
+  <meta http-equiv="Cache-Control" content="no-transform">
+  <meta http-equiv="Cache-Control" content="no-siteapp">
+
+<link rel="stylesheet" href="/css/main.css?v=7.4.0">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '7.4.0',
+    exturl: false,
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false},
+    copycode: {"enable":false,"show_result":false,"style":null},
+    back2top: {"enable":true,"sidebar":true,"scrollpercent":false},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: true,
+    lazyload: true,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: "",
+      labels: ""
+    },
+    localsearch: {"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: '',
+    motion: {"enable":false},
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="状态: 初稿  介绍 我们的程序需要存储和处理数据, 而所有复杂数据结构都是由数字, 字符串, 结构, 布尔类型等基本单元组合而成的.TypeScript 不仅包含几乎所有你期望在 JavaScript 见到的那些基本数据类型, 还新增了枚举类型帮助你写出更可读的程序. 本文将介绍它们.">
+<meta name="keywords" content="博客,个人博客,日志,在线工具">
+<meta property="og:type" content="article">
+<meta property="og:title" content="基本数据类型">
+<meta property="og:url" content="https://hyan23.org/2019/11/05/ts-basic-types/index.html">
+<meta property="og:site_name" content="Hyan Lee">
+<meta property="og:description" content="状态: 初稿  介绍 我们的程序需要存储和处理数据, 而所有复杂数据结构都是由数字, 字符串, 结构, 布尔类型等基本单元组合而成的.TypeScript 不仅包含几乎所有你期望在 JavaScript 见到的那些基本数据类型, 还新增了枚举类型帮助你写出更可读的程序. 本文将介绍它们.">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2020-03-06T11:55:23.140Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="基本数据类型">
+<meta name="twitter:description" content="状态: 初稿  介绍 我们的程序需要存储和处理数据, 而所有复杂数据结构都是由数字, 字符串, 结构, 布尔类型等基本单元组合而成的.TypeScript 不仅包含几乎所有你期望在 JavaScript 见到的那些基本数据类型, 还新增了枚举类型帮助你写出更可读的程序. 本文将介绍它们.">
+  <link rel="canonical" href="https://hyan23.org/2019/11/05/ts-basic-types/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>基本数据类型 | Hyan Lee</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+  <div class="container">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Hyan Lee</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+      
+      
+      
+        
+        <li class="menu-item menu-item-home">
+      
+    
+      
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-关于-/-留言板">
+      
+    
+      
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于 / 留言板</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-categories">
+      
+    
+      
+      
+        
+      
+        
+          
+        
+      
+        
+      
+    
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类<span class="badge">6</span></a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-archives">
+      
+    
+      
+      
+        
+          
+        
+      
+        
+      
+        
+      
+    
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">31</span></a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-精选-/-系列">
+      
+    
+      
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <a href="/selections/" rel="section"><i class="fa fa-fw fa-book"></i>精选 / 系列</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-摄影">
+      
+    
+      
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <a href="/gallery/" rel="section"><i class="fa fa-fw fa-camera"></i>摄影</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-工具">
+      
+    
+      
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <a href="/tools/" rel="section"><i class="fa fa-fw fa-calculator"></i>工具</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-友情链接">
+      
+    
+      
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <a href="/friends/" rel="section"><i class="fa fa-fw fa-external-link"></i>友情链接</a>
+
+  </li>
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+            
+
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+      <article itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block post">
+    <link itemprop="mainEntityOfPage" href="https://hyan23.org/2019/11/05/ts-basic-types/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Hyan Lee">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar2.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hyan Lee">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">基本数据类型
+
+          
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              
+                
+              
+
+              <time title="创建时间：2019-11-05 16:13:18" itemprop="dateCreated datePublished" datetime="2019-11-05T16:13:18+08:00">2019-11-05</time>
+            </span>
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-03-06 19:55:23" itemprop="dateModified" datetime="2020-03-06T19:55:23+08:00">2020-03-06</time>
+              </span>
+            
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/翻译稿/" itemprop="url" rel="index"><span itemprop="name">翻译稿</span></a></span>
+
+                
+                
+                  ，
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/翻译稿/TypeScript/" itemprop="url" rel="index"><span itemprop="name">TypeScript</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+          
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">本文字数：</span>
+              
+              <span>2.8k</span>
+            </span>
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <pre><code>状态: 初稿
+</code></pre><!--
+# Table of Contents
+- [Table of Contents](#table-of-contents)
+- [介绍](#%E4%BB%8B%E7%BB%8D)
+- [布尔类型(Boolean)](#%E5%B8%83%E5%B0%94%E7%B1%BB%E5%9E%8Bboolean)
+- [数字类型(Number)](#%E6%95%B0%E5%AD%97%E7%B1%BB%E5%9E%8Bnumber)
+- [字符串(String)](#%E5%AD%97%E7%AC%A6%E4%B8%B2string)
+- [数组(Array)](#%E6%95%B0%E7%BB%84array)
+- [元组(Tuple)](#%E5%85%83%E7%BB%84tuple)
+- [枚举(Enum)](#%E6%9E%9A%E4%B8%BEenum)
+- [Any](#any)
+- [Void](#void)
+- [Null 和 Undefined](#null-%E5%92%8C-undefined)
+- [Never](#never)
+- [Object](#object)
+- [类型担保](#%E7%B1%BB%E5%9E%8B%E6%8B%85%E4%BF%9D)
+- [关于 let](#%E5%85%B3%E4%BA%8E-let)
+-->
+<h1 id="介绍" class="heading-control"><a href="#介绍" class="headerlink" title="介绍"></a>介绍<a class="heading-anchor" href="#介绍" aria-hidden="true"></a></h1><!-- # Introduction -->
+<div class="translation-block" title="
+For programs to be useful, we need to be able to work with some of the simplest units of data: numbers, strings, structures, boolean values, and the like.
+In TypeScript, we support much the same types as you would expect in JavaScript, with a convenient enumeration type thrown in to help things along.
+"><p>我们的程序需要存储和处理数据, 而所有复杂数据结构都是由数字, 字符串, 结构, 布尔类型等基本单元组合而成的.<br>TypeScript 不仅包含几乎所有你期望在 JavaScript 见到的那些基本数据类型, 还新增了枚举类型帮助你写出更可读的程序. 本文将介绍它们.</p></div>
+<a id="more"></a>
+<h1 id="布尔类型-Boolean" class="heading-control"><a href="#布尔类型-Boolean" class="headerlink" title="布尔类型(Boolean)"></a>布尔类型(Boolean)<a class="heading-anchor" href="#布尔类型-Boolean" aria-hidden="true"></a></h1><!-- # Boolean -->
+<div class="translation-block" title="
+The most basic datatype is the simple true&amp;#x2F;false value, which JavaScript and TypeScript call a `boolean` value.
+"><p><strong>布尔类型</strong>（Boolean）, 你只能用它表示两个值——真（<code>true</code>）, 假（<code>false</code>）. 用关键字 <code>boolean</code> 来定义一个布尔类型的变量.</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> isDone: <span class="built_in">boolean</span> = <span class="literal">false</span>;</span><br></pre></td></tr></table></figure>
+<h1 id="数字类型-Number" class="heading-control"><a href="#数字类型-Number" class="headerlink" title="数字类型(Number)"></a>数字类型(Number)<a class="heading-anchor" href="#数字类型-Number" aria-hidden="true"></a></h1><!-- # Number -->
+<div class="translation-block" title="
+As in JavaScript, all numbers in TypeScript are floating point values.
+These floating point numbers get the type `number`.
+In addition to hexadecimal and decimal literals, TypeScript also supports binary and octal literals introduced in ECMAScript 2015.
+"><p><strong>数字类型</strong>（Number）. 跟 JavaScript 一致, 所有 TypeScript 中的数字都是浮点数.<br>我们用 <code>number</code> 关键字来定义数字型变量.<br>从 ECMAScript 2015 开始, TypeScript 同时支持十进制, 十六进制, 二进制, 和八进制字面量.<br>以下都是对一个 <code>number</code> 变量的正确初始化.</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> decimal: <span class="built_in">number</span> = <span class="number">6</span>;</span><br><span class="line"><span class="keyword">let</span> hex: <span class="built_in">number</span> = <span class="number">0xf00d</span>;</span><br><span class="line"><span class="keyword">let</span> binary: <span class="built_in">number</span> = <span class="number">0b1010</span>;</span><br><span class="line"><span class="keyword">let</span> octal: <span class="built_in">number</span> = <span class="number">0o744</span>;</span><br></pre></td></tr></table></figure>
+<h1 id="字符串-String" class="heading-control"><a href="#字符串-String" class="headerlink" title="字符串(String)"></a>字符串(String)<a class="heading-anchor" href="#字符串-String" aria-hidden="true"></a></h1><!-- # String -->
+<div class="translation-block" title="
+Another fundamental part of creating programs in JavaScript for webpages and servers alike is working with textual data.
+As in other languages, we use the type `string` to refer to these textual datatypes.
+Just like JavaScript, TypeScript also uses double quotes (`&amp;quot;`) or single quotes (`&amp;#39;`) to surround string data.
+"><p>无论是创建网页还是类服务端(servers alike)应用, <strong>字符串</strong>（String, 或文本类型）都是另一种重要的数据类型.<br>我们用关键字 <code>string</code> 来定义一个字符串变量.<br>字符串字面量必须以成对的单引号 (‘) 或双引号 (“) 环绕.</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> color: <span class="built_in">string</span> = <span class="string">"blue"</span>;</span><br><span class="line">color = <span class="string">'red'</span>;</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+You can also use *template strings*, which can span multiple lines and have embedded expressions.
+These strings are surrounded by the backtick&amp;#x2F;backquote (`` ` ``) character, and embedded expressions are of the form `${ expr }`.
+"><p><strong>模板字符串</strong>（template strings）能够在源程序中跨越多行. 它们以反引号 (`) 环绕;<br>你还可以在模板字符串内嵌入表达式, 这些表达式形如: <code>${ expr }</code></p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> fullName: <span class="built_in">string</span> = <span class="string">`Bob Bobbington`</span>;</span><br><span class="line"><span class="keyword">let</span> age: <span class="built_in">number</span> = <span class="number">37</span>;</span><br><span class="line"><span class="keyword">let</span> sentence: <span class="built_in">string</span> = <span class="string">`Hello, my name is <span class="subst">$&#123; fullName &#125;</span>.</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">I'll be <span class="subst">$&#123; age + <span class="number">1</span> &#125;</span> years old next month.`</span>;</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+This is equivalent to declaring `sentence` like so:
+"><p>以上对 <code>sentence</code> 的定义等同于:</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> sentence: <span class="built_in">string</span> = <span class="string">"Hello, my name is "</span> + fullName + <span class="string">".\n\n"</span> +</span><br><span class="line">    <span class="string">"I'll be "</span> + (age + <span class="number">1</span>) + <span class="string">" years old next month."</span>;</span><br></pre></td></tr></table></figure>
+<h1 id="数组-Array" class="heading-control"><a href="#数组-Array" class="headerlink" title="数组(Array)"></a>数组(Array)<a class="heading-anchor" href="#数组-Array" aria-hidden="true"></a></h1><!-- # Array -->
+<div class="translation-block" title="
+TypeScript, like JavaScript, allows you to work with arrays of values.
+Array types can be written in one of two ways.
+In the first, you use the type of the elements followed by `[]` to denote an array of that element type:
+"><p><strong>数组</strong>（Array）存储相同类型的一组元素.<br>有两种描述数组类型的方式:<br>其一, 在元素类型后面加一对方括号（[]）将其扩展为存储该类型的数组类型:</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> list: <span class="built_in">number</span>[] = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>];</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+The second way uses a generic array type, `Array&amp;lt;elemType&amp;gt;`:
+"><p>其二, 特化泛型数组类型 <code>Array&lt;elemType&gt;</code>.</p>
+<blockquote>
+<p>译注: 参考<a href="#">泛型</a>一章.</p>
+</blockquote></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> list: <span class="built_in">Array</span>&lt;<span class="built_in">number</span>&gt; = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>];</span><br></pre></td></tr></table></figure>
+<h1 id="元组-Tuple" class="heading-control"><a href="#元组-Tuple" class="headerlink" title="元组(Tuple)"></a>元组(Tuple)<a class="heading-anchor" href="#元组-Tuple" aria-hidden="true"></a></h1><!-- # Tuple -->
+<div class="translation-block" title="
+Tuple types allow you to express an array with a fixed number of elements whose types are known, but need not be the same. For example, you may want to represent a value as a pair of a `string` and a `number`:
+"><p><strong>元组</strong>（Tuple）类似数组, 但有几个不同点:</p>
+<ol>
+<li>数组的长度是可变的, 元组长度不可变;</li>
+<li>数组中的元素类型一致, 元组的每个元素类型可以不同.</li>
+</ol>
+<p>以下定义表示一个 <code>string</code> 值, 一个 <code>number</code> 值的二元组:</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Declare a tuple type</span></span><br><span class="line"><span class="keyword">let</span> x: [<span class="built_in">string</span>, <span class="built_in">number</span>];</span><br><span class="line"><span class="comment">// Initialize it</span></span><br><span class="line">x = [<span class="string">"hello"</span>, <span class="number">10</span>]; <span class="comment">// OK</span></span><br><span class="line"><span class="comment">// Initialize it incorrectly</span></span><br><span class="line">x = [<span class="number">10</span>, <span class="string">"hello"</span>]; <span class="comment">// Error</span></span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+When accessing an element with a known index, the correct type is retrieved:
+"><p>你可以用下标访问元组中位于不同位置的元素, 该表达式值的类型是取得的元素类型:</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">console</span>.log(x[<span class="number">0</span>].substring(<span class="number">1</span>)); <span class="comment">// OK</span></span><br><span class="line"><span class="built_in">console</span>.log(x[<span class="number">1</span>].substring(<span class="number">1</span>)); <span class="comment">// Error, 'number' does not have 'substring'</span></span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+Accessing an element outside the set of known indices fails with an error:
+"><p>访问不存在的下标引发程序错误:</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">x[<span class="number">3</span>] = <span class="string">"world"</span>; <span class="comment">// Error, Property '3' does not exist on type '[string, number]'.</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">console</span>.log(x[<span class="number">5</span>].toString()); <span class="comment">// Error, Property '5' does not exist on type '[string, number]'.</span></span><br></pre></td></tr></table></figure>
+<h1 id="枚举-Enum" class="heading-control"><a href="#枚举-Enum" class="headerlink" title="枚举(Enum)"></a>枚举(Enum)<a class="heading-anchor" href="#枚举-Enum" aria-hidden="true"></a></h1><!-- # Enum -->
+<div class="translation-block" title="
+A helpful addition to the standard set of datatypes from JavaScript is the `enum`.
+As in languages like C#, an enum is a way of giving more friendly names to sets of numeric values.
+"><p><strong>枚举类型</strong>（Enum）是一项对标准 JavaScript 很有用的补充.<br>我们知道, C# 等支持枚举的语言能够赋予一组数字好记的名字.</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">enum</span> Color &#123;Red, Green, Blue&#125;</span><br><span class="line"><span class="keyword">let</span> c: Color = Color.Green;</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+By default, enums begin numbering their members starting at `0`.
+You can change this by manually setting the value of one of its members.
+For example, we can start the previous example at `1` instead of `0`:
+"><p>枚举元素的值默认从 <code>0</code> 开始依次递增.<br>你也可以手动为一个元素指定值, 它后面元素的值继续在它的基础上递增.<br>下例, 我们让枚举 <code>Color</code> 从 <code>1</code> 开始:</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">enum</span> Color &#123;Red = <span class="number">1</span>, Green, Blue&#125;</span><br><span class="line"><span class="keyword">let</span> c: Color = Color.Green;</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+Or, even manually set all the values in the enum:
+"><p>你还可以手动为所有枚举元素指定它代表的数值.</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">enum</span> Color &#123;Red = <span class="number">1</span>, Green = <span class="number">2</span>, Blue = <span class="number">4</span>&#125;</span><br><span class="line"><span class="keyword">let</span> c: Color = Color.Green;</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+A handy feature of enums is that you can also go from a numeric value to the name of that value in the enum.
+For example, if we had the value `2` but weren&amp;#39;t sure what that mapped to in the `Color` enum above, we could look up the corresponding name:
+"><p>一个方便的特性是<strong>反向查询</strong> — 查询数值在一个枚举集合中对应的枚举成员名.<br>比如, 我们不知道数值 <code>2</code> 代表 <code>Color</code> 枚举集合中的哪个成员, 可借助反向查询语法:</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">enum</span> Color &#123;Red = <span class="number">1</span>, Green, Blue&#125;</span><br><span class="line"><span class="keyword">let</span> colorName: <span class="built_in">string</span> = Color[<span class="number">2</span>];</span><br><span class="line"></span><br><span class="line"><span class="built_in">console</span>.log(colorName); <span class="comment">// Displays 'Green' as its value is 2 above</span></span><br></pre></td></tr></table></figure>
+<h1 id="Any" class="heading-control"><a href="#Any" class="headerlink" title="Any"></a>Any<a class="heading-anchor" href="#Any" aria-hidden="true"></a></h1><div class="translation-block" title="
+We may need to describe the type of variables that we do not know when we are writing an application.
+These values may come from dynamic content, e.g. from the user or a 3rd party library.
+In these cases, we want to opt-out of type checking and let the values pass through compile-time checks.
+To do so, we label these with the `any` type:
+"><p>有时, 我们暂不能确定一个变量将要存储什么类型的值.<br>它的值可能来自动态内容（dynamic content）, 比如用户, 第三方库.<br>针对这种情况, 我们把它的类型设为 <code>any</code>.<br>以表明不希望这个变量参与静态类型检查, 直接通过编译:</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> notSure: <span class="built_in">any</span> = <span class="number">4</span>;</span><br><span class="line">notSure = <span class="string">"maybe a string instead"</span>;</span><br><span class="line">notSure = <span class="literal">false</span>; <span class="comment">// okay, definitely a boolean</span></span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+The `any` type is a powerful way to work with existing JavaScript, allowing you to gradually opt-in and opt-out of type checking during compilation.
+You might expect `Object` to play a similar role, as it does in other languages.
+However, variables of type `Object` only allow you to assign any value to them. You can&amp;#39;t call arbitrary methods on them, even ones that actually exist:
+"><p><code>any</code> 是一条用于沿用现有 JavaScript 的强大途径, 它允许你逐步引入和移除编译期类型检查.<br>有人认为它等同于其他语言的 <code>Object</code>.<br>然而, 这并不准确, 虽然你可以把任何变量赋值给一个 <code>Object</code>, 但你不能在这个引用上任意调用原变量的方法, 即使这些方法的确存在:</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> notSure: <span class="built_in">any</span> = <span class="number">4</span>;</span><br><span class="line">notSure.ifItExists(); <span class="comment">// okay, ifItExists might exist at runtime</span></span><br><span class="line">notSure.toFixed(); <span class="comment">// okay, toFixed exists (but the compiler doesn't check)</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> prettySure: <span class="built_in">Object</span> = <span class="number">4</span>;</span><br><span class="line">prettySure.toFixed(); <span class="comment">// Error: Property 'toFixed' doesn't exist on type 'Object'.</span></span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+&amp;gt; Note: Avoid using `Object` in favor of the non-primitive `object` type as described in our [Do&amp;#39;s and Don&amp;#39;ts](https:&amp;#x2F;&amp;#x2F;www.typescriptlang.org&amp;#x2F;docs&amp;#x2F;handbook&amp;#x2F;declaration-files&amp;#x2F;do-s-and-don-ts.html#general-types) section.
+
+The `any` type is also handy if you know some part of the type, but perhaps not all of it.
+For example, you may have an array but the array has a mix of different types:
+"><blockquote>
+<p>注: 如同在我们 <a href="https://www.typescriptlang.org/docs/handbook/declaration-files/do-s-and-don-ts.html#general-types" target="_blank" rel="noopener">Do’s and Don’ts</a> 一章描述的, 避免像使用原始类型 <code>object</code> 那样使用 <code>Object</code>.</p>
+</blockquote>
+<p>假如你仅了解一个类型的一部分 — 而不是所有, <code>any</code> 也能带来方便.<br>比如说, 你有一个元组 (译注: 原文是数组), 它的元素类型不尽相同.</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> list: <span class="built_in">any</span>[] = [<span class="number">1</span>, <span class="literal">true</span>, <span class="string">"free"</span>];</span><br><span class="line"></span><br><span class="line">list[<span class="number">1</span>] = <span class="number">100</span>;</span><br></pre></td></tr></table></figure>
+<h1 id="Void" class="heading-control"><a href="#Void" class="headerlink" title="Void"></a>Void<a class="heading-anchor" href="#Void" aria-hidden="true"></a></h1><div class="translation-block" title="
+`void` is a little like the opposite of `any`: the absence of having any type at all.
+You may commonly see this as the return type of functions that do not return a value:
+"><p>你可以按 <code>any</code> 的相反面来理解 <code>void</code>: 不存在任何类型.<br>通常, 你会看到这个关键字作为函数的返回值类型出现, 表明这个函数不返回值.</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">warnUser</span>(<span class="params"></span>): <span class="title">void</span> </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">"This is my warning message"</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+Declaring variables of type `void` is not useful because you can only assign `null` (only if `--strictNullChecks` is not specified, see next section) or `undefined` to them:
+"><p>定义 <code>void</code> 类型的变量不见得特别有用, 因为你只能把 <code>null</code> 值（在没指定 <code>--strictNullChecks</code> 选项的前提下, 参见下节）或 <code>undefined</code> 值赋给它.</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> unusable: <span class="built_in">void</span> = <span class="literal">undefined</span>;</span><br><span class="line">unusable = <span class="literal">null</span>; <span class="comment">// OK if `--strictNullChecks` is not given</span></span><br></pre></td></tr></table></figure>
+<h1 id="Null-和-Undefined" class="heading-control"><a href="#Null-和-Undefined" class="headerlink" title="Null 和 Undefined"></a>Null 和 Undefined<a class="heading-anchor" href="#Null-和-Undefined" aria-hidden="true"></a></h1><!-- # Null and Undefined -->
+<div class="translation-block" title="
+In TypeScript, both `undefined` and `null` actually have their own types named `undefined` and `null` respectively.
+Much like `void`, they&amp;#39;re not extremely useful on their own:
+"><p><code>null</code> 和 <code>undefined</code> 不仅都是特殊值, 它们对应的类型名也是 <code>null</code> 和 <code>undefined</code>.<br>同 <code>void</code>, 我们一般不单独定义 <code>null</code> 和 <code>undefined</code> 类型的变量.</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Not much else we can assign to these variables!</span></span><br><span class="line"><span class="keyword">let</span> u: <span class="literal">undefined</span> = <span class="literal">undefined</span>;</span><br><span class="line"><span class="keyword">let</span> n: <span class="literal">null</span> = <span class="literal">null</span>;</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+By default `null` and `undefined` are subtypes of all other types.
+That means you can assign `null` and `undefined` to something like `number`.
+
+However, when using the `--strictNullChecks` flag, `null` and `undefined` are only assignable to `any` and their respective types (the one exception being that `undefined` is also assignable to `void`).
+This helps avoid *many* common errors.
+In cases where you want to pass in either a `string` or `null` or `undefined`, you can use the union type `string | null | undefined`.
+
+Union types are an advanced topic that we&amp;#39;ll cover in a later chapter.
+
+&amp;gt; As a note: we encourage the use of `--strictNullChecks` when possible, but for the purposes of this handbook, we will assume it is turned off.
+"><p>通常, <code>null</code> 和 <code>undefined</code> 是其他所有类型的子类型.<br>这意味着你可以把 <code>null</code> 值或 <code>undefined</code> 值赋值给 <code>number</code> 等变量.</p>
+<p>但是, 当 <code>--strictNullChecks</code> 选项打开后, <code>null</code> 和 <code>undefined</code> 就只能赋值给 <code>any</code> 和它们自身的类型了, 即 <code>null</code> 和 <code>undefined</code>（例外之一是 <code>undefined</code> 还可以赋值给 <code>void</code>）.<br>该选项能够消除许多常见错误.<br>如果你确实希望随时把 <code>string</code>, <code>null</code>, 或 <code>undefined</code> 之一赋值给同一个变量, 你可以把这个变量定义为 <code>string</code>, <code>null</code> 和 <code>undefined</code> 的联合: <code>string | null | undefined</code>.</p>
+<p>我们在以后的章节重点探讨联合数据类型.</p>
+<blockquote>
+<p>注: 我们鼓励打开 <code>--strictNullChecks</code>, 但是在这本手册中, 我们假定它是关闭的.</p>
+</blockquote></div>
+<h1 id="Never" class="heading-control"><a href="#Never" class="headerlink" title="Never"></a>Never<a class="heading-anchor" href="#Never" aria-hidden="true"></a></h1><div class="translation-block" title="
+The `never` type represents the type of values that never occur.
+For instance, `never` is the return type for a function expression or an arrow function expression that always throws an exception or one that never returns;
+"><p><code>never</code> 表示永远不会产生值.<br>例如: 如果一个函数表达式或箭头函数表达式始终抛出异常, 或从不返回, 它的返回值类型就是 <code>never</code>;</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Function returning never must have unreachable end point</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">error</span>(<span class="params">message: <span class="built_in">string</span></span>): <span class="title">never</span> </span>&#123;</span><br><span class="line">    <span class="keyword">throw</span> <span class="keyword">new</span> <span class="built_in">Error</span>(message);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Inferred return type is never</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">fail</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> error(<span class="string">"Something failed"</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Function returning never must have unreachable end point</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">infiniteLoop</span>(<span class="params"></span>): <span class="title">never</span> </span>&#123;</span><br><span class="line">    <span class="keyword">while</span> (<span class="literal">true</span>) &#123;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+Variables also acquire the type `never` when narrowed by any type guards that can never be true.
+"><p>又如: 一个变量 <code>x</code> 属于<strong>类型护卫</strong>永不为真的那一分支, 它的类型也是 <code>never</code>.</p>
+<blockquote>
+<p>译注: 类型护卫首次出现在<a href="#">高级数据类型</a>一章.</p>
+</blockquote></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">narrowByTypeGuard</span>(<span class="params">x: <span class="built_in">number</span> | <span class="built_in">string</span></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">typeof</span> x === <span class="string">'number'</span>) &#123;</span><br><span class="line">        x;</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (<span class="keyword">typeof</span> x === <span class="string">'string'</span>) &#123;</span><br><span class="line">        x;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        x; <span class="comment">// Acquire type never</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+The `never` type is a subtype of, and assignable to, every type; however, *no* type is a subtype of, or assignable to, `never` (except `never` itself).
+Even `any` isn&amp;#39;t assignable to `never`.
+
+Some examples of functions returning `never`:
+"><p><code>never</code> 是其他所有类型的子类型(可赋值给所有类型); 同时, 没有类型是 <code>never</code> 的子类型, 因此, 任何除 <code>never</code> 外的值都不可以赋值给一个 <code>never</code>, 包括 <code>any</code>.</p></div>
+<h1 id="Object" class="heading-control"><a href="#Object" class="headerlink" title="Object"></a>Object<a class="heading-anchor" href="#Object" aria-hidden="true"></a></h1><div class="translation-block" title="
+`object` is a type that represents the non-primitive type, i.e. anything that is not `number`, `string`, `boolean`, `bigint`, `symbol`, `null`, or `undefined`.
+
+With `object` type, APIs like `Object.create` can be better represented. For example:
+"><p><code>object</code> 可以表示任何非原始数据类型（任何除 <code>number</code>, <code>string</code>, <code>boolean</code>, <code>symbol</code>, <code>null</code>, 和 <code>undefined</code> 外的）.</p>
+<p>有了 <code>object</code>, 我们能更好地表达形如 <code>Object.create</code> 的方法:</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">declare</span> <span class="function"><span class="keyword">function</span> <span class="title">create</span>(<span class="params">o: object | <span class="literal">null</span></span>): <span class="title">void</span></span>;</span><br><span class="line"></span><br><span class="line">create(&#123; prop: <span class="number">0</span> &#125;); <span class="comment">// OK</span></span><br><span class="line">create(<span class="literal">null</span>); <span class="comment">// OK</span></span><br><span class="line"></span><br><span class="line">create(<span class="number">42</span>); <span class="comment">// Error</span></span><br><span class="line">create(<span class="string">"string"</span>); <span class="comment">// Error</span></span><br><span class="line">create(<span class="literal">false</span>); <span class="comment">// Error</span></span><br><span class="line">create(<span class="literal">undefined</span>); <span class="comment">// Error</span></span><br></pre></td></tr></table></figure>
+<h1 id="类型担保" class="heading-control"><a href="#类型担保" class="headerlink" title="类型担保"></a>类型担保<a class="heading-anchor" href="#类型担保" aria-hidden="true"></a></h1><!-- # Type assertions -->
+<div class="translation-block" title="
+Sometimes you&amp;#39;ll end up in a situation where you&amp;#39;ll know more about a value than TypeScript does.
+Usually this will happen when you know the type of some entity could be more specific than its current type.
+
+*Type assertions* are a way to tell the compiler &amp;quot;trust me, I know what I&amp;#39;m doing.&amp;quot;
+A type assertion is like a type cast in other languages, but performs no special checking or restructuring of data.
+It has no runtime impact, and is used purely by the compiler.
+TypeScript assumes that you, the programmer, have performed any special checks that you need.
+
+Type assertions have two forms.
+One is the &amp;quot;angle-bracket&amp;quot; syntax:
+"><p>有时, 你可能比 TypeScript 更了解一个值.<br>特别地, 当你知道一个值的实际类型比它当前类型(译注: 引用它的变量类型是该值的父类型)更具体时.</p>
+<p><strong>类型担保</strong>打开了与编译器协商的通道: “相信我, 我知道我在干什么. ”<br>类型担保类似其他语言的强制类型转换, 但它既不重组数据(restructuring), 又不做任何运行时检查.<br>换言之, 它完全在编译期实现, 不加重运行期负担.<br>如果你使用类型担保, TypeScript 假定你 — 作为编程人员, 已经做了必要的检查.</p>
+<p>有两种类型担保形式.</p>
+<p>其一, 尖括号式:</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> someValue: <span class="built_in">any</span> = <span class="string">"this is a string"</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> strLength: <span class="built_in">number</span> = (&lt;<span class="built_in">string</span>&gt;someValue).length;</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+And the other is the `as`-syntax:
+"><p>其二, as 关键字式:</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> someValue: <span class="built_in">any</span> = <span class="string">"this is a string"</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> strLength: <span class="built_in">number</span> = (someValue <span class="keyword">as</span> <span class="built_in">string</span>).length;</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+The two samples are equivalent.
+Using one over the other is mostly a choice of preference; however, when using TypeScript with JSX, only `as`-style assertions are allowed.
+"><p>以上两种写法完全等同.<br>一般, 选择哪种取决于个人偏好. 但当你结合 TypeScript, <a href="#">JSX</a> 使用时, 只有 as 关键字式是有效的.</p></div>
+<h1 id="关于-let" class="heading-control"><a href="#关于-let" class="headerlink" title="关于 let"></a>关于 let<a class="heading-anchor" href="#关于-let" aria-hidden="true"></a></h1><!-- # A note about `let` -->
+<div class="translation-block" title="
+You may&amp;#39;ve noticed that so far, we&amp;#39;ve been using the `let` keyword instead of JavaScript&amp;#39;s `var` keyword which you might be more familiar with.
+The `let` keyword was introduced to JavaScript in ES2015 and is now considered the standard because it&amp;#39;s safer than `var`.
+We&amp;#39;ll discuss the details later, but many common problems in JavaScript are alleviated by using `let`, so you should use it instead of `var` whenever possible.
+"><p>到目前为止, 我们一直用 <code>let</code> 关键字代替或许你更熟悉的 <code>var</code>.<br>ES2015 为 JavaScript 引入 <code>let</code> 关键字, 它比 <code>var</code> 更安全, 所以正在逐渐成为标准写法.<br>我们以后再讨论其细节, 建议你尽可能用 <code>let</code> 代替 <code>var</code>, 它能减轻很多常见 JavaScript 问题.</p></div>
+    </div>
+
+    
+    
+    
+        
+      
+        <div id="reward-container">
+  <div>如果这篇文章对您有用，可以考虑打赏:)</div>
+  <button id="reward-button" disable="enable" onclick="var qr = document.getElementById(&quot;qr&quot;); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+        
+      
+      <div style="display: inline-block">
+        <img src="/images/wechatpay.png" alt="Hyan Lee 微信支付">
+        <p>微信支付</p>
+      </div>
+
+  </div>
+</div>
+
+      
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>Hyan Lee</li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://hyan23.org/2019/11/05/ts-basic-types/" title="基本数据类型">https://hyan23.org/2019/11/05/ts-basic-types/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！</li>
+</ul>
+</div>
+
+      
+
+      <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+              
+                <a href="/2019/11/05/ts-ts-in-5mins/" rel="next" title="五分钟了解 TypeScript">
+                  <i class="fa fa-chevron-left"></i> 五分钟了解 TypeScript
+                </a>
+              
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+              
+                <a href="/2019/11/06/ts-variable-declarations/" rel="prev" title="变量定义">
+                  变量定义 <i class="fa fa-chevron-right"></i>
+                </a>
+              
+            </div>
+          </div>
+        
+      </footer>
+    
+  </div>
+  
+  
+  
+  </article>
+
+  </div>
+
+
+          </div>
+          
+    
+    <div class="comments" id="gitalk-container"></div>
+  
+
+        </div>
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+        
+        
+        
+        
+      
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#介绍"><span class="nav-number">1.</span> <span class="nav-text">介绍</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#布尔类型-Boolean"><span class="nav-number">2.</span> <span class="nav-text">布尔类型(Boolean)</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#数字类型-Number"><span class="nav-number">3.</span> <span class="nav-text">数字类型(Number)</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#字符串-String"><span class="nav-number">4.</span> <span class="nav-text">字符串(String)</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#数组-Array"><span class="nav-number">5.</span> <span class="nav-text">数组(Array)</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#元组-Tuple"><span class="nav-number">6.</span> <span class="nav-text">元组(Tuple)</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#枚举-Enum"><span class="nav-number">7.</span> <span class="nav-text">枚举(Enum)</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Any"><span class="nav-number">8.</span> <span class="nav-text">Any</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Void"><span class="nav-number">9.</span> <span class="nav-text">Void</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Null-和-Undefined"><span class="nav-number">10.</span> <span class="nav-text">Null 和 Undefined</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Never"><span class="nav-number">11.</span> <span class="nav-text">Never</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Object"><span class="nav-number">12.</span> <span class="nav-text">Object</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#类型担保"><span class="nav-number">13.</span> <span class="nav-text">类型担保</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#关于-let"><span class="nav-number">14.</span> <span class="nav-text">关于 let</span></a></li></ol></div>
+        
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image"
+      src="/images/avatar2.png"
+      alt="Hyan Lee">
+  <p class="site-author-name" itemprop="name">Hyan Lee</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">31</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-categories">
+        
+          
+            <a href="/categories/">
+          
+        
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">分类</span>
+        </a>
+      </div>
+    
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+      
+      
+        
+      
+      
+        
+      
+        <a href="https://github.com/hyan23" title="GitHub &rarr; https://github.com/hyan23" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+    
+      <span class="links-of-author-item">
+      
+      
+        
+      
+      
+        
+      
+        <a href="mailto:hyan23lee@hotmail.com" title="E-Mail &rarr; mailto:hyan23lee@hotmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+    
+      <span class="links-of-author-item">
+      
+      
+        
+      
+      
+        
+      
+        <a href="https://t.me/hyan23" title="Telegram &rarr; https://t.me/hyan23" rel="noopener" target="_blank"><i class="fa fa-fw fa-telegram"></i>Telegram</a>
+      </span>
+    
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    
+  
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+      
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2017 – <span itemprop="copyrightYear">2020</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Hyan Lee</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    
+    <span title="站点总字数">118k</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v3.9.0</div>
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js?v=3.1.0"></script>
+  <script src="//cdn.jsdelivr.net/npm/medium-zoom@1/dist/medium-zoom.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+<script src="/js/utils.js?v=7.4.0"></script>
+<script src="/js/schemes/pisces.js?v=7.4.0"></script>
+<script src="/js/next-boot.js?v=7.4.0"></script>
+
+
+
+  
+  <script>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+    mermaid.initialize({
+      theme: 'forest',
+      logLevel: 3,
+      flowchart: { curve: 'linear' },
+      gantt: { axisFormat: '%m/%d/%Y' },
+      sequence: { actorMargin: 50 }
+    });
+  }, window.mermaid);
+}
+</script>
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID: '442da4785490db3ece48',
+      clientSecret: '3bfa2829a34371ca37db636917e791d114bd338c',
+      repo: 'blog-comments',
+      owner: 'hyan23',
+      admin: ['hyan23'],
+      id: '3367b42493f02c5a9ddfd663e04922e4',
+        language: window.navigator.language || window.navigator.userLanguage,
+      
+      distractionFreeMode: 'true'
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+</script>
+
+</body>
+</html>

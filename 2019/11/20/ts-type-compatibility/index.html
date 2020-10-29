@@ -1,0 +1,917 @@
+<!DOCTYPE html>
+
+
+
+
+
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/favicon/apple-touch-icon.png?v=7.4.0">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon/favicon-32x32.png?v=7.4.0">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon/favicon-16x16.png?v=7.4.0">
+  <link rel="mask-icon" href="/images/favicon/safari-pinned-tab.svg?v=7.4.0" color="#222">
+  <link rel="manifest" href="/images/favicon/site.webmanifest">
+  <meta name="msapplication-config" content="/images/favicon/browserconfig.xml">
+  <meta http-equiv="Cache-Control" content="no-transform">
+  <meta http-equiv="Cache-Control" content="no-siteapp">
+
+<link rel="stylesheet" href="/css/main.css?v=7.4.0">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '7.4.0',
+    exturl: false,
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false},
+    copycode: {"enable":false,"show_result":false,"style":null},
+    back2top: {"enable":true,"sidebar":true,"scrollpercent":false},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: true,
+    lazyload: true,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: "",
+      labels: ""
+    },
+    localsearch: {"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: '',
+    motion: {"enable":false},
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="状态: 初稿 介绍 TypeScript 中的类型兼容性基于结构子类型.结构类型是一种只考察成员分析两类型相关性的方法.它显著区别于名义类型.考虑以下代码:">
+<meta name="keywords" content="博客,个人博客,日志,在线工具">
+<meta property="og:type" content="article">
+<meta property="og:title" content="类型兼容性">
+<meta property="og:url" content="https://hyan23.org/2019/11/20/ts-type-compatibility/index.html">
+<meta property="og:site_name" content="Hyan Lee">
+<meta property="og:description" content="状态: 初稿 介绍 TypeScript 中的类型兼容性基于结构子类型.结构类型是一种只考察成员分析两类型相关性的方法.它显著区别于名义类型.考虑以下代码:">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2020-01-05T15:53:01.696Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="类型兼容性">
+<meta name="twitter:description" content="状态: 初稿 介绍 TypeScript 中的类型兼容性基于结构子类型.结构类型是一种只考察成员分析两类型相关性的方法.它显著区别于名义类型.考虑以下代码:">
+  <link rel="canonical" href="https://hyan23.org/2019/11/20/ts-type-compatibility/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>类型兼容性 | Hyan Lee</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+  <div class="container">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Hyan Lee</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+      
+      
+      
+        
+        <li class="menu-item menu-item-home">
+      
+    
+      
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-关于-/-留言板">
+      
+    
+      
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于 / 留言板</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-categories">
+      
+    
+      
+      
+        
+      
+        
+          
+        
+      
+        
+      
+    
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类<span class="badge">6</span></a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-archives">
+      
+    
+      
+      
+        
+          
+        
+      
+        
+      
+        
+      
+    
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">31</span></a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-精选-/-系列">
+      
+    
+      
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <a href="/selections/" rel="section"><i class="fa fa-fw fa-book"></i>精选 / 系列</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-摄影">
+      
+    
+      
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <a href="/gallery/" rel="section"><i class="fa fa-fw fa-camera"></i>摄影</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-工具">
+      
+    
+      
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <a href="/tools/" rel="section"><i class="fa fa-fw fa-calculator"></i>工具</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-友情链接">
+      
+    
+      
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <a href="/friends/" rel="section"><i class="fa fa-fw fa-external-link"></i>友情链接</a>
+
+  </li>
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+            
+
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+      <article itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block post">
+    <link itemprop="mainEntityOfPage" href="https://hyan23.org/2019/11/20/ts-type-compatibility/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Hyan Lee">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar2.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hyan Lee">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">类型兼容性
+
+          
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              
+                
+              
+
+              <time title="创建时间：2019-11-20 09:30:59" itemprop="dateCreated datePublished" datetime="2019-11-20T09:30:59+08:00">2019-11-20</time>
+            </span>
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-01-05 23:53:01" itemprop="dateModified" datetime="2020-01-05T23:53:01+08:00">2020-01-05</time>
+              </span>
+            
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/翻译稿/" itemprop="url" rel="index"><span itemprop="name">翻译稿</span></a></span>
+
+                
+                
+                  ，
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/翻译稿/TypeScript/" itemprop="url" rel="index"><span itemprop="name">TypeScript</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+          
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">本文字数：</span>
+              
+              <span>2.1k</span>
+            </span>
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <pre><code>状态: 初稿
+</code></pre><h1 id="介绍" class="heading-control"><a href="#介绍" class="headerlink" title="介绍"></a>介绍<a class="heading-anchor" href="#介绍" aria-hidden="true"></a></h1><!-- # Introduction -->
+<div class="translation-block" title="
+Type compatibility in TypeScript is based on structural subtyping.
+Structural typing is a way of relating types based solely on their members.
+This is in contrast with nominal typing.
+Consider the following code:
+"><p>TypeScript 中的类型兼容性基于结构子类型.<br>结构类型是一种只考察成员分析两类型相关性的方法.<br>它显著区别于名义类型.<br>考虑以下代码:</p></div>
+<a id="more"></a>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">interface</span> Named &#123;</span><br><span class="line">    name: <span class="built_in">string</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> Person &#123;</span><br><span class="line">    name: <span class="built_in">string</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> p: Named;</span><br><span class="line"><span class="comment">// OK, because of structural typing</span></span><br><span class="line">p = <span class="keyword">new</span> Person();</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+In nominally-typed languages like C# or Java, the equivalent code would be an error because the `Person` class does not explicitly describe itself as being an implementer of the `Named` interface.
+
+TypeScript&amp;#39;s structural type system was designed based on how JavaScript code is typically written.
+Because JavaScript widely uses anonymous objects like function expressions and object literals, it&amp;#39;s much more natural to represent the kinds of relationships found in JavaScript libraries with a structural type system instead of a nominal one.
+"><p>可以看到, <code>Person</code> 类没有显式声明它是 <code>Named</code> 接口的一个实现, 在运用名义类型的语言看来, 如 C#, Java, 等同代码是错误的.</p>
+<p>TypeScript 受 JavaScript 典型编码风格启发设计出结构类型系统.<br>鉴于函数表达式和对象字面量等匿名对象在 JavaScript 中被广泛使用, 以结构类型代替名义类型表示 JavaScript 库中那种类型关系更加自然.</p></div>
+<h2 id="健全性说明" class="heading-control"><a href="#健全性说明" class="headerlink" title="健全性说明"></a>健全性说明<a class="heading-anchor" href="#健全性说明" aria-hidden="true"></a></h2><!-- ## A Note on Soundness -->
+<div class="translation-block" title="
+TypeScript&amp;#39;s type system allows certain operations that can&amp;#39;t be known at compile-time to be safe. When a type system has this property, it is said to not be &amp;quot;sound&amp;quot;. The places where TypeScript allows unsound behavior were carefully considered, and throughout this document we&amp;#39;ll explain where these happen and the motivating scenarios behind them.
+"><p>TypeScript 的类型系统让在编译期不完全了解的某些操作得以安全运行. 如果一个类型系统具有此属性, 就说它是不”健全”的. 那些 TypeScript 允许不 “健全” 行为的地方都经过严格推敲, 对它们在何处发生和背后促发情景的解释贯穿本文.</p></div>
+<h1 id="那就开始吧" class="heading-control"><a href="#那就开始吧" class="headerlink" title="那就开始吧"></a>那就开始吧<a class="heading-anchor" href="#那就开始吧" aria-hidden="true"></a></h1><!-- # Starting out -->
+<div class="translation-block" title="
+The basic rule for TypeScript&amp;#39;s structural type system is that `x` is compatible with `y` if `y` has at least the same members as `x`. For example:
+"><p>TypeScript 结构类型的基本规则可以这样描述: 为使类型 <code>x</code> 兼容类型 <code>y</code>, <code>y</code> 至少应该包含 <code>x</code> 所有成员. 例如:</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">interface</span> Named &#123;</span><br><span class="line">    name: <span class="built_in">string</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> x: Named;</span><br><span class="line"><span class="comment">// y's inferred type is &#123; name: string; location: string; &#125;</span></span><br><span class="line"><span class="keyword">let</span> y = &#123; name: <span class="string">"Alice"</span>, location: <span class="string">"Seattle"</span> &#125;;</span><br><span class="line">x = y;</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+To check whether `y` can be assigned to `x`, the compiler checks each property of `x` to find a corresponding compatible property in `y`.
+In this case, `y` must have a member called `name` that is a string. It does, so the assignment is allowed.
+
+The same rule for assignment is used when checking function call arguments:
+"><p>要判断 <code>y</code> 能否赋值给 <code>x</code>, 对每个 <code>x</code> 中属性, 编译器在 <code>y</code> 中为之查找相兼容的成员属性.<br>在这个例子中, <code>y</code> 必须有一个叫做 <code>name</code> 的 <code>string</code> 类型成员. 而它满足条件, 赋值成立.</p>
+<p>对函数实参的检查采用相同赋值规则:</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">greet</span>(<span class="params">n: Named</span>) </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">"Hello, "</span> + n.name);</span><br><span class="line">&#125;</span><br><span class="line">greet(y); <span class="comment">// OK</span></span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+Note that `y` has an extra `location` property, but this does not create an error.
+Only members of the target type (`Named` in this case) are considered when checking for compatibility.
+
+This comparison process proceeds recursively, exploring the type of each member and sub-member.
+"><p>不难发现 <code>y</code> 有一个额外属性 <code>location</code>, 但它不会引起错误.<br>兼容性检查只考虑所有目标类型(本例 <code>Named</code>)成员.</p>
+<p>这个比较过程是递归的, 及至每个成员和成员的成员.</p></div>
+<h1 id="比较两个函数" class="heading-control"><a href="#比较两个函数" class="headerlink" title="比较两个函数"></a>比较两个函数<a class="heading-anchor" href="#比较两个函数" aria-hidden="true"></a></h1><!-- # Comparing two functions -->
+<div class="translation-block" title="
+While comparing primitive types and object types is relatively straightforward, the question of what kinds of functions should be considered compatible is a bit more involved.
+Let&amp;#39;s start with a basic example of two functions that differ only in their parameter lists:
+"><p>比较原始和对象类型相对直接, 而怎样的两个函数才是兼容的这个问题就不是那么好说清了.<br>作为开始, 我们研究两个只有参数列表有差异的函数:</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> x = <span class="function">(<span class="params">a: <span class="built_in">number</span></span>) =&gt;</span> <span class="number">0</span>;</span><br><span class="line"><span class="keyword">let</span> y = <span class="function">(<span class="params">b: <span class="built_in">number</span>, s: <span class="built_in">string</span></span>) =&gt;</span> <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">y = x; <span class="comment">// OK</span></span><br><span class="line">x = y; <span class="comment">// Error</span></span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+To check if `x` is assignable to `y`, we first look at the parameter list.
+Each parameter in `x` must have a corresponding parameter in `y` with a compatible type.
+Note that the names of the parameters are not considered, only their types.
+In this case, every parameter of `x` has a corresponding compatible parameter in `y`, so the assignment is allowed.
+
+The second assignment is an error, because `y` has a required second parameter that `x` does not have, so the assignment is disallowed.
+
+You may be wondering why we allow &amp;#39;discarding&amp;#39; parameters like in the example `y = x`.
+The reason for this assignment to be allowed is that ignoring extra function parameters is actually quite common in JavaScript.
+For example, `Array#forEach` provides three parameters to the callback function: the array element, its index, and the containing array.
+Nevertheless, it&amp;#39;s very useful to provide a callback that only uses the first parameter:
+"><p>为了弄清楚 <code>x</code> 能否赋值给 <code>y</code>, 首先考察它们的参数列表.<br>在 <code>y</code> 中为每个 <code>x</code> 参数找到类型兼容的对应参数.<br>匹配过程忽略参数名, 只关注类型.<br>本例第一条赋值语句, <code>x</code> 每个参数都在 <code>y</code> 中找到匹配, 因此它是正确的.</p>
+<p>第二条赋值语句是错的, 在 <code>x</code> 中找不到 <code>y</code> 第二个必选参数 <code>s</code>, 即 <code>x</code> 不兼容 <code>y</code>.</p>
+<p>或许你想知道对于 <code>y = x</code>, 为何舍弃参数可行的.<br>这是因为忽略额外函数参数在 JavaScript 中十分普遍.<br>比方说, <code>Array#forEach</code> 往回调函数传三个参数: 数组元素, 下标, 数组本身.<br>不过, 多数回调函数只保留第一个参数:</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> items = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>];</span><br><span class="line"></span><br><span class="line"><span class="comment">// Don't force these extra parameters</span></span><br><span class="line">items.forEach(<span class="function">(<span class="params">item, index, array</span>) =&gt;</span> <span class="built_in">console</span>.log(item));</span><br><span class="line"></span><br><span class="line"><span class="comment">// Should be OK!</span></span><br><span class="line">items.forEach(<span class="function"><span class="params">item</span> =&gt;</span> <span class="built_in">console</span>.log(item));</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+Now let&amp;#39;s look at how return types are treated, using two functions that differ only by their return type:
+"><p>现在来了解返回值类型所扮演角色, 以两个仅返回值不同的函数为例:</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> x = <span class="function"><span class="params">()</span> =&gt;</span> (&#123;name: <span class="string">"Alice"</span>&#125;);</span><br><span class="line"><span class="keyword">let</span> y = <span class="function"><span class="params">()</span> =&gt;</span> (&#123;name: <span class="string">"Alice"</span>, location: <span class="string">"Seattle"</span>&#125;);</span><br><span class="line"></span><br><span class="line">x = y; <span class="comment">// OK</span></span><br><span class="line">y = x; <span class="comment">// Error, because x() lacks a location property</span></span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+The type system enforces that the source function&amp;#39;s return type be a subtype of the target type&amp;#39;s return type.
+"><p>类型系统规定源函数的返回值类型应当是目标函数返回值的子类型.</p></div>
+<blockquote>
+<p>译注: 等号右侧为源函数</p>
+</blockquote>
+<h2 id="函数参数协变" class="heading-control"><a href="#函数参数协变" class="headerlink" title="函数参数协变"></a>函数参数协变<a class="heading-anchor" href="#函数参数协变" aria-hidden="true"></a></h2><!-- ## Function Parameter Bivariance -->
+<div class="translation-block" title="
+When comparing the types of function parameters, assignment succeeds if either the source parameter is assignable to the target parameter, or vice versa.
+This is unsound because a caller might end up being given a function that takes a more specialized type, but invokes the function with a less specialized type.
+In practice, this sort of error is rare, and allowing this enables many common JavaScript patterns. A brief example:
+"><p>默认设置下, 对每对函数参数的要求较为宽松, 只要源参数能赋值给目标参数, 或反向成立.<br>这是不健全的, 调用者可能传一个类型不够具体的实参去调用参数类型更具体的给定函数.<br>实践中, 这种错误很少见, 而该原则使众多 JavaScript 设计模式成为可能. 一个例子:</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">enum</span> EventType &#123; Mouse, Keyboard &#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">interface</span> Event &#123; timestamp: <span class="built_in">number</span>; &#125;</span><br><span class="line"><span class="keyword">interface</span> MouseEvent <span class="keyword">extends</span> Event &#123; x: <span class="built_in">number</span>; y: <span class="built_in">number</span> &#125;</span><br><span class="line"><span class="keyword">interface</span> KeyEvent <span class="keyword">extends</span> Event &#123; keyCode: <span class="built_in">number</span> &#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">listenEvent</span>(<span class="params">eventType: EventType, handler: (n: Event) =&gt; <span class="built_in">void</span></span>) </span>&#123;</span><br><span class="line">    <span class="comment">/* ... */</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Unsound, but useful and common</span></span><br><span class="line">listenEvent(EventType.Mouse, <span class="function">(<span class="params">e: MouseEvent</span>) =&gt;</span> <span class="built_in">console</span>.log(e.x + <span class="string">","</span> + e.y));</span><br><span class="line"></span><br><span class="line"><span class="comment">// Undesirable alternatives in presence of soundness</span></span><br><span class="line">listenEvent(EventType.Mouse, <span class="function">(<span class="params">e: Event</span>) =&gt;</span> <span class="built_in">console</span>.log((e <span class="keyword">as</span> MouseEvent).x + <span class="string">","</span> + (e <span class="keyword">as</span> MouseEvent).y));</span><br><span class="line">listenEvent(EventType.Mouse, <span class="function">(<span class="params">(<span class="params">e: MouseEvent</span>) =&gt; <span class="built_in">console</span>.log(<span class="params">e.x + "," + e.y</span>)</span>) <span class="params">as</span> (<span class="params">e: Event</span>) =&gt;</span> <span class="built_in">void</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// Still disallowed (clear error). Type safety enforced for wholly incompatible types</span></span><br><span class="line">listenEvent(EventType.Mouse, <span class="function">(<span class="params">e: <span class="built_in">number</span></span>) =&gt;</span> <span class="built_in">console</span>.log(e));</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+You can have TypeScript raise errors when this happens via the compiler flag `strictFunctionTypes`.
+"><p>打开 <code>strictFunctionTypes</code> 编译器选项让编译器报错.</p></div>
+<h2 id="可选参数，-变长参数" class="heading-control"><a href="#可选参数，-变长参数" class="headerlink" title="可选参数， 变长参数"></a>可选参数， 变长参数<a class="heading-anchor" href="#可选参数，-变长参数" aria-hidden="true"></a></h2><!-- ## Optional Parameters and Rest Parameters -->
+<div class="translation-block" title="
+When comparing functions for compatibility, optional and required parameters are interchangeable.
+Extra optional parameters of the source type are not an error, and optional parameters of the target type without corresponding parameters in the source type are not an error.
+
+When a function has a rest parameter, it is treated as if it were an infinite series of optional parameters.
+
+This is unsound from a type system perspective, but from a runtime point of view the idea of an optional parameter is generally not well-enforced since passing `undefined` in that position is equivalent for most functions.
+
+The motivating example is the common pattern of a function that takes a callback and invokes it with some predictable (to the programmer) but unknown (to the type system) number of arguments:
+"><p>考虑函数兼容性, 可选和必选参数是可互换的.<br>源函数额外可选参数不会引起错误, 目标函数多出的可选参数也不会引起错误.</p>
+<p>在类型系统眼里, 函数的变长参数相当一个无限可选参数序列.</p>
+<p>以类型系统的角度来看, 这是不健全的, 但站在运行时的立场, 可选参数的想法并没有得到充分执行, 因为对多数函数传递 <code>undefined</code> 等同于可选参数.</p>
+<p>一个以回调函数作为参数, 再以程序员可知而类型系统不可知的实参数量调用它的函数, 算是激发性示例, 同时, 它也是个常见模式.</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">invokeLater</span>(<span class="params">args: <span class="built_in">any</span>[], callback: (...args: <span class="built_in">any</span>[]) =&gt; <span class="built_in">void</span></span>) </span>&#123;</span><br><span class="line">    <span class="comment">/* ... Invoke callback with 'args' ... */</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Unsound - invokeLater "might" provide any number of arguments</span></span><br><span class="line">invokeLater([<span class="number">1</span>, <span class="number">2</span>], <span class="function">(<span class="params">x, y</span>) =&gt;</span> <span class="built_in">console</span>.log(x + <span class="string">", "</span> + y));</span><br><span class="line"></span><br><span class="line"><span class="comment">// Confusing (x and y are actually required) and undiscoverable</span></span><br><span class="line">invokeLater([<span class="number">1</span>, <span class="number">2</span>], <span class="function">(<span class="params">x?, y?</span>) =&gt;</span> <span class="built_in">console</span>.log(x + <span class="string">", "</span> + y));</span><br></pre></td></tr></table></figure>
+<h2 id="函数重载" class="heading-control"><a href="#函数重载" class="headerlink" title="函数重载"></a>函数重载<a class="heading-anchor" href="#函数重载" aria-hidden="true"></a></h2><!-- ## Functions with overloads -->
+<div class="translation-block" title="
+When a function has overloads, each overload in the source type must be matched by a compatible signature on the target type.
+This ensures that the target function can be called in all the same situations as the source function.
+"><p>如果一个函数有重载, 源函数每个重载都必须被目标函数的一个签名匹配.<br>这条规则确保我们可以按源函数所有重载情形调用目标函数.</p></div>
+<blockquote>
+<p>译注: 这里源函数 / 目标函数概念似与前文有出入, 下例为我编写:</p>
+</blockquote>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">interface</span> MyPrint &#123;</span><br><span class="line">    (val: <span class="built_in">boolean</span>) : <span class="built_in">void</span>;</span><br><span class="line">    (val: <span class="built_in">number</span>): <span class="built_in">void</span>;</span><br><span class="line">    (val: <span class="built_in">string</span>): <span class="built_in">void</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">myPrintImpl</span>(<span class="params">val: <span class="built_in">boolean</span></span>): <span class="title">void</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">myPrintImpl</span>(<span class="params">val: <span class="built_in">number</span></span>): <span class="title">void</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">myPrintImpl</span>(<span class="params">val: <span class="built_in">any</span></span>): <span class="title">void</span> </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(val);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> printIt: MyPrint = myPrintImpl; <span class="comment">// Error, Type '&#123; (val: boolean): void; (val: number): void; &#125;' is not assignable to type 'MyPrint'.</span></span><br></pre></td></tr></table></figure>
+<h1 id="枚举的情况" class="heading-control"><a href="#枚举的情况" class="headerlink" title="枚举的情况"></a>枚举的情况<a class="heading-anchor" href="#枚举的情况" aria-hidden="true"></a></h1><!-- # Enums -->
+<div class="translation-block" title="
+Enums are compatible with numbers, and numbers are compatible with enums. Enum values from different enum types are considered incompatible. For example,
+"><p>枚举与数值类型互相兼容. 来自不同枚举集的枚举值不互相兼容:</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">enum</span> Status &#123; Ready, Waiting &#125;;</span><br><span class="line"><span class="keyword">enum</span> Color &#123; Red, Blue, Green &#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> status = Status.Ready;</span><br><span class="line">status = Color.Green;  <span class="comment">// Error</span></span><br></pre></td></tr></table></figure>
+<h1 id="类的情况" class="heading-control"><a href="#类的情况" class="headerlink" title="类的情况"></a>类的情况<a class="heading-anchor" href="#类的情况" aria-hidden="true"></a></h1><!-- # Classes -->
+<div class="translation-block" title="
+Classes work similarly to object literal types and interfaces with one exception: they have both a static and an instance type.
+When comparing two objects of a class type, only members of the instance are compared.
+Static members and constructors do not affect compatibility.
+"><p>类与字面量对象类型, 接口工作方式差不多, 只有一个例外: 它区分静态面, 实例面.<br>编译器在比较两个类对象时, 只比较实例面成员.<br>静态成员和构造器不影响类对象兼容性.</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> Animal &#123;</span><br><span class="line">    feet: <span class="built_in">number</span>;</span><br><span class="line">    <span class="keyword">constructor</span>(<span class="params">name: <span class="built_in">string</span>, numFeet: <span class="built_in">number</span></span>) &#123; &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> Size &#123;</span><br><span class="line">    feet: <span class="built_in">number</span>;</span><br><span class="line">    <span class="keyword">constructor</span>(<span class="params">numFeet: <span class="built_in">number</span></span>) &#123; &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> a: Animal;</span><br><span class="line"><span class="keyword">let</span> s: Size;</span><br><span class="line"></span><br><span class="line">a = s;  <span class="comment">// OK</span></span><br><span class="line">s = a;  <span class="comment">// OK</span></span><br></pre></td></tr></table></figure>
+<h2 id="类的私有和保护成员" class="heading-control"><a href="#类的私有和保护成员" class="headerlink" title="类的私有和保护成员"></a>类的私有和保护成员<a class="heading-anchor" href="#类的私有和保护成员" aria-hidden="true"></a></h2><!-- ## Private and protected members in classes -->
+<div class="translation-block" title="
+Private and protected members in a class affect their compatibility.
+When an instance of a class is checked for compatibility, if the target type contains a private member, then the source type must also contain a private member that originated from the same class.
+Likewise, the same applies for an instance with a protected member.
+This allows a class to be assignment compatible with its super class, but *not* with classes from a different inheritance hierarchy which otherwise have the same shape.
+"><p>类的私有和保护成员影响它们的兼容性.<br>在比较类实例时, 如果目标对象有一个私有成员, 源对象就要有一个同源私有成员.<br>如果目标对象有一个保护成员, 源对象就要有一个同源保护成员.<br>它强调一个类与它父类兼容, <em>不</em>与有相同形体但来自不同继承分支的类兼容.</p></div>
+<h1 id="泛型的情况" class="heading-control"><a href="#泛型的情况" class="headerlink" title="泛型的情况"></a>泛型的情况<a class="heading-anchor" href="#泛型的情况" aria-hidden="true"></a></h1><!-- # Generics -->
+<div class="translation-block" title="
+Because TypeScript is a structural type system, type parameters only affect the resulting type when consumed as part of the type of a member. For example,
+"><p>TypeScript 是一个结构类型系统, 只有类型参数作为成员类型的一部分使用时, 才影响结果类型. 例如,</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">interface</span> Empty&lt;T&gt; &#123;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">let</span> x: Empty&lt;<span class="built_in">number</span>&gt;;</span><br><span class="line"><span class="keyword">let</span> y: Empty&lt;<span class="built_in">string</span>&gt;;</span><br><span class="line"></span><br><span class="line">x = y;  <span class="comment">// OK, because y matches structure of x</span></span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+In the above, `x` and `y` are compatible because their structures do not use the type argument in a differentiating way.
+Changing this example by adding a member to `Empty&amp;lt;T&amp;gt;` shows how this works:
+"><p>上例, 类型参数并没有造成 <code>x</code>, <code>y</code> 结构上的差异, 所以它们是兼容的.<br>稍作修改, 为 <code>Empty&lt;T&gt;</code> 添加一个成员, 用上类型参数:</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">interface</span> NotEmpty&lt;T&gt; &#123;</span><br><span class="line">    data: T;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">let</span> x: NotEmpty&lt;<span class="built_in">number</span>&gt;;</span><br><span class="line"><span class="keyword">let</span> y: NotEmpty&lt;<span class="built_in">string</span>&gt;;</span><br><span class="line"></span><br><span class="line">x = y;  <span class="comment">// Error, because x and y are not compatible</span></span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+In this way, a generic type that has its type arguments specified acts just like a non-generic type.
+
+For generic types that do not have their type arguments specified, compatibility is checked by specifying `any` in place of all unspecified type arguments.
+The resulting types are then checked for compatibility, just as in the non-generic case.
+
+For example,
+"><p>类型参数特化后的泛型可看作普通类型.</p>
+<p>对于类型参数未特化的泛型类型, 类型系统假定每个类型参数都是 <code>any</code>.<br>再和普通类型一样, 检查结果类型的兼容性.</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> identity = <span class="function"><span class="keyword">function</span>&lt;<span class="title">T</span>&gt;(<span class="params">x: T</span>): <span class="title">T</span> </span>&#123;</span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> reverse = <span class="function"><span class="keyword">function</span>&lt;<span class="title">U</span>&gt;(<span class="params">y: U</span>): <span class="title">U</span> </span>&#123;</span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">identity = reverse;  <span class="comment">// OK, because (x: any) =&gt; any matches (y: any) =&gt; any</span></span><br></pre></td></tr></table></figure>
+<h1 id="高级话题" class="heading-control"><a href="#高级话题" class="headerlink" title="高级话题"></a>高级话题<a class="heading-anchor" href="#高级话题" aria-hidden="true"></a></h1><!-- # Advanced Topics -->
+<h2 id="两种兼容性机制" class="heading-control"><a href="#两种兼容性机制" class="headerlink" title="两种兼容性机制"></a>两种兼容性机制<a class="heading-anchor" href="#两种兼容性机制" aria-hidden="true"></a></h2><!-- ## Subtype vs Assignment -->
+<div class="translation-block" title="
+So far, we&amp;#39;ve used &amp;quot;compatible&amp;quot;, which is not a term defined in the language spec.
+In TypeScript, there are two kinds of compatibility: subtype and assignment.
+These differ only in that assignment extends subtype compatibility with rules to allow assignment to and from `any`, and to and from `enum` with corresponding numeric values.
+
+Different places in the language use one of the two compatibility mechanisms, depending on the situation.
+For practical purposes, type compatibility is dictated by assignment compatibility, even in the cases of the `implements` and `extends` clauses.
+
+For more information, see the [TypeScript spec](https:&amp;#x2F;&amp;#x2F;github.com&amp;#x2F;Microsoft&amp;#x2F;TypeScript&amp;#x2F;blob&amp;#x2F;master&amp;#x2F;doc&amp;#x2F;spec.md).
+"><p>谈了这么多, 我们使用的术语 “兼容性” 其实并未在语言标准定义.<br>在 TypeScript 中, 兼容性有两种类型: 子类型, 赋值.<br>两者仅区别在赋值用规则扩展了子类型兼容性使得任何类型可以与 <code>any</code> 相互转换, 枚举可以和相应数值类型相互转换.</p>
+<p>语言依情况为不同场合选择兼容性机制.<br>为了实用, 即便是 <code>implements</code> 和 <code>extends</code> 子句, 类型兼容性也受制于赋值兼容性.</p>
+<p>阅读 <a href="https://github.com/Microsoft/TypeScript/blob/master/doc/spec.md" target="_blank" rel="noopener">TypeScript spec</a> 了解更多信息.</p></div>
+<blockquote>
+<p>译注: 这段我没读懂</p>
+</blockquote>
+
+    </div>
+
+    
+    
+    
+        
+      
+        <div id="reward-container">
+  <div>如果这篇文章对您有用，可以考虑打赏:)</div>
+  <button id="reward-button" disable="enable" onclick="var qr = document.getElementById(&quot;qr&quot;); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+        
+      
+      <div style="display: inline-block">
+        <img src="/images/wechatpay.png" alt="Hyan Lee 微信支付">
+        <p>微信支付</p>
+      </div>
+
+  </div>
+</div>
+
+      
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>Hyan Lee</li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://hyan23.org/2019/11/20/ts-type-compatibility/" title="类型兼容性">https://hyan23.org/2019/11/20/ts-type-compatibility/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！</li>
+</ul>
+</div>
+
+      
+
+      <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+              
+                <a href="/2019/11/20/ts-type-inference/" rel="next" title="类型推导">
+                  <i class="fa fa-chevron-left"></i> 类型推导
+                </a>
+              
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+              
+                <a href="/2019/11/20/ts-advanced-types/" rel="prev" title="高级数据类型">
+                  高级数据类型 <i class="fa fa-chevron-right"></i>
+                </a>
+              
+            </div>
+          </div>
+        
+      </footer>
+    
+  </div>
+  
+  
+  
+  </article>
+
+  </div>
+
+
+          </div>
+          
+    
+    <div class="comments" id="gitalk-container"></div>
+  
+
+        </div>
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+        
+        
+        
+        
+      
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#介绍"><span class="nav-number">1.</span> <span class="nav-text">介绍</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#健全性说明"><span class="nav-number">1.1.</span> <span class="nav-text">健全性说明</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#那就开始吧"><span class="nav-number">2.</span> <span class="nav-text">那就开始吧</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#比较两个函数"><span class="nav-number">3.</span> <span class="nav-text">比较两个函数</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#函数参数协变"><span class="nav-number">3.1.</span> <span class="nav-text">函数参数协变</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#可选参数，-变长参数"><span class="nav-number">3.2.</span> <span class="nav-text">可选参数， 变长参数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#函数重载"><span class="nav-number">3.3.</span> <span class="nav-text">函数重载</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#枚举的情况"><span class="nav-number">4.</span> <span class="nav-text">枚举的情况</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#类的情况"><span class="nav-number">5.</span> <span class="nav-text">类的情况</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#类的私有和保护成员"><span class="nav-number">5.1.</span> <span class="nav-text">类的私有和保护成员</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#泛型的情况"><span class="nav-number">6.</span> <span class="nav-text">泛型的情况</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#高级话题"><span class="nav-number">7.</span> <span class="nav-text">高级话题</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#两种兼容性机制"><span class="nav-number">7.1.</span> <span class="nav-text">两种兼容性机制</span></a></li></ol></li></ol></div>
+        
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image"
+      src="/images/avatar2.png"
+      alt="Hyan Lee">
+  <p class="site-author-name" itemprop="name">Hyan Lee</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">31</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-categories">
+        
+          
+            <a href="/categories/">
+          
+        
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">分类</span>
+        </a>
+      </div>
+    
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+      
+      
+        
+      
+      
+        
+      
+        <a href="https://github.com/hyan23" title="GitHub &rarr; https://github.com/hyan23" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+    
+      <span class="links-of-author-item">
+      
+      
+        
+      
+      
+        
+      
+        <a href="mailto:hyan23lee@hotmail.com" title="E-Mail &rarr; mailto:hyan23lee@hotmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+    
+      <span class="links-of-author-item">
+      
+      
+        
+      
+      
+        
+      
+        <a href="https://t.me/hyan23" title="Telegram &rarr; https://t.me/hyan23" rel="noopener" target="_blank"><i class="fa fa-fw fa-telegram"></i>Telegram</a>
+      </span>
+    
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    
+  
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+      
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2017 – <span itemprop="copyrightYear">2020</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Hyan Lee</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    
+    <span title="站点总字数">118k</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v3.9.0</div>
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js?v=3.1.0"></script>
+  <script src="//cdn.jsdelivr.net/npm/medium-zoom@1/dist/medium-zoom.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+<script src="/js/utils.js?v=7.4.0"></script>
+<script src="/js/schemes/pisces.js?v=7.4.0"></script>
+<script src="/js/next-boot.js?v=7.4.0"></script>
+
+
+
+  
+  <script>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+    mermaid.initialize({
+      theme: 'forest',
+      logLevel: 3,
+      flowchart: { curve: 'linear' },
+      gantt: { axisFormat: '%m/%d/%Y' },
+      sequence: { actorMargin: 50 }
+    });
+  }, window.mermaid);
+}
+</script>
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID: '442da4785490db3ece48',
+      clientSecret: '3bfa2829a34371ca37db636917e791d114bd338c',
+      repo: 'blog-comments',
+      owner: 'hyan23',
+      admin: ['hyan23'],
+      id: '900dd8ef032b41a4c36bc10aa8adef52',
+        language: window.navigator.language || window.navigator.userLanguage,
+      
+      distractionFreeMode: 'true'
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+</script>
+
+</body>
+</html>

@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+
+
+
+
+
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/favicon/apple-touch-icon.png?v=7.4.0">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon/favicon-32x32.png?v=7.4.0">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon/favicon-16x16.png?v=7.4.0">
+  <link rel="mask-icon" href="/images/favicon/safari-pinned-tab.svg?v=7.4.0" color="#222">
+  <link rel="manifest" href="/images/favicon/site.webmanifest">
+  <meta name="msapplication-config" content="/images/favicon/browserconfig.xml">
+  <meta http-equiv="Cache-Control" content="no-transform">
+  <meta http-equiv="Cache-Control" content="no-siteapp">
+
+<link rel="stylesheet" href="/css/main.css?v=7.4.0">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '7.4.0',
+    exturl: false,
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false},
+    copycode: {"enable":false,"show_result":false,"style":null},
+    back2top: {"enable":true,"sidebar":true,"scrollpercent":false},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: true,
+    lazyload: true,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: "",
+      labels: ""
+    },
+    localsearch: {"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: '',
+    motion: {"enable":false},
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="介绍这里是我使用 Debian(GNU/Linux) 系统和常用电子设备的一些技巧总结">
+<meta name="keywords" content="博客,个人博客,日志,在线工具">
+<meta property="og:type" content="article">
+<meta property="og:title" content="有用的技巧">
+<meta property="og:url" content="https://hyan23.org/2017/05/29/skills/index.html">
+<meta property="og:site_name" content="Hyan Lee">
+<meta property="og:description" content="介绍这里是我使用 Debian(GNU/Linux) 系统和常用电子设备的一些技巧总结">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2020-03-06T11:48:37.946Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="有用的技巧">
+<meta name="twitter:description" content="介绍这里是我使用 Debian(GNU/Linux) 系统和常用电子设备的一些技巧总结">
+  <link rel="canonical" href="https://hyan23.org/2017/05/29/skills/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>有用的技巧 | Hyan Lee</title><meta name="robots" content="noindex">
+  
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+  <div class="container">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Hyan Lee</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+      
+      
+      
+        
+        <li class="menu-item menu-item-home">
+      
+    
+      
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-关于-/-留言板">
+      
+    
+      
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于 / 留言板</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-categories">
+      
+    
+      
+      
+        
+      
+        
+          
+        
+      
+        
+      
+    
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类<span class="badge">6</span></a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-archives">
+      
+    
+      
+      
+        
+          
+        
+      
+        
+      
+        
+      
+    
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">31</span></a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-精选-/-系列">
+      
+    
+      
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <a href="/selections/" rel="section"><i class="fa fa-fw fa-book"></i>精选 / 系列</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-摄影">
+      
+    
+      
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <a href="/gallery/" rel="section"><i class="fa fa-fw fa-camera"></i>摄影</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-工具">
+      
+    
+      
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <a href="/tools/" rel="section"><i class="fa fa-fw fa-calculator"></i>工具</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-友情链接">
+      
+    
+      
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <a href="/friends/" rel="section"><i class="fa fa-fw fa-external-link"></i>友情链接</a>
+
+  </li>
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+            
+
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+      <article itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block post">
+    <link itemprop="mainEntityOfPage" href="https://hyan23.org/2017/05/29/skills/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Hyan Lee">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar2.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hyan Lee">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">有用的技巧
+
+          
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              
+                
+              
+
+              <time title="创建时间：2017-05-29 00:00:00" itemprop="dateCreated datePublished" datetime="2017-05-29T00:00:00+08:00">2017-05-29</time>
+            </span>
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-03-06 19:48:37" itemprop="dateModified" datetime="2020-03-06T19:48:37+08:00">2020-03-06</time>
+              </span>
+            
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/清单/" itemprop="url" rel="index"><span itemprop="name">清单</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+          
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">本文字数：</span>
+              
+              <span>1.6k</span>
+            </span>
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h3 id="介绍" class="heading-control"><a href="#介绍" class="headerlink" title="介绍"></a>介绍<a class="heading-anchor" href="#介绍" aria-hidden="true"></a></h3><p>这里是我使用 Debian(GNU/Linux) 系统和常用电子设备的一些技巧总结</p>
+<a id="more"></a>
+<h3 id="2019-12-09" class="heading-control"><a href="#2019-12-09" class="headerlink" title="2019.12.09"></a>2019.12.09<a class="heading-anchor" href="#2019-12-09" aria-hidden="true"></a></h3><p>电梯按钮连按两次可以取消选层</p>
+<p>笔记本电脑只有特定 USB 接口才支持关机充电</p>
+<h3 id="2019-12-06" class="heading-control"><a href="#2019-12-06" class="headerlink" title="2019.12.06"></a>2019.12.06<a class="heading-anchor" href="#2019-12-06" aria-hidden="true"></a></h3><h4 id="关闭休眠-删除-hiberfil-sys-文件" class="heading-control"><a href="#关闭休眠-删除-hiberfil-sys-文件" class="headerlink" title="关闭休眠, 删除 hiberfil.sys 文件"></a>关闭休眠, 删除 hiberfil.sys 文件<a class="heading-anchor" href="#关闭休眠-删除-hiberfil-sys-文件" aria-hidden="true"></a></h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">powercfg -h off</span><br></pre></td></tr></table></figure>
+<h3 id="2019-11-08" class="heading-control"><a href="#2019-11-08" class="headerlink" title="2019.11.08"></a>2019.11.08<a class="heading-anchor" href="#2019-11-08" aria-hidden="true"></a></h3><h4 id="Deleting-Files-that-Require-Permission-from-Myself" class="heading-control"><a href="#Deleting-Files-that-Require-Permission-from-Myself" class="headerlink" title="Deleting Files that Require Permission from Myself"></a>Deleting Files that Require Permission from Myself<a class="heading-anchor" href="#Deleting-Files-that-Require-Permission-from-Myself" aria-hidden="true"></a></h4><p><a href="https://community.spiceworks.com/topic/2031630-deleting-files-that-require-permission-from-myself" target="_blank" rel="noopener">https://community.spiceworks.com/topic/2031630-deleting-files-that-require-permission-from-myself</a></p>
+<p>把 everyone 的权限设为完全控制</p>
+<p>replace all child object permission</p>
+<h3 id="2019-04-27" class="heading-control"><a href="#2019-04-27" class="headerlink" title="2019.04.27"></a>2019.04.27<a class="heading-anchor" href="#2019-04-27" aria-hidden="true"></a></h3><h4 id="Windows10虚拟桌面管理" class="heading-control"><a href="#Windows10虚拟桌面管理" class="headerlink" title="Windows10虚拟桌面管理"></a>Windows10虚拟桌面管理<a class="heading-anchor" href="#Windows10虚拟桌面管理" aria-hidden="true"></a></h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Win+Tab: 打开虚拟桌面概览界面</span><br><span class="line">Ctrl+Win+D: 创建新桌面</span><br><span class="line">Ctrl+Win+左右方向键：在虚拟桌面之间切换</span><br><span class="line">Ctrl+Win+F4：关闭当前虚拟桌面</span><br></pre></td></tr></table></figure>
+<h3 id="2019-02-16" class="heading-control"><a href="#2019-02-16" class="headerlink" title="2019.02.16"></a>2019.02.16<a class="heading-anchor" href="#2019-02-16" aria-hidden="true"></a></h3><h4 id="Windows10实用技巧" class="heading-control"><a href="#Windows10实用技巧" class="headerlink" title="Windows10实用技巧"></a>Windows10实用技巧<a class="heading-anchor" href="#Windows10实用技巧" aria-hidden="true"></a></h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">1. 桌面最后一排图标空白: Ctrl + 鼠标滚轮调整图标大小。</span><br><span class="line">2. 删除UltraISO虚拟CD驱动器: 管理员运行UltraISO - 选项 - 配置 - 虚拟光驱 - 设备数量: 无。</span><br><span class="line">3. 改变开始菜单高度，Ctrl + 上/下箭头。</span><br><span class="line">4. f3，搜索文件或内容。</span><br><span class="line">5. alt + enter，查看项目属性。</span><br><span class="line">6. Ctrl + f4，关闭多文档程序的一个文档。</span><br><span class="line">7. Ctrl + ESC，显示开始菜单。</span><br><span class="line">8. f10，显示菜单访问键。</span><br><span class="line">9. 空格键，选中或清除复选框。</span><br><span class="line">10. win + m，最小化所有窗口。</span><br><span class="line">11. win + shift + m，还原最小化的窗口。</span><br><span class="line">12. win + e，打开资源管理器。</span><br><span class="line">13. osk.exe，屏幕键盘。</span><br><span class="line">14. win10睡眠自动唤醒：可能是由于误碰鼠标造成的。</span><br><span class="line">	打开设备管理器，找到“鼠标和其他指针设备”，选中外接指针设备，打开属性面板，</span><br><span class="line">	电源管理，取消勾选“允许此设备唤醒计算机”。</span><br><span class="line">15. 設置默認輸入法:　控製麵板 - 語言 - 輸入法 - 高級設置 - 替代默認輸入法 - 進行選擇。</span><br><span class="line">16. 在計算機 - 網絡位置下添加攝像頭圖標: 複製到C:\Users\hyan23\AppData\Roaming\Microsoft\Windows\Network Shortcuts\</span><br><span class="line">17. 关闭休眠功能, 管理员运行powercfg -h off</span><br><span class="line">18. win10应用闪退, 可能需要更新, 进应用商店, 必须启用服务windows update4</span><br><span class="line">19. USB共享网络，系统卡顿：</span><br><span class="line">	打开设备管理器，选择usb共享的那个网卡（一般是名字里有NDIS这几个字母的），右键，更新驱动程序，选第二项（从计算机设备列表中选取），然后去掉“显示兼容设备”的对钩，在左边列表找到“Microsoft”，右边列表最后一项，选择“远程NDIS兼容设备”，确定。作者：杨晓恒</span><br><span class="line">，链接http://www.zhihu.com/question/35185870/answer/93712562</span><br><span class="line">来源：知乎</span><br><span class="line">著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。</span><br><span class="line">20. win+&apos;+&apos;, win+&apos;-&apos;, win+esc，使用放大镜。</span><br><span class="line">21. 复制一段文本即可清空资源管理器剪切板</span><br></pre></td></tr></table></figure>
+<h3 id="2018-06-20" class="heading-control"><a href="#2018-06-20" class="headerlink" title="2018.06.20"></a>2018.06.20<a class="heading-anchor" href="#2018-06-20" aria-hidden="true"></a></h3><h4 id="Kindle升级和自定义字体" class="heading-control"><a href="#Kindle升级和自定义字体" class="headerlink" title="Kindle升级和自定义字体"></a>Kindle升级和自定义字体<a class="heading-anchor" href="#Kindle升级和自定义字体" aria-hidden="true"></a></h4><p>Kindle 最新版固件 5.9.6 已经支持使用自定义字体, 如果你的 Kindle 尚未收到推送(“更新您的 Kindle”选项为灰色), 可以按以下方法手动升级:</p>
+<p>打开<a href="https://bookfere.com/" target="_blank" rel="noopener">https://bookfere.com/</a>{: target=”_blank” }, 下载适合你机型的最新固件, 下载完成后进行md5和sha1校验(Linux命令: md5sum, sha1sum)并将结果与该网站列出的值进行比对, 如有不符, 必须重新下载</p>
+<p>使用 USB 连接线将 Kindle 连接至电脑, 打开 Kindle 存储分区, 将升级文件复制到 Kindle <strong>根目录</strong>中, 断开与电脑的连接, 此时, “更新您的 Kindle”按钮已经可用, 选择更新, Kindle 将重启一次完成升级</p>
+<p>安装自定义字体:</p>
+<p>打开<a href="http://font.chinaz.com/" target="_blank" rel="noopener">http://font.chinaz.com/</a>{: target=”_blank” }(我用过的), 购买字体下载, Kindle 支持的字体扩展名有: .ttf, .ttc 或 .otf, 将 Kindle 与电脑连接, 把下载好的字体文件(可能需要解压, 直到得到 .ttf, .ttc 或 .otf 文件)复制到 Kindle 根目录下的 <strong>fonts</strong> 文件夹, 断开与电脑的连接, 在 Kindle 打开一本书, 即可选取新安装的字体使用.</p>
+<h4 id="在手机隐藏APP-Store已购买应用" class="heading-control"><a href="#在手机隐藏APP-Store已购买应用" class="headerlink" title="在手机隐藏APP Store已购买应用"></a>在手机隐藏APP Store已购买应用<a class="heading-anchor" href="#在手机隐藏APP-Store已购买应用" aria-hidden="true"></a></h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">1. 设置-&gt;iCloud-&gt;打开家庭共享</span><br><span class="line">2. APP Store-&gt;查看已购买项目-&gt;左滑隐藏</span><br></pre></td></tr></table></figure>
+<h3 id="2018-04-10" class="heading-control"><a href="#2018-04-10" class="headerlink" title="2018.04.10"></a>2018.04.10<a class="heading-anchor" href="#2018-04-10" aria-hidden="true"></a></h3><h4 id="删除-Kindle-已购买图书" class="heading-control"><a href="#删除-Kindle-已购买图书" class="headerlink" title="删除 Kindle 已购买图书"></a>删除 Kindle 已购买图书<a class="heading-anchor" href="#删除-Kindle-已购买图书" aria-hidden="true"></a></h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">1. 打开amazon.cn, 登录自己的账户</span><br><span class="line">2. 依次点击: 我的账户 -&gt; 管理我的内容和设备</span><br><span class="line">3. 选中想要删除的图书, 进行批量操作</span><br><span class="line">4. 点击列表左上方的 &quot;显示&quot; 下拉菜单, 还可以删除过期的 Kindle 用户指南和通过邮箱推送的个人文档</span><br></pre></td></tr></table></figure>
+<h3 id="genymotion-下载文件过慢" class="heading-control"><a href="#genymotion-下载文件过慢" class="headerlink" title="genymotion 下载文件过慢"></a>genymotion 下载文件过慢<a class="heading-anchor" href="#genymotion-下载文件过慢" aria-hidden="true"></a></h3><blockquote>
+<p>目前下载速度慢的问题已经被解决了, 如果你的速度还是慢, 可以试试这个方法</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">1. downloading files 有进度后, 点 &quot;Cancel&quot;</span><br><span class="line">2. 找到正在下载的 .ova 文件, 由于这个文件还没下载完, 所以它的扩展名是 .ova.partial, 在第三步要把 .partial 去掉</span><br><span class="line">3. 把文件名拼接到 http://files2.genymotion.com/dists/系统版本/ova/ 后面,</span><br><span class="line">4. 其中系统版本应该凑齐三位, 比如下载的系统是安卓 6.0 就写成 6.0.0</span><br><span class="line">5. 这个 url 就是该文件的下载地址了, 使用任意下载工具下载, 把下载好的文件移动到 ova 目录中, 同时删除过期的 .ova.partial 文件</span><br><span class="line">6. 重新创建设备</span><br></pre></td></tr></table></figure>
+<p><a href="https://www.jianshu.com/p/ce4b1fede738" target="_blank" rel="noopener">ref: https://www.jianshu.com/p/ce4b1fede738</a></p>
+<h3 id="markdown-图片缩放" class="heading-control"><a href="#markdown-图片缩放" class="headerlink" title="markdown 图片缩放"></a>markdown 图片缩放<a class="heading-anchor" href="#markdown-图片缩放" aria-hidden="true"></a></h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">我们知道, 在 markdown 里插入图片有原生语法和 HTML 标签这两种方式, 通常如果你想插入一张需要调整显示大小的图片可以采用 img 标签, 并修改 width 和 height 属性来调整宽高, 如果你不喜欢在 markdown 文档里混合 HTML 标签, kramdown markdown(适用于 jekyll)提供了一种名为 inline attribute 的技术, 允许你以 ![alt][url]&#123;: width=&quot;&quot; height =&quot;&quot; &#125; 语法来为图片设定显示宽高</span><br></pre></td></tr></table></figure>
+<h3 id="markdown-注释" class="heading-control"><a href="#markdown-注释" class="headerlink" title="markdown 注释"></a>markdown 注释<a class="heading-anchor" href="#markdown-注释" aria-hidden="true"></a></h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[//]: # (comment)</span><br></pre></td></tr></table></figure>
+<h3 id="2018-04-07" class="heading-control"><a href="#2018-04-07" class="headerlink" title="2018.04.07"></a>2018.04.07<a class="heading-anchor" href="#2018-04-07" aria-hidden="true"></a></h3><h4 id="删除-github-所有提交" class="heading-control"><a href="#删除-github-所有提交" class="headerlink" title="删除 github 所有提交"></a>删除 github 所有提交<a class="heading-anchor" href="#删除-github-所有提交" aria-hidden="true"></a></h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">git checkout --orphan latest_branch</span><br><span class="line">git add -A</span><br><span class="line">git commit -am &quot;commit message&quot;</span><br><span class="line">git branch -D master</span><br><span class="line">git branch -m master</span><br><span class="line">git push -f origin master</span><br></pre></td></tr></table></figure>
+<h4 id="删除-github-上一个提交" class="heading-control"><a href="#删除-github-上一个提交" class="headerlink" title="删除 github 上一个提交"></a>删除 github 上一个提交<a class="heading-anchor" href="#删除-github-上一个提交" aria-hidden="true"></a></h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">git reset --hard HEAD^1</span><br><span class="line">git push -f origin master</span><br></pre></td></tr></table></figure>
+<h4 id="修改-commit-message" class="heading-control"><a href="#修改-commit-message" class="headerlink" title="修改 commit message"></a>修改 commit message<a class="heading-anchor" href="#修改-commit-message" aria-hidden="true"></a></h4><p><a href="https://help.github.com/articles/changing-a-commit-message/" target="_blank" rel="noopener">链接</a></p>
+<h4 id="清空-mysql-历史命令记录" class="heading-control"><a href="#清空-mysql-历史命令记录" class="headerlink" title="清空 mysql 历史命令记录"></a>清空 mysql 历史命令记录<a class="heading-anchor" href="#清空-mysql-历史命令记录" aria-hidden="true"></a></h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ rm ~/mysql_history</span><br></pre></td></tr></table></figure>
+<h4 id="重设-mysql-root-密码" class="heading-control"><a href="#重设-mysql-root-密码" class="headerlink" title="重设 mysql root 密码"></a>重设 mysql root 密码<a class="heading-anchor" href="#重设-mysql-root-密码" aria-hidden="true"></a></h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">1. 停止 mysql 服务</span><br><span class="line">$ sudo service mysql stop</span><br><span class="line">2. 以无密码方式启动服务</span><br><span class="line">$ sudo mysqld_safe --skip-grant-tables --skip-networking &amp;</span><br><span class="line">3. 登录 root 用户</span><br><span class="line">$ mysql -uroot</span><br><span class="line">4. 进入 mysql 控制台, 更新 root 密码</span><br><span class="line">mysql&gt; use mysql;</span><br><span class="line">mysql&gt; update user set password=PASSWORD(&apos;新密码&apos;) where User=&apos;root&apos; and Host=&apos;localhost&apos;;</span><br><span class="line">mysql&gt; flush privileges;</span><br><span class="line">mysql&gt; quit</span><br><span class="line">5. 重启 mysql 服务</span><br><span class="line">$ sudo service mysql restart</span><br><span class="line"></span><br><span class="line">有的人改完密码还是登不了(我自己就是), 这个错误是:</span><br><span class="line">ERROR 1698 (28000): Access denied for user &apos;root&apos;@&apos;localhost&apos;</span><br><span class="line">这是因为 User 表里 root 用户那一行的 plugin 字段不为 &apos;mysql_native_password&apos; 造成的, 可能是: &apos;unix_socket&apos;, 重复上面的 1 - 3 步, 进入控制台后, 执行:</span><br><span class="line">mysql&gt; update user set plugin=&apos;mysql_native_password&apos; where User=&apos;root&apos; and Host=&apos;localhost&apos;;</span><br><span class="line">mysql&gt; flush privileges;</span><br><span class="line">mysql&gt; quit</span><br><span class="line">$ sudo service mysql restart</span><br></pre></td></tr></table></figure>
+<h4 id="禁止-iPhone-safari-自动打开-APP" class="heading-control"><a href="#禁止-iPhone-safari-自动打开-APP" class="headerlink" title="禁止 iPhone safari 自动打开 APP"></a>禁止 iPhone safari 自动打开 APP<a class="heading-anchor" href="#禁止-iPhone-safari-自动打开-APP" aria-hidden="true"></a></h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">APP 被自动打开后点击屏幕右上角域名, 不是左上角, 以后就不会跳转了</span><br></pre></td></tr></table></figure>
+<h3 id="2017-09-11" class="heading-control"><a href="#2017-09-11" class="headerlink" title="2017.09.11"></a>2017.09.11<a class="heading-anchor" href="#2017-09-11" aria-hidden="true"></a></h3><h4 id="Read-Only-File-System-ERROR" class="heading-control"><a href="#Read-Only-File-System-ERROR" class="headerlink" title="Read Only File System ERROR"></a>Read Only File System ERROR<a class="heading-anchor" href="#Read-Only-File-System-ERROR" aria-hidden="true"></a></h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">有时, 在打开某一个分区时, 系统会把这个分区挂载为只读模式, 我们不能向磁盘写入任何东西, 这个问题常常发生在双系统的情况, 由于 WINDOWS 系统未能正确关机, 导致该 NTFS 分区状态尚处于活动中, 因此, 系统为了保护该分区数据, 仅允许以只读模式挂载, 我们只需要重新进入一次 WINDOWS 系统即可解决</span><br></pre></td></tr></table></figure>
+<h3 id="2017-08-30" class="heading-control"><a href="#2017-08-30" class="headerlink" title="2017.08.30"></a>2017.08.30<a class="heading-anchor" href="#2017-08-30" aria-hidden="true"></a></h3><h4 id="为-Libreoffice-添加中文字体" class="heading-control"><a href="#为-Libreoffice-添加中文字体" class="headerlink" title="为 Libreoffice 添加中文字体"></a>为 Libreoffice 添加中文字体<a class="heading-anchor" href="#为-Libreoffice-添加中文字体" aria-hidden="true"></a></h4><blockquote>
+<p>很简单, 打开 ~/.config/libreoffice/4/user/fonts, 把 WINDOWS 分区的字体复制过来即可</p>
+</blockquote>
+<h4 id="下载-Maven-jar-包" class="heading-control"><a href="#下载-Maven-jar-包" class="headerlink" title="下载 Maven jar 包"></a>下载 Maven jar 包<a class="heading-anchor" href="#下载-Maven-jar-包" aria-hidden="true"></a></h4><blockquote>
+<p><a href="https://stackoverflow.com/questions/19082860/where-can-i-download-spring-framework-jars-without-using-maven" target="_blank" rel="noopener">链接</a></p>
+</blockquote>
+<h3 id="2017-06-20" class="heading-control"><a href="#2017-06-20" class="headerlink" title="2017.06.20"></a>2017.06.20<a class="heading-anchor" href="#2017-06-20" aria-hidden="true"></a></h3><h4 id="查看端口占用" class="heading-control"><a href="#查看端口占用" class="headerlink" title="查看端口占用"></a>查看端口占用<a class="heading-anchor" href="#查看端口占用" aria-hidden="true"></a></h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"># netstat -tulpn|grep :8080</span><br></pre></td></tr></table></figure>
+<h4 id="调用本地邮件客户端" class="heading-control"><a href="#调用本地邮件客户端" class="headerlink" title="调用本地邮件客户端"></a>调用本地邮件客户端<a class="heading-anchor" href="#调用本地邮件客户端" aria-hidden="true"></a></h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;a href=&quot;mailto:someone@example.com&quot;&gt;Send email&lt;/a&gt;</span><br></pre></td></tr></table></figure>
+<h4 id="中州韵输入法-在中文状态输入英文符号" class="heading-control"><a href="#中州韵输入法-在中文状态输入英文符号" class="headerlink" title="中州韵输入法 - 在中文状态输入英文符号"></a>中州韵输入法 - 在中文状态输入英文符号<a class="heading-anchor" href="#中州韵输入法-在中文状态输入英文符号" aria-hidden="true"></a></h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">$ vi ~/.config/ibus/rime/luna_pinyin_simp.custom.yaml</span><br><span class="line"></span><br><span class="line">patch:</span><br><span class="line">  # &quot;switches/@0/reset&quot;: 1</span><br><span class="line">  &quot;switches/@1/reset&quot;: 0</span><br><span class="line">  &quot;punctuator/import_preset&quot;: alternative</span><br><span class="line">  # &quot;key_binder/import_preset&quot;: alternative</span><br><span class="line"></span><br><span class="line">重新部署</span><br></pre></td></tr></table></figure>
+<h3 id="2017-06-08" class="heading-control"><a href="#2017-06-08" class="headerlink" title="2017.06.08"></a>2017.06.08<a class="heading-anchor" href="#2017-06-08" aria-hidden="true"></a></h3><h4 id="nautilus-GNOME-文件管理器-输入路径导航" class="heading-control"><a href="#nautilus-GNOME-文件管理器-输入路径导航" class="headerlink" title="nautilus(GNOME 文件管理器) 输入路径导航"></a>nautilus(GNOME 文件管理器) 输入路径导航<a class="heading-anchor" href="#nautilus-GNOME-文件管理器-输入路径导航" aria-hidden="true"></a></h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Ctrl+L</span><br></pre></td></tr></table></figure>
+<h4 id="查看命令属于哪个-package" class="heading-control"><a href="#查看命令属于哪个-package" class="headerlink" title="查看命令属于哪个 package"></a>查看命令属于哪个 package<a class="heading-anchor" href="#查看命令属于哪个-package" aria-hidden="true"></a></h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sudo dpkg -S $(which command)</span><br></pre></td></tr></table></figure>
+<h3 id="2017-06-02" class="heading-control"><a href="#2017-06-02" class="headerlink" title="2017.06.02"></a>2017.06.02<a class="heading-anchor" href="#2017-06-02" aria-hidden="true"></a></h3><h4 id="通过进程名杀死进程" class="heading-control"><a href="#通过进程名杀死进程" class="headerlink" title="通过进程名杀死进程"></a>通过进程名杀死进程<a class="heading-anchor" href="#通过进程名杀死进程" aria-hidden="true"></a></h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ pkill &lt;process_name&gt;</span><br></pre></td></tr></table></figure>
+<h4 id="清空命令记录" class="heading-control"><a href="#清空命令记录" class="headerlink" title="清空命令记录"></a>清空命令记录<a class="heading-anchor" href="#清空命令记录" aria-hidden="true"></a></h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ rm ~/.bash_history</span><br></pre></td></tr></table></figure>
+<h4 id="刷新对-profile-的修改" class="heading-control"><a href="#刷新对-profile-的修改" class="headerlink" title="刷新对 ~/.profile 的修改"></a>刷新对 ~/.profile 的修改<a class="heading-anchor" href="#刷新对-profile-的修改" aria-hidden="true"></a></h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ . ~/.profile</span><br></pre></td></tr></table></figure>
+<h4 id="列出最近安装过哪些软件包" class="heading-control"><a href="#列出最近安装过哪些软件包" class="headerlink" title="列出最近安装过哪些软件包"></a>列出最近安装过哪些软件包<a class="heading-anchor" href="#列出最近安装过哪些软件包" aria-hidden="true"></a></h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ cat /var/log/dpkg.log |awk &apos;/ install / &#123;printf &quot;%s &quot;, $4 &#125;&apos;</span><br></pre></td></tr></table></figure>
+<h4 id="用-find-命令排除文件" class="heading-control"><a href="#用-find-命令排除文件" class="headerlink" title="用 find 命令排除文件"></a>用 find 命令排除文件<a class="heading-anchor" href="#用-find-命令排除文件" aria-hidden="true"></a></h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ find . &apos;!&apos; -name &quot;*.obj&quot; &apos;!&apos; -name &quot;*.exe&quot;</span><br></pre></td></tr></table></figure>
+<h3 id="Initial" class="heading-control"><a href="#Initial" class="headerlink" title="Initial"></a>Initial<a class="heading-anchor" href="#Initial" aria-hidden="true"></a></h3><h4 id="禁用-nouveau-驱动程序" class="heading-control"><a href="#禁用-nouveau-驱动程序" class="headerlink" title="禁用 nouveau 驱动程序"></a>禁用 nouveau 驱动程序<a class="heading-anchor" href="#禁用-nouveau-驱动程序" aria-hidden="true"></a></h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sudo echo &quot;blacklist nouveau&quot; &gt;&gt; /etc/modprobe.d/blacklist.conf</span><br></pre></td></tr></table></figure>
+<h4 id="禁用蜂鸣器" class="heading-control"><a href="#禁用蜂鸣器" class="headerlink" title="禁用蜂鸣器"></a>禁用蜂鸣器<a class="heading-anchor" href="#禁用蜂鸣器" aria-hidden="true"></a></h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sudo echo &quot;blacklist pcspkr&quot; &gt;&gt; /etc/modprobe.d/blacklist-libnfc.conf</span><br></pre></td></tr></table></figure>
+<h4 id="在-RTC-存储本地时间" class="heading-control"><a href="#在-RTC-存储本地时间" class="headerlink" title="在 RTC 存储本地时间"></a>在 RTC 存储本地时间<a class="heading-anchor" href="#在-RTC-存储本地时间" aria-hidden="true"></a></h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sudo timedatectl set-local-rtc 1</span><br></pre></td></tr></table></figure>
+<h4 id="添加-i386-架构" class="heading-control"><a href="#添加-i386-架构" class="headerlink" title="添加 i386 架构"></a>添加 i386 架构<a class="heading-anchor" href="#添加-i386-架构" aria-hidden="true"></a></h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sudo dpkg --add-architecture i386</span><br></pre></td></tr></table></figure>
+<h4 id="一个-apt-警告" class="heading-control"><a href="#一个-apt-警告" class="headerlink" title="一个 apt 警告"></a>一个 apt 警告<a class="heading-anchor" href="#一个-apt-警告" aria-hidden="true"></a></h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">apt-get warning:</span><br><span class="line">W: 系统中不存在沙箱用户&apos;_apt&apos;，无法降低权限</span><br><span class="line">W: No sandbox user &apos;_apt&apos; on the system, can not drop privileges</span><br><span class="line">$ sudo useradd --system -M _apt</span><br></pre></td></tr></table></figure>
+<h4 id="包管理器无法获取锁" class="heading-control"><a href="#包管理器无法获取锁" class="headerlink" title="包管理器无法获取锁"></a>包管理器无法获取锁<a class="heading-anchor" href="#包管理器无法获取锁" aria-hidden="true"></a></h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ sudo rm /var/cache/apt/archives/lock</span><br><span class="line">$ sudo rm /var/lib/dpkg/lock</span><br></pre></td></tr></table></figure>
+<h4 id="修改-deb-包" class="heading-control"><a href="#修改-deb-包" class="headerlink" title="修改 deb 包"></a>修改 deb 包<a class="heading-anchor" href="#修改-deb-包" aria-hidden="true"></a></h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ mkdir tmp</span><br><span class="line">$ dpkg-deb -R package.deb tmp</span><br><span class="line">$ dpkg-deb -b tmp tmp.deb</span><br></pre></td></tr></table></figure>
+<h4 id="为用户添加-sudo" class="heading-control"><a href="#为用户添加-sudo" class="headerlink" title="为用户添加 sudo"></a>为用户添加 sudo<a class="heading-anchor" href="#为用户添加-sudo" aria-hidden="true"></a></h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># visudo</span><br><span class="line">+user ALL=(ALL)ALL</span><br></pre></td></tr></table></figure>
+<h4 id="中文-tty" class="heading-control"><a href="#中文-tty" class="headerlink" title="中文 tty"></a>中文 tty<a class="heading-anchor" href="#中文-tty" aria-hidden="true"></a></h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">$ sudo apt-get install ttf-wqy-zenhei</span><br><span class="line">$ sudo apt-get install fbterm</span><br><span class="line">$ vi ~/.bashrc</span><br><span class="line">+if [ &quot;$TERM&quot; = &quot;linux&quot; ]; then</span><br><span class="line">+    alias fbterm=&apos;LANG=zh_CN.UTF-8 fbterm&apos;</span><br><span class="line">+    fbterm --font-size=20</span><br><span class="line">+fi</span><br></pre></td></tr></table></figure>
+<h4 id="GNOME-为文件绑定默认程序" class="heading-control"><a href="#GNOME-为文件绑定默认程序" class="headerlink" title="GNOME 为文件绑定默认程序"></a>GNOME 为文件绑定默认程序<a class="heading-anchor" href="#GNOME-为文件绑定默认程序" aria-hidden="true"></a></h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">文件右键菜单 -&gt; Properties-&gt;Open with-&gt;set as default</span><br></pre></td></tr></table></figure>
+<h4 id="右键新建文件" class="heading-control"><a href="#右键新建文件" class="headerlink" title="右键新建文件"></a>右键新建文件<a class="heading-anchor" href="#右键新建文件" aria-hidden="true"></a></h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">在以下目录创建模板:</span><br><span class="line">~/Templates</span><br></pre></td></tr></table></figure>
+<h4 id="开机启动程序" class="heading-control"><a href="#开机启动程序" class="headerlink" title="开机启动程序"></a>开机启动程序<a class="heading-anchor" href="#开机启动程序" aria-hidden="true"></a></h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">在以下目录创建启动项:</span><br><span class="line">~/.config/autostart</span><br></pre></td></tr></table></figure>
+<h4 id="vim-定制" class="heading-control"><a href="#vim-定制" class="headerlink" title="vim 定制"></a>vim 定制<a class="heading-anchor" href="#vim-定制" aria-hidden="true"></a></h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ sudo leafpad /etc/vim/vimrc.tiny</span><br><span class="line">-set compatible(方向键变字母)</span><br><span class="line">+set nocompatible</span><br><span class="line">+set backspace=2(退格无效)</span><br></pre></td></tr></table></figure>
+<h4 id="增大-icedove-字体" class="heading-control"><a href="#增大-icedove-字体" class="headerlink" title="增大 icedove 字体"></a>增大 icedove 字体<a class="heading-anchor" href="#增大-icedove-字体" aria-hidden="true"></a></h4><p><a href="https://addons.mozilla.org/en-US/thunderbird/addon/theme-font-size-changer/" target="_blank" rel="noopener">Add-On</a></p>
+<h4 id="把网页转换为-pdf" class="heading-control"><a href="#把网页转换为-pdf" class="headerlink" title="把网页转换为 pdf"></a>把网页转换为 pdf<a class="heading-anchor" href="#把网页转换为-pdf" aria-hidden="true"></a></h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">用 google-chrome 打开网页, 菜单-&gt;打印(Print)</span><br></pre></td></tr></table></figure>
+<h4 id="中州韵输入法-Shift-上屏" class="heading-control"><a href="#中州韵输入法-Shift-上屏" class="headerlink" title="中州韵输入法 - Shift 上屏"></a>中州韵输入法 - Shift 上屏<a class="heading-anchor" href="#中州韵输入法-Shift-上屏" aria-hidden="true"></a></h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">$ vi ~/.config/ibus/rime/default.custom.yaml</span><br><span class="line">增加下面几行:</span><br><span class="line">patch:</span><br><span class="line">  ascii_composer/switch_key:</span><br><span class="line">    Shift_L: commit_code</span><br><span class="line">    Shift_R: commit_text</span><br><span class="line">再重新部署</span><br></pre></td></tr></table></figure><!-- flag of hidden posts -->
+    </div>
+
+    
+    
+    
+        
+      
+        <div id="reward-container">
+  <div>如果这篇文章对您有用，可以考虑打赏:)</div>
+  <button id="reward-button" disable="enable" onclick="var qr = document.getElementById(&quot;qr&quot;); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+        
+      
+      <div style="display: inline-block">
+        <img src="/images/wechatpay.png" alt="Hyan Lee 微信支付">
+        <p>微信支付</p>
+      </div>
+
+  </div>
+</div>
+
+      
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>Hyan Lee</li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://hyan23.org/2017/05/29/skills/" title="有用的技巧">https://hyan23.org/2017/05/29/skills/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！</li>
+</ul>
+</div>
+
+      
+
+      <footer class="post-footer">
+
+        
+
+      </footer>
+    
+  </div>
+  
+  
+  
+  </article>
+
+  </div>
+
+
+          </div>
+          
+    
+    <div class="comments" id="gitalk-container"></div>
+  
+
+        </div>
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+        
+        
+        
+        
+      
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#介绍"><span class="nav-number">1.</span> <span class="nav-text">介绍</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2019-12-09"><span class="nav-number">2.</span> <span class="nav-text">2019.12.09</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2019-12-06"><span class="nav-number">3.</span> <span class="nav-text">2019.12.06</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2019-11-08"><span class="nav-number">4.</span> <span class="nav-text">2019.11.08</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2019-04-27"><span class="nav-number">5.</span> <span class="nav-text">2019.04.27</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2019-02-16"><span class="nav-number">6.</span> <span class="nav-text">2019.02.16</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2018-06-20"><span class="nav-number">7.</span> <span class="nav-text">2018.06.20</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2018-04-10"><span class="nav-number">8.</span> <span class="nav-text">2018.04.10</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#genymotion-下载文件过慢"><span class="nav-number">9.</span> <span class="nav-text">genymotion 下载文件过慢</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#markdown-图片缩放"><span class="nav-number">10.</span> <span class="nav-text">markdown 图片缩放</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#markdown-注释"><span class="nav-number">11.</span> <span class="nav-text">markdown 注释</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2018-04-07"><span class="nav-number">12.</span> <span class="nav-text">2018.04.07</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2017-09-11"><span class="nav-number">13.</span> <span class="nav-text">2017.09.11</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2017-08-30"><span class="nav-number">14.</span> <span class="nav-text">2017.08.30</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2017-06-20"><span class="nav-number">15.</span> <span class="nav-text">2017.06.20</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2017-06-08"><span class="nav-number">16.</span> <span class="nav-text">2017.06.08</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2017-06-02"><span class="nav-number">17.</span> <span class="nav-text">2017.06.02</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Initial"><span class="nav-number">18.</span> <span class="nav-text">Initial</span></a></li></ol></div>
+        
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image"
+      src="/images/avatar2.png"
+      alt="Hyan Lee">
+  <p class="site-author-name" itemprop="name">Hyan Lee</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">31</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-categories">
+        
+          
+            <a href="/categories/">
+          
+        
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">分类</span>
+        </a>
+      </div>
+    
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+      
+      
+        
+      
+      
+        
+      
+        <a href="https://github.com/hyan23" title="GitHub &rarr; https://github.com/hyan23" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+    
+      <span class="links-of-author-item">
+      
+      
+        
+      
+      
+        
+      
+        <a href="mailto:hyan23lee@hotmail.com" title="E-Mail &rarr; mailto:hyan23lee@hotmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+    
+      <span class="links-of-author-item">
+      
+      
+        
+      
+      
+        
+      
+        <a href="https://t.me/hyan23" title="Telegram &rarr; https://t.me/hyan23" rel="noopener" target="_blank"><i class="fa fa-fw fa-telegram"></i>Telegram</a>
+      </span>
+    
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    
+  
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+      
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2017 – <span itemprop="copyrightYear">2020</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Hyan Lee</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    
+    <span title="站点总字数">118k</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v3.9.0</div>
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js?v=3.1.0"></script>
+  <script src="//cdn.jsdelivr.net/npm/medium-zoom@1/dist/medium-zoom.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+<script src="/js/utils.js?v=7.4.0"></script>
+<script src="/js/schemes/pisces.js?v=7.4.0"></script>
+<script src="/js/next-boot.js?v=7.4.0"></script>
+
+
+
+  
+  <script>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+    mermaid.initialize({
+      theme: 'forest',
+      logLevel: 3,
+      flowchart: { curve: 'linear' },
+      gantt: { axisFormat: '%m/%d/%Y' },
+      sequence: { actorMargin: 50 }
+    });
+  }, window.mermaid);
+}
+</script>
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID: '442da4785490db3ece48',
+      clientSecret: '3bfa2829a34371ca37db636917e791d114bd338c',
+      repo: 'blog-comments',
+      owner: 'hyan23',
+      admin: ['hyan23'],
+      id: '046cbd91ef94c02d45d76b98e0d8d98d',
+        language: window.navigator.language || window.navigator.userLanguage,
+      
+      distractionFreeMode: 'true'
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+</script>
+
+</body>
+</html>

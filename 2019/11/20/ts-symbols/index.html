@@ -1,0 +1,823 @@
+<!DOCTYPE html>
+
+
+
+
+
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/favicon/apple-touch-icon.png?v=7.4.0">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon/favicon-32x32.png?v=7.4.0">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon/favicon-16x16.png?v=7.4.0">
+  <link rel="mask-icon" href="/images/favicon/safari-pinned-tab.svg?v=7.4.0" color="#222">
+  <link rel="manifest" href="/images/favicon/site.webmanifest">
+  <meta name="msapplication-config" content="/images/favicon/browserconfig.xml">
+  <meta http-equiv="Cache-Control" content="no-transform">
+  <meta http-equiv="Cache-Control" content="no-siteapp">
+
+<link rel="stylesheet" href="/css/main.css?v=7.4.0">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '7.4.0',
+    exturl: false,
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false},
+    copycode: {"enable":false,"show_result":false,"style":null},
+    back2top: {"enable":true,"sidebar":true,"scrollpercent":false},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: true,
+    lazyload: true,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: "",
+      labels: ""
+    },
+    localsearch: {"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: '',
+    motion: {"enable":false},
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="状态: 初稿 介绍 自 ECMAScript 2015 开始, symbol 跟 number 和 string 一样, 成为一种原始数据类型. symbol 值通过 Symbol 构造函数创建.">
+<meta name="keywords" content="博客,个人博客,日志,在线工具">
+<meta property="og:type" content="article">
+<meta property="og:title" content="符号">
+<meta property="og:url" content="https://hyan23.org/2019/11/20/ts-symbols/index.html">
+<meta property="og:site_name" content="Hyan Lee">
+<meta property="og:description" content="状态: 初稿 介绍 自 ECMAScript 2015 开始, symbol 跟 number 和 string 一样, 成为一种原始数据类型. symbol 值通过 Symbol 构造函数创建.">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2020-02-18T06:51:49.169Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="符号">
+<meta name="twitter:description" content="状态: 初稿 介绍 自 ECMAScript 2015 开始, symbol 跟 number 和 string 一样, 成为一种原始数据类型. symbol 值通过 Symbol 构造函数创建.">
+  <link rel="canonical" href="https://hyan23.org/2019/11/20/ts-symbols/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>符号 | Hyan Lee</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+  <div class="container">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Hyan Lee</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+      
+      
+      
+        
+        <li class="menu-item menu-item-home">
+      
+    
+      
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-关于-/-留言板">
+      
+    
+      
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于 / 留言板</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-categories">
+      
+    
+      
+      
+        
+      
+        
+          
+        
+      
+        
+      
+    
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类<span class="badge">6</span></a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-archives">
+      
+    
+      
+      
+        
+          
+        
+      
+        
+      
+        
+      
+    
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">31</span></a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-精选-/-系列">
+      
+    
+      
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <a href="/selections/" rel="section"><i class="fa fa-fw fa-book"></i>精选 / 系列</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-摄影">
+      
+    
+      
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <a href="/gallery/" rel="section"><i class="fa fa-fw fa-camera"></i>摄影</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-工具">
+      
+    
+      
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <a href="/tools/" rel="section"><i class="fa fa-fw fa-calculator"></i>工具</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-友情链接">
+      
+    
+      
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <a href="/friends/" rel="section"><i class="fa fa-fw fa-external-link"></i>友情链接</a>
+
+  </li>
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+            
+
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+      <article itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block post">
+    <link itemprop="mainEntityOfPage" href="https://hyan23.org/2019/11/20/ts-symbols/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Hyan Lee">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar2.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hyan Lee">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">符号
+
+          
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              
+                
+              
+
+              <time title="创建时间：2019-11-20 09:32:48" itemprop="dateCreated datePublished" datetime="2019-11-20T09:32:48+08:00">2019-11-20</time>
+            </span>
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-02-18 14:51:49" itemprop="dateModified" datetime="2020-02-18T14:51:49+08:00">2020-02-18</time>
+              </span>
+            
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/翻译稿/" itemprop="url" rel="index"><span itemprop="name">翻译稿</span></a></span>
+
+                
+                
+                  ，
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/翻译稿/TypeScript/" itemprop="url" rel="index"><span itemprop="name">TypeScript</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+          
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">本文字数：</span>
+              
+              <span>848</span>
+            </span>
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <pre><code>状态: 初稿
+</code></pre><h1 id="介绍" class="heading-control"><a href="#介绍" class="headerlink" title="介绍"></a>介绍<a class="heading-anchor" href="#介绍" aria-hidden="true"></a></h1><!-- # Introduction -->
+<div class="translation-block" title="
+Starting with ECMAScript 2015, `symbol` is a primitive data type, just like `number` and `string`.
+
+`symbol` values are created by calling the `Symbol` constructor.
+"><p>自 ECMAScript 2015 开始, <code>symbol</code> 跟 <code>number</code> 和 <code>string</code> 一样, 成为一种原始数据类型.</p>
+<p><code>symbol</code> 值通过 <code>Symbol</code> 构造函数创建.</p></div>
+<a id="more"></a>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> sym1 = Symbol();</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> sym2 = Symbol(<span class="string">"key"</span>); <span class="comment">// optional string key</span></span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+Symbols are immutable, and unique.
+"><p>符号具有持久性, 唯一性.</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> sym2 = Symbol(<span class="string">"key"</span>);</span><br><span class="line"><span class="keyword">let</span> sym3 = Symbol(<span class="string">"key"</span>);</span><br><span class="line"></span><br><span class="line">sym2 === sym3; <span class="comment">// false, symbols are unique</span></span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+Just like strings, symbols can be used as keys for object properties.
+"><p>如同字符串, 符号也能承担对象属性键的角色.</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> sym = Symbol();</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> obj = &#123;</span><br><span class="line">    [sym]: <span class="string">"value"</span></span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="built_in">console</span>.log(obj[sym]); <span class="comment">// "value"</span></span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+Symbols can also be combined with computed property declarations to declare object properties and class members.
+"><p>符号可与计算出的属性声明联合定义对象属性和类成员.</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> getClassNameSymbol = Symbol();</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> C &#123;</span><br><span class="line">    [getClassNameSymbol]()&#123;</span><br><span class="line">       <span class="keyword">return</span> <span class="string">"C"</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> c = <span class="keyword">new</span> C();</span><br><span class="line"><span class="keyword">let</span> className = c[getClassNameSymbol](); <span class="comment">// "C"</span></span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+[&amp;#39;key&amp;#39;]: string 也是定义属性的一种方式.
+"><p>笔记</p></div>
+<h1 id="常见符号" class="heading-control"><a href="#常见符号" class="headerlink" title="常见符号"></a>常见符号<a class="heading-anchor" href="#常见符号" aria-hidden="true"></a></h1><!-- # Well-known Symbols -->
+<div class="translation-block" title="
+In addition to user-defined symbols, there are well-known built-in symbols.
+Built-in symbols are used to represent internal language behaviors.
+
+Here is a list of well-known symbols:
+"><p>除用户自定义符号外, 还存在一批常见内建符号.<br>内建符号代表语言内部功能.</p>
+<p>列表如下:</p></div>
+<h2 id="Symbol-hasInstance" class="heading-control"><a href="#Symbol-hasInstance" class="headerlink" title="Symbol.hasInstance"></a><code>Symbol.hasInstance</code><a class="heading-anchor" href="#Symbol-hasInstance" aria-hidden="true"></a></h2><div class="translation-block" title="
+A method that determines if a constructor object recognizes an object as one of the constructor’s instances. Called by the semantics of the instanceof operator.
+"><p>一个判断某构造器对象能否识别一个对象为构造器的实例的方法. 为 instanceof 运算符所调用.</p></div>
+<h2 id="Symbol-isConcatSpreadable" class="heading-control"><a href="#Symbol-isConcatSpreadable" class="headerlink" title="Symbol.isConcatSpreadable"></a><code>Symbol.isConcatSpreadable</code><a class="heading-anchor" href="#Symbol-isConcatSpreadable" aria-hidden="true"></a></h2><div class="translation-block" title="
+A Boolean value indicating that an object should be flattened to its array elements by Array.prototype.concat.
+"><p>一个布尔值, 指出 Array.prototype.concat 可以展平某对象的数组元素.</p></div>
+<h2 id="Symbol-iterator" class="heading-control"><a href="#Symbol-iterator" class="headerlink" title="Symbol.iterator"></a><code>Symbol.iterator</code><a class="heading-anchor" href="#Symbol-iterator" aria-hidden="true"></a></h2><div class="translation-block" title="
+A method that returns the default iterator for an object. Called by the semantics of the for-of statement.
+"><p>一个返回对象默认迭代器的方法. 由 for-of 语句调用.</p></div>
+<h2 id="Symbol-match" class="heading-control"><a href="#Symbol-match" class="headerlink" title="Symbol.match"></a><code>Symbol.match</code><a class="heading-anchor" href="#Symbol-match" aria-hidden="true"></a></h2><div class="translation-block" title="
+A regular expression method that matches the regular expression against a string. Called by the `String.prototype.match` method.
+"><p>一个匹配字符串和正则表达式的正则表达式方法. 由 <code>String.prototype.match</code> 方法调用.</p></div>
+<h2 id="Symbol-replace" class="heading-control"><a href="#Symbol-replace" class="headerlink" title="Symbol.replace"></a><code>Symbol.replace</code><a class="heading-anchor" href="#Symbol-replace" aria-hidden="true"></a></h2><div class="translation-block" title="
+A regular expression method that replaces matched substrings of a string. Called by the `String.prototype.replace` method.
+"><p>一个替换字符串中匹配子串的正则表达式方法. 由 <code>String.prototype.replace</code> 方法调用.</p></div>
+<h2 id="Symbol-search" class="heading-control"><a href="#Symbol-search" class="headerlink" title="Symbol.search"></a><code>Symbol.search</code><a class="heading-anchor" href="#Symbol-search" aria-hidden="true"></a></h2><div class="translation-block" title="
+A regular expression method that returns the index within a string that matches the regular expression. Called by the `String.prototype.search` method.
+"><p>一个返回字符串中匹配指定正则表达式的下标的正则表达式方法. 由 <code>String.prototype.search</code> 方法调用.</p></div>
+<h2 id="Symbol-species" class="heading-control"><a href="#Symbol-species" class="headerlink" title="Symbol.species"></a><code>Symbol.species</code><a class="heading-anchor" href="#Symbol-species" aria-hidden="true"></a></h2><div class="translation-block" title="
+A function valued property that is the constructor function that is used to create derived objects.
+"><p>一个用于创建派生对象的构造器函数的函数属性.</p></div>
+<h2 id="Symbol-split" class="heading-control"><a href="#Symbol-split" class="headerlink" title="Symbol.split"></a><code>Symbol.split</code><a class="heading-anchor" href="#Symbol-split" aria-hidden="true"></a></h2><div class="translation-block" title="
+A regular expression method that splits a string at the indices that match the regular expression.
+Called by the `String.prototype.split` method.
+"><p>一个把字符串从匹配指定正则表达式的下标处分割的正则表达式方法.<br>由 <code>String.prototype.split</code> 方法调用.</p></div>
+<h2 id="Symbol-toPrimitive" class="heading-control"><a href="#Symbol-toPrimitive" class="headerlink" title="Symbol.toPrimitive"></a><code>Symbol.toPrimitive</code><a class="heading-anchor" href="#Symbol-toPrimitive" aria-hidden="true"></a></h2><div class="translation-block" title="
+A method that converts an object to a corresponding primitive value.
+Called by the `ToPrimitive` abstract operation.
+"><p>一个把对象转换为对应原始类型的方法.<br>由 <code>ToPrimitive</code> 抽象操作调用.</p></div>
+<h2 id="Symbol-toStringTag" class="heading-control"><a href="#Symbol-toStringTag" class="headerlink" title="Symbol.toStringTag"></a><code>Symbol.toStringTag</code><a class="heading-anchor" href="#Symbol-toStringTag" aria-hidden="true"></a></h2><div class="translation-block" title="
+A String value that is used in the creation of the default string description of an object.
+Called by the built-in method `Object.prototype.toString`.
+"><p>一个用于创建对象默认字符串描述的字符串值.<br>由内建方法 <code>Object.prototype.toString</code> 调用.</p></div>
+<h2 id="Symbol-unscopables" class="heading-control"><a href="#Symbol-unscopables" class="headerlink" title="Symbol.unscopables"></a><code>Symbol.unscopables</code><a class="heading-anchor" href="#Symbol-unscopables" aria-hidden="true"></a></h2><div class="translation-block" title="
+An Object whose own property names are property names that are excluded from the &amp;#39;with&amp;#39; environment bindings of the associated objects.
+"><p>一个对象, 它自身的属性名是从相关联对象的 ‘with’ 环境绑定中排除的属性名.</p></div>
+
+    </div>
+
+    
+    
+    
+        
+      
+        <div id="reward-container">
+  <div>如果这篇文章对您有用，可以考虑打赏:)</div>
+  <button id="reward-button" disable="enable" onclick="var qr = document.getElementById(&quot;qr&quot;); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+        
+      
+      <div style="display: inline-block">
+        <img src="/images/wechatpay.png" alt="Hyan Lee 微信支付">
+        <p>微信支付</p>
+      </div>
+
+  </div>
+</div>
+
+      
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>Hyan Lee</li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://hyan23.org/2019/11/20/ts-symbols/" title="符号">https://hyan23.org/2019/11/20/ts-symbols/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！</li>
+</ul>
+</div>
+
+      
+
+      <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+              
+                <a href="/2019/11/20/ts-advanced-types/" rel="next" title="高级数据类型">
+                  <i class="fa fa-chevron-left"></i> 高级数据类型
+                </a>
+              
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+              
+                <a href="/2019/11/20/ts-iterators-and-generators/" rel="prev" title="迭代器, 生成器">
+                  迭代器, 生成器 <i class="fa fa-chevron-right"></i>
+                </a>
+              
+            </div>
+          </div>
+        
+      </footer>
+    
+  </div>
+  
+  
+  
+  </article>
+
+  </div>
+
+
+          </div>
+          
+    
+    <div class="comments" id="gitalk-container"></div>
+  
+
+        </div>
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+        
+        
+        
+        
+      
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#介绍"><span class="nav-number">1.</span> <span class="nav-text">介绍</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#常见符号"><span class="nav-number">2.</span> <span class="nav-text">常见符号</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Symbol-hasInstance"><span class="nav-number">2.1.</span> <span class="nav-text">Symbol.hasInstance</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Symbol-isConcatSpreadable"><span class="nav-number">2.2.</span> <span class="nav-text">Symbol.isConcatSpreadable</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Symbol-iterator"><span class="nav-number">2.3.</span> <span class="nav-text">Symbol.iterator</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Symbol-match"><span class="nav-number">2.4.</span> <span class="nav-text">Symbol.match</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Symbol-replace"><span class="nav-number">2.5.</span> <span class="nav-text">Symbol.replace</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Symbol-search"><span class="nav-number">2.6.</span> <span class="nav-text">Symbol.search</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Symbol-species"><span class="nav-number">2.7.</span> <span class="nav-text">Symbol.species</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Symbol-split"><span class="nav-number">2.8.</span> <span class="nav-text">Symbol.split</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Symbol-toPrimitive"><span class="nav-number">2.9.</span> <span class="nav-text">Symbol.toPrimitive</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Symbol-toStringTag"><span class="nav-number">2.10.</span> <span class="nav-text">Symbol.toStringTag</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Symbol-unscopables"><span class="nav-number">2.11.</span> <span class="nav-text">Symbol.unscopables</span></a></li></ol></li></ol></div>
+        
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image"
+      src="/images/avatar2.png"
+      alt="Hyan Lee">
+  <p class="site-author-name" itemprop="name">Hyan Lee</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">31</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-categories">
+        
+          
+            <a href="/categories/">
+          
+        
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">分类</span>
+        </a>
+      </div>
+    
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+      
+      
+        
+      
+      
+        
+      
+        <a href="https://github.com/hyan23" title="GitHub &rarr; https://github.com/hyan23" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+    
+      <span class="links-of-author-item">
+      
+      
+        
+      
+      
+        
+      
+        <a href="mailto:hyan23lee@hotmail.com" title="E-Mail &rarr; mailto:hyan23lee@hotmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+    
+      <span class="links-of-author-item">
+      
+      
+        
+      
+      
+        
+      
+        <a href="https://t.me/hyan23" title="Telegram &rarr; https://t.me/hyan23" rel="noopener" target="_blank"><i class="fa fa-fw fa-telegram"></i>Telegram</a>
+      </span>
+    
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    
+  
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+      
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2017 – <span itemprop="copyrightYear">2020</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Hyan Lee</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    
+    <span title="站点总字数">118k</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v3.9.0</div>
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js?v=3.1.0"></script>
+  <script src="//cdn.jsdelivr.net/npm/medium-zoom@1/dist/medium-zoom.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+<script src="/js/utils.js?v=7.4.0"></script>
+<script src="/js/schemes/pisces.js?v=7.4.0"></script>
+<script src="/js/next-boot.js?v=7.4.0"></script>
+
+
+
+  
+  <script>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+    mermaid.initialize({
+      theme: 'forest',
+      logLevel: 3,
+      flowchart: { curve: 'linear' },
+      gantt: { axisFormat: '%m/%d/%Y' },
+      sequence: { actorMargin: 50 }
+    });
+  }, window.mermaid);
+}
+</script>
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID: '442da4785490db3ece48',
+      clientSecret: '3bfa2829a34371ca37db636917e791d114bd338c',
+      repo: 'blog-comments',
+      owner: 'hyan23',
+      admin: ['hyan23'],
+      id: '48fbbac61b5aeae3b859e9849589c9ce',
+        language: window.navigator.language || window.navigator.userLanguage,
+      
+      distractionFreeMode: 'true'
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+</script>
+
+</body>
+</html>

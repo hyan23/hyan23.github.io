@@ -1,0 +1,1099 @@
+<!DOCTYPE html>
+
+
+
+
+
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/favicon/apple-touch-icon.png?v=7.4.0">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon/favicon-32x32.png?v=7.4.0">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon/favicon-16x16.png?v=7.4.0">
+  <link rel="mask-icon" href="/images/favicon/safari-pinned-tab.svg?v=7.4.0" color="#222">
+  <link rel="manifest" href="/images/favicon/site.webmanifest">
+  <meta name="msapplication-config" content="/images/favicon/browserconfig.xml">
+  <meta http-equiv="Cache-Control" content="no-transform">
+  <meta http-equiv="Cache-Control" content="no-siteapp">
+
+<link rel="stylesheet" href="/css/main.css?v=7.4.0">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '7.4.0',
+    exturl: false,
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false},
+    copycode: {"enable":false,"show_result":false,"style":null},
+    back2top: {"enable":true,"sidebar":true,"scrollpercent":false},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: true,
+    lazyload: true,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: "",
+      labels: ""
+    },
+    localsearch: {"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: '',
+    motion: {"enable":false},
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="状态: 初稿 介绍 随着 TypeScript 和 ES6 对类的引入, 现在开始出现一些要求能注解或修改类和类成员的额外特性的场景.装饰器提供一种途径, 为类声明及其成员添加注解和元编程语法.装饰器是一个 JavaScript 第二阶段提议, 以及 TypeScript 试验特性.">
+<meta name="keywords" content="博客,个人博客,日志,在线工具">
+<meta property="og:type" content="article">
+<meta property="og:title" content="装饰器">
+<meta property="og:url" content="https://hyan23.org/2019/11/20/ts-decorators/index.html">
+<meta property="og:site_name" content="Hyan Lee">
+<meta property="og:description" content="状态: 初稿 介绍 随着 TypeScript 和 ES6 对类的引入, 现在开始出现一些要求能注解或修改类和类成员的额外特性的场景.装饰器提供一种途径, 为类声明及其成员添加注解和元编程语法.装饰器是一个 JavaScript 第二阶段提议, 以及 TypeScript 试验特性.">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2020-02-25T09:55:54.732Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="装饰器">
+<meta name="twitter:description" content="状态: 初稿 介绍 随着 TypeScript 和 ES6 对类的引入, 现在开始出现一些要求能注解或修改类和类成员的额外特性的场景.装饰器提供一种途径, 为类声明及其成员添加注解和元编程语法.装饰器是一个 JavaScript 第二阶段提议, 以及 TypeScript 试验特性.">
+  <link rel="canonical" href="https://hyan23.org/2019/11/20/ts-decorators/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>装饰器 | Hyan Lee</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+  <div class="container">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Hyan Lee</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+      
+      
+      
+        
+        <li class="menu-item menu-item-home">
+      
+    
+      
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-关于-/-留言板">
+      
+    
+      
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于 / 留言板</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-categories">
+      
+    
+      
+      
+        
+      
+        
+          
+        
+      
+        
+      
+    
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类<span class="badge">6</span></a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-archives">
+      
+    
+      
+      
+        
+          
+        
+      
+        
+      
+        
+      
+    
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">31</span></a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-精选-/-系列">
+      
+    
+      
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <a href="/selections/" rel="section"><i class="fa fa-fw fa-book"></i>精选 / 系列</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-摄影">
+      
+    
+      
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <a href="/gallery/" rel="section"><i class="fa fa-fw fa-camera"></i>摄影</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-工具">
+      
+    
+      
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <a href="/tools/" rel="section"><i class="fa fa-fw fa-calculator"></i>工具</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-友情链接">
+      
+    
+      
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <a href="/friends/" rel="section"><i class="fa fa-fw fa-external-link"></i>友情链接</a>
+
+  </li>
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+            
+
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+      <article itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block post">
+    <link itemprop="mainEntityOfPage" href="https://hyan23.org/2019/11/20/ts-decorators/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Hyan Lee">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar2.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hyan Lee">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">装饰器
+
+          
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              
+                
+              
+
+              <time title="创建时间：2019-11-20 09:34:07" itemprop="dateCreated datePublished" datetime="2019-11-20T09:34:07+08:00">2019-11-20</time>
+            </span>
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-02-25 17:55:54" itemprop="dateModified" datetime="2020-02-25T17:55:54+08:00">2020-02-25</time>
+              </span>
+            
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/翻译稿/" itemprop="url" rel="index"><span itemprop="name">翻译稿</span></a></span>
+
+                
+                
+                  ，
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/翻译稿/TypeScript/" itemprop="url" rel="index"><span itemprop="name">TypeScript</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+          
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">本文字数：</span>
+              
+              <span>3.5k</span>
+            </span>
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <pre><code>状态: 初稿
+</code></pre><h1 id="介绍" class="heading-control"><a href="#介绍" class="headerlink" title="介绍"></a>介绍<a class="heading-anchor" href="#介绍" aria-hidden="true"></a></h1><!-- # Introduction -->
+<div class="translation-block" title="
+With the introduction of Classes in TypeScript and ES6, there now exist certain scenarios that require additional features to support annotating or modifying classes and class members.
+Decorators provide a way to add both annotations and a meta-programming syntax for class declarations and members.
+Decorators are a [stage 2 proposal](https:&amp;#x2F;&amp;#x2F;github.com&amp;#x2F;tc39&amp;#x2F;proposal-decorators) for JavaScript and are available as an experimental feature of TypeScript.
+"><p>随着 TypeScript 和 ES6 对类的引入, 现在开始出现一些要求能注解或修改类和类成员的额外特性的场景.<br>装饰器提供一种途径, 为类声明及其成员添加注解和元编程语法.<br>装饰器是一个 JavaScript <a href="https://github.com/tc39/proposal-decorators" target="_blank" rel="noopener">第二阶段提议</a>, 以及 TypeScript 试验特性.</p></div>
+<a id="more"></a>
+<div class="translation-block" title="
+&amp;gt; NOTE&amp;amp;emsp; Decorators are an experimental feature that may change in future releases.
+
+To enable experimental support for decorators, you must enable the `experimentalDecorators` compiler option either on the command line or in your `tsconfig.json`:
+"><blockquote>
+<p>注&emsp; 装饰器作为试验特性, 可能在将来版本中发生改变.</p>
+</blockquote>
+<p>要启用对装饰器的试验性支持, 你必须在命令行或 <code>tsconfig.json</code> 文件启用 <code>experimentalDecorators</code> 编译器选项.</p></div>
+<p><strong>命令行</strong>:</p>
+<!-- **Command Line**: -->
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tsc --target ES5 --experimentalDecorators</span><br></pre></td></tr></table></figure>
+<p><strong>tsconfig.json 文件</strong></p>
+<!-- **tsconfig.json**: -->
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="attr">"compilerOptions"</span>: &#123;</span><br><span class="line">        <span class="attr">"target"</span>: <span class="string">"ES5"</span>,</span><br><span class="line">        <span class="attr">"experimentalDecorators"</span>: <span class="literal">true</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="装饰器" class="heading-control"><a href="#装饰器" class="headerlink" title="装饰器"></a>装饰器<a class="heading-anchor" href="#装饰器" aria-hidden="true"></a></h1><!-- # Decorators -->
+<div class="translation-block" title="
+A *Decorator* is a special kind of declaration that can be attached to a [class declaration](#class-decorators), [method](#method-decorators), [accessor](#accessor-decorators), [property](#property-decorators), or [parameter](#parameter-decorators).
+Decorators use the form `@expression`, where `expression` must evaluate to a function that will be called at runtime with information about the decorated declaration.
+
+For example, given the decorator `@sealed` we might write the `sealed` function as follows:
+"><p><em>装饰器</em>是可以附加在<a href="#">类声明</a>, <a href="#">方法</a>, <a href="#">存取方法</a>, <a href="#">属性</a>, 或<a href="#">参数</a>上的一类特殊声明.<br>装饰器满足 <code>@expression</code> 形式, 其中, <code>expression</code> 必须当成函数求值, 在运行期, 求出的函数被调用, 其参数是关于被装饰声明的信息.</p>
+<p>例如, 给定装饰器 <code>@sealed</code>, 我们可能会编写如下 <code>sealed</code> 函数:</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">sealed</span>(<span class="params">target</span>) </span>&#123;</span><br><span class="line">    <span class="comment">// do something with 'target' ...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+&amp;gt; NOTE&amp;amp;emsp; You can see a more detailed example of a decorator in [Class Decorators](#class-decorators), below.
+"><blockquote>
+<p>注&emsp; 你可以在后文<a href="#">类装饰器</a>一节看到装饰器更详细的实例.</p>
+</blockquote></div>
+<h2 id="装饰器工厂" class="heading-control"><a href="#装饰器工厂" class="headerlink" title="装饰器工厂"></a>装饰器工厂<a class="heading-anchor" href="#装饰器工厂" aria-hidden="true"></a></h2><!-- ## Decorator Factories -->
+<div class="translation-block" title="
+If we want to customize how a decorator is applied to a declaration, we can write a decorator factory.
+A *Decorator Factory* is simply a function that returns the expression that will be called by the decorator at runtime.
+
+We can write a decorator factory in the following fashion:
+"><p>如果我们想自定义一个装饰器如何附加到一声明上, 可以编写装饰器工厂.<br><em>装饰器工厂</em>只是一个函数, 它返回一个在运行期由装饰器调用的表达式.</p>
+<p>我们可以参考以下样式编写装饰器工厂:</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">color</span>(<span class="params">value: <span class="built_in">string</span></span>) </span>&#123; <span class="comment">// this is the decorator factory</span></span><br><span class="line">    <span class="keyword">return</span> <span class="function"><span class="keyword">function</span> (<span class="params">target</span>) </span>&#123; <span class="comment">// this is the decorator</span></span><br><span class="line">        <span class="comment">// do something with 'target' and 'value'...</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+&amp;gt; NOTE&amp;amp;emsp; You can see a more detailed example of a decorator factory in [Method Decorators](#method-decorators), below.
+"><blockquote>
+<p>注&emsp; 你可以在后文<a href="#">方法装饰器</a>一节看到装饰器工厂更详细的实例.</p>
+</blockquote></div>
+<h2 id="装饰器复合" class="heading-control"><a href="#装饰器复合" class="headerlink" title="装饰器复合"></a>装饰器复合<a class="heading-anchor" href="#装饰器复合" aria-hidden="true"></a></h2><!-- ## Decorator Composition -->
+<div class="translation-block" title="
+Multiple decorators can be applied to a declaration, as in the following examples:
+"><p>多个装饰器可一并附加到同一个声明上, 如下例所示:</p></div>
+<div class="translation-block" title="
+* On a single line:
+"><ul>
+<li>置于单行:</li>
+</ul></div>
+  <figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@f</span> <span class="meta">@g</span> x</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+* On multiple lines:
+"><ul>
+<li>置于多行:</li>
+</ul></div>
+  <figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@f</span></span><br><span class="line"><span class="meta">@g</span></span><br><span class="line">x</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+When multiple decorators apply to a single declaration, their evaluation is similar to [function composition in mathematics](http:&amp;#x2F;&amp;#x2F;en.wikipedia.org&amp;#x2F;wiki&amp;#x2F;Function_composition). In this model, when composing functions *f* and *g*, the resulting composite (*f* ∘ *g*)(*x*) is equivalent to *f*(*g*(*x*)).
+
+As such, the following steps are performed when evaluating multiple decorators on a single declaration in TypeScript:
+
+1. The expressions for each decorator are evaluated top-to-bottom.
+2. The results are then called as functions from bottom-to-top.
+
+If we were to use [decorator factories](#decorator-factories), we can observe this evaluation order with the following example:
+"><p>当多个装饰器附加于单一声明, 它们的求值过程十分类似<a href="http://en.wikipedia.org/wiki/Function_composition" target="_blank" rel="noopener">数学中的复合函数</a>. 在这个例子中, 我们复合函数 <em>f</em> 和 <em>g</em>, 结果 (<em>f</em> ∘ <em>g</em>)(<em>x</em>) 等同于 <em>f</em>(<em>g</em>(<em>x</em>)).</p>
+<p>由此, TypeScript 执行以下步骤求值附加在单一声明的多个装饰器:</p>
+<ol>
+<li>从上往下求出每个装饰器的表达式.</li>
+<li>从下往上调用求出的函数.</li>
+</ol>
+<p>如果我们会用<a href="#">装饰器工厂</a>, 可以通过下例观察求值顺序:</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">f</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">"f(): evaluated"</span>);</span><br><span class="line">    <span class="keyword">return</span> <span class="function"><span class="keyword">function</span> (<span class="params">target, propertyKey: <span class="built_in">string</span>, descriptor: PropertyDescriptor</span>) </span>&#123;</span><br><span class="line">        <span class="built_in">console</span>.log(<span class="string">"f(): called"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">g</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">"g(): evaluated"</span>);</span><br><span class="line">    <span class="keyword">return</span> <span class="function"><span class="keyword">function</span> (<span class="params">target, propertyKey: <span class="built_in">string</span>, descriptor: PropertyDescriptor</span>) </span>&#123;</span><br><span class="line">        <span class="built_in">console</span>.log(<span class="string">"g(): called"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> C &#123;</span><br><span class="line">    <span class="meta">@f</span>()</span><br><span class="line">    <span class="meta">@g</span>()</span><br><span class="line">    method() &#123;&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+Which would print this output to the console:
+"><p>它会在终端打印下列输出:</p></div>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">f(): evaluated</span><br><span class="line">g(): evaluated</span><br><span class="line">g(): called</span><br><span class="line">f(): called</span><br></pre></td></tr></table></figure>
+<h2 id="对装饰器求值" class="heading-control"><a href="#对装饰器求值" class="headerlink" title="对装饰器求值"></a>对装饰器求值<a class="heading-anchor" href="#对装饰器求值" aria-hidden="true"></a></h2><!-- ## Decorator Evaluation -->
+<div class="translation-block" title="
+There is a well defined order to how decorators applied to various declarations inside of a class are applied:
+
+1. *Parameter Decorators*, followed by *Method*, *Accessor*, or *Property Decorators* are applied for each instance member.
+2. *Parameter Decorators*, followed by *Method*, *Accessor*, or *Property Decorators* are applied for each static member.
+3. *Parameter Decorators* are applied for the constructor.
+4. *Class Decorators* are applied for the class.
+"><p>附加到类中各种声明上的装饰器的应用顺序已经预先定义:</p>
+<ol>
+<li>附加在每个实例成员上的<em>参数装饰器</em>, 然后是<em>方法</em>, <em>存取方法</em>, 或<em>属性装饰器</em>.</li>
+<li>附加在每个静态成员上的<em>参数装饰器</em>, 然后是<em>方法</em>, <em>存取方法</em>, 或<em>属性装饰器</em>.</li>
+<li>附加在构造器上的<em>参数装饰器</em>.</li>
+<li>附加在类上的<em>类装饰器</em>.</li>
+</ol></div>
+<h2 id="类装饰器" class="heading-control"><a href="#类装饰器" class="headerlink" title="类装饰器"></a>类装饰器<a class="heading-anchor" href="#类装饰器" aria-hidden="true"></a></h2><!-- ## Class Decorators -->
+<div class="translation-block" title="
+A *Class Decorator* is declared just before a class declaration.
+The class decorator is applied to the constructor of the class and can be used to observe, modify, or replace a class definition.
+A class decorator cannot be used in a declaration file, or in any other ambient context (such as on a `declare` class).
+
+The expression for the class decorator will be called as a function at runtime, with the constructor of the decorated class as its only argument.
+
+If the class decorator returns a value, it will replace the class declaration with the provided constructor function.
+
+&amp;gt; NOTE&amp;amp;nbsp; Should you choose to return a new constructor function, you must take care to maintain the original prototype.
+The logic that applies decorators at runtime will **not** do this for you.
+
+The following is an example of a class decorator (`@sealed`) applied to the `Greeter` class:
+"><p><em>类装饰器</em>附加在一个类声明之前.<br>类装饰器作用于类的构造器, 可以监视, 修改, 或替换类定义.<br>类装饰器不能出现在声明文件, 或任何其他外部上下文环境中(比如以 <code>declare</code> 声明的类).</p>
+<p>类装饰器的表达式作为函数在运行期被调用, 目标类的构造器是它唯一的参数.</p>
+<p>如果类装饰器返回一个值, 它会用给定构造器函数替换类声明.</p>
+<blockquote>
+<p>注&nbsp; 如果你选择返回新构造器函数, 你必须维护好类的旧原型.<br>运行期应用装饰器的逻辑<strong>不</strong>帮你完成这件事.</p>
+</blockquote>
+<p>下面是一个作用于 <code>Greater</code> 类的类装饰器(<code>@sealed</code>):</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@sealed</span></span><br><span class="line"><span class="keyword">class</span> Greeter &#123;</span><br><span class="line">    greeting: <span class="built_in">string</span>;</span><br><span class="line">    <span class="keyword">constructor</span>(<span class="params">message: <span class="built_in">string</span></span>) &#123;</span><br><span class="line">        <span class="keyword">this</span>.greeting = message;</span><br><span class="line">    &#125;</span><br><span class="line">    greet() &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">"Hello, "</span> + <span class="keyword">this</span>.greeting;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+We can define the `@sealed` decorator using the following function declaration:
+"><p>我们可以通过如下函数声明定义 <code>@sealed</code> 装饰器:</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">sealed</span>(<span class="params">constructor: <span class="built_in">Function</span></span>) </span>&#123;</span><br><span class="line">    <span class="built_in">Object</span>.seal(<span class="keyword">constructor</span>);</span><br><span class="line">    Object.seal(<span class="params">constructor.prototype</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+When `@sealed` is executed, it will seal both the constructor and its prototype.
+
+Next we have an example of how to override the constructor.
+"><p>当 <code>@sealed</code> 得以执行, 它会封存构造器及其原型.</p>
+<p>下个例子显示怎么覆写构造器.</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">classDecorator</span>&lt;<span class="title">T</span> <span class="title">extends</span> </span>&#123;<span class="keyword">new</span>(...args:<span class="built_in">any</span>[]):&#123;&#125;&#125;&gt;(<span class="keyword">constructor</span>:T) &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">class</span> <span class="keyword">extends</span> <span class="keyword">constructor</span> &#123;</span><br><span class="line">        newProperty = <span class="string">"new property"</span>;</span><br><span class="line">        hello = <span class="string">"override"</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@classDecorator</span></span><br><span class="line"><span class="keyword">class</span> Greeter &#123;</span><br><span class="line">    property = <span class="string">"property"</span>;</span><br><span class="line">    hello: <span class="built_in">string</span>;</span><br><span class="line">    <span class="keyword">constructor</span>(<span class="params">m: <span class="built_in">string</span></span>) &#123;</span><br><span class="line">        <span class="keyword">this</span>.hello = m;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="built_in">console</span>.log(<span class="keyword">new</span> Greeter(<span class="string">"world"</span>));</span><br></pre></td></tr></table></figure>
+<h2 id="方法装饰器" class="heading-control"><a href="#方法装饰器" class="headerlink" title="方法装饰器"></a>方法装饰器<a class="heading-anchor" href="#方法装饰器" aria-hidden="true"></a></h2><!-- ## Method Decorators -->
+<div class="translation-block" title="
+A *Method Decorator* is declared just before a method declaration.
+The decorator is applied to the *Property Descriptor* for the method, and can be used to observe, modify, or replace a method definition.
+A method decorator cannot be used in a declaration file, on an overload, or in any other ambient context (such as in a `declare` class).
+
+The expression for the method decorator will be called as a function at runtime, with the following three arguments:
+
+1. Either the constructor function of the class for a static member, or the prototype of the class for an instance member.
+2. The name of the member.
+3. The *Property Descriptor* for the member.
+
+&amp;gt; NOTE&amp;amp;emsp; The *Property Descriptor* will be `undefined` if your script target is less than `ES5`.
+
+If the method decorator returns a value, it will be used as the *Property Descriptor* for the method.
+
+&amp;gt; NOTE&amp;amp;emsp; The return value is ignored if your script target is less than `ES5`.
+
+The following is an example of a method decorator (`@enumerable`) applied to a method on the `Greeter` class:
+"><p><em>方法装饰器</em>附加在一个方法声明之前.<br>方法装饰器作用于方法的<em>属性描述符</em>, 可以监视, 修改, 或替换方法定义.<br>方法装饰器不能出现在声明文件, 或任何其他外部上下文环境中(比如以 <code>declare</code> 声明的类).</p>
+<p>方法装饰器的表达式作为函数在运行期被调用, 给定如下三个参数:</p>
+<ol>
+<li>对静态成员, 类的构造器函数; 对实例成员, 类的原型.</li>
+<li>成员名.</li>
+<li>成员的<em>属性描述符</em>.</li>
+</ol>
+<blockquote>
+<p>注&emsp; 在低于 ES5 的运行环境中, <em>属性描述符</em>是 <code>undefined</code>.</p>
+</blockquote>
+<p>如果方法装饰器返回一个值, 此值成为方法的<em>属性描述符</em>.</p>
+<blockquote>
+<p>注&emsp; 在低于 ES5 的运行环境中, 返回值将被忽略.</p>
+</blockquote>
+<p>下面是一个作用于 <code>Greater</code> 类一个方法的方法装饰器(<code>@enumerable</code>):</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> Greeter &#123;</span><br><span class="line">    greeting: <span class="built_in">string</span>;</span><br><span class="line">    <span class="keyword">constructor</span>(<span class="params">message: <span class="built_in">string</span></span>) &#123;</span><br><span class="line">        <span class="keyword">this</span>.greeting = message;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@enumerable</span>(<span class="literal">false</span>)</span><br><span class="line">    greet() &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">"Hello, "</span> + <span class="keyword">this</span>.greeting;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+We can define the `@enumerable` decorator using the following function declaration:
+"><p>我们可以通过如下函数声明定义 <code>@enumerable</code> 装饰器:</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">enumerable</span>(<span class="params">value: <span class="built_in">boolean</span></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="function"><span class="keyword">function</span> (<span class="params">target: <span class="built_in">any</span>, propertyKey: <span class="built_in">string</span>, descriptor: PropertyDescriptor</span>) </span>&#123;</span><br><span class="line">        descriptor.enumerable = value;</span><br><span class="line">    &#125;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+The `@enumerable(false)` decorator here is a [decorator factory](#decorator-factories).
+When the `@enumerable(false)` decorator is called, it modifies the `enumerable` property of the property descriptor.
+"><p>这里的 <code>@enumerable(false)</code> 装饰器是一个<a href="#">装饰器工厂</a>.<br><code>@enumerable(false)</code> 被调用时, 它修改属性描述符的 <code>enumerable</code> 属性.</p></div>
+<h2 id="存取方法装饰器" class="heading-control"><a href="#存取方法装饰器" class="headerlink" title="存取方法装饰器"></a>存取方法装饰器<a class="heading-anchor" href="#存取方法装饰器" aria-hidden="true"></a></h2><!-- ## Accessor Decorators -->
+<div class="translation-block" title="
+An *Accessor Decorator* is declared just before an accessor declaration.
+The accessor decorator is applied to the *Property Descriptor* for the accessor and can be used to observe, modify, or replace an accessor&amp;#39;s definitions.
+An accessor decorator cannot be used in a declaration file, or in any other ambient context (such as in a `declare` class).
+
+&amp;gt; NOTE&amp;amp;emsp; TypeScript disallows decorating both the `get` and `set` accessor for a single member.
+Instead, all decorators for the member must be applied to the first accessor specified in document order.
+This is because decorators apply to a *Property Descriptor*, which combines both the `get` and `set` accessor, not each declaration separately.
+
+The expression for the accessor decorator will be called as a function at runtime, with the following three arguments:
+
+1. Either the constructor function of the class for a static member, or the prototype of the class for an instance member.
+2. The name of the member.
+3. The *Property Descriptor* for the member.
+
+&amp;gt; NOTE&amp;amp;emsp; The *Property Descriptor* will be `undefined` if your script target is less than `ES5`.
+
+If the accessor decorator returns a value, it will be used as the *Property Descriptor* for the member.
+
+&amp;gt; NOTE&amp;amp;emsp; The return value is ignored if your script target is less than `ES5`.
+
+The following is an example of an accessor decorator (`@configurable`) applied to a member of the `Point` class:
+"><p><em>存取方法装饰器</em>附加在一个存取方法声明之前.<br>存取方法装饰器作用于存取方法的<em>属性描述符</em>, 可以监视, 修改, 或替换存取方法定义.<br>存取方法装饰器不能出现在声明文件, 或任何其他外部上下文环境中(比如以 <code>declare</code> 声明的类).</p>
+<blockquote>
+<p>注&emsp; TypeScript 不允许同时装饰单个成员的 <code>get</code> 和 <code>set</code> 方法.<br>该成员所有装饰器必须附加在取决于文档顺序的第一个存取方法上.<br>原因是装饰器作用于<em>属性描述符</em>, 它联合了 <code>get</code> 和 <code>set</code> 两个方法, 并非单独的每一个.</p>
+</blockquote>
+<p>存取方法装饰器的表达式作为函数在运行期被调用, 给定如下三个参数:</p>
+<ol>
+<li>对静态成员, 类的构造器函数; 对实例成员, 类的原型.</li>
+<li>成员名.</li>
+<li>成员的<em>属性描述符</em>.</li>
+</ol>
+<blockquote>
+<p>注&emsp; 在低于 ES5 的运行环境中, <em>属性描述符</em>是 <code>undefined</code>.</p>
+</blockquote>
+<p>如果存取方法装饰器返回一个值, 此值成为目标成员的<em>属性描述符</em>.</p>
+<blockquote>
+<p>注&emsp; 在低于 ES5 的运行环境中, 返回值将被忽略.</p>
+</blockquote>
+<p>下面是一个作用于 <code>Point</code> 类一个成员的存取方法装饰器(<code>@configurable</code>):</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> Point &#123;</span><br><span class="line">    <span class="keyword">private</span> _x: <span class="built_in">number</span>;</span><br><span class="line">    <span class="keyword">private</span> _y: <span class="built_in">number</span>;</span><br><span class="line">    <span class="keyword">constructor</span>(<span class="params">x: <span class="built_in">number</span>, y: <span class="built_in">number</span></span>) &#123;</span><br><span class="line">        <span class="keyword">this</span>._x = x;</span><br><span class="line">        <span class="keyword">this</span>._y = y;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@configurable</span>(<span class="literal">false</span>)</span><br><span class="line">    <span class="keyword">get</span> x() &#123; <span class="keyword">return</span> <span class="keyword">this</span>._x; &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@configurable</span>(<span class="literal">false</span>)</span><br><span class="line">    <span class="keyword">get</span> y() &#123; <span class="keyword">return</span> <span class="keyword">this</span>._y; &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+We can define the `@configurable` decorator using the following function declaration:
+"><p>我们可以通过如下函数声明定义 <code>@configurable</code> 装饰器:</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">configurable</span>(<span class="params">value: <span class="built_in">boolean</span></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="function"><span class="keyword">function</span> (<span class="params">target: <span class="built_in">any</span>, propertyKey: <span class="built_in">string</span>, descriptor: PropertyDescriptor</span>) </span>&#123;</span><br><span class="line">        descriptor.configurable = value;</span><br><span class="line">    &#125;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="属性装饰器" class="heading-control"><a href="#属性装饰器" class="headerlink" title="属性装饰器"></a>属性装饰器<a class="heading-anchor" href="#属性装饰器" aria-hidden="true"></a></h2><!-- ## Property Decorators -->
+<div class="translation-block" title="
+A *Property Decorator* is declared just before a property declaration.
+A property decorator cannot be used in a declaration file, or in any other ambient context (such as in a `declare` class).
+
+The expression for the property decorator will be called as a function at runtime, with the following two arguments:
+
+1. Either the constructor function of the class for a static member, or the prototype of the class for an instance member.
+2. The name of the member.
+
+&amp;gt; NOTE&amp;amp;emsp; A *Property Descriptor* is not provided as an argument to a property decorator due to how property decorators are initialized in TypeScript.
+This is because there is currently no mechanism to describe an instance property when defining members of a prototype, and no way to observe or modify the initializer for a property. The return value is ignored too.
+As such, a property decorator can only be used to observe that a property of a specific name has been declared for a class.
+
+We can use this information to record metadata about the property, as in the following example:
+"><p><em>属性装饰器</em>附加在一个属性声明之前.<br>属性装饰器不能出现在声明文件, 或任何其他外部上下文环境中(比如以 <code>declare</code> 声明的类).</p>
+<p>属性装饰器的表达式作为函数在运行期被调用, 给定如下两个参数:</p>
+<ol>
+<li>对静态成员, 类的构造器函数; 对实例成员, 类的原型.</li>
+<li>成员名.</li>
+</ol>
+<blockquote>
+<p>注&emsp; 受制于 TypeScript 初始化属性装饰器的方式, <em>属性描述符</em>没作为参数提供给属性装饰器.<br>这是由于当前没有在定义原型成员时描述实例属性的机制, 也没有监视或修改一个属性初始化器的方法. 它的返回值同样被忽略.<br>故, 属性装饰器只能用来观测一个类已经声明特定成员名的属性.</p>
+</blockquote>
+<p>我们可以利用此信息记录有关属性的元数据, 如下例所示:</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> Greeter &#123;</span><br><span class="line">    <span class="meta">@format</span>(<span class="string">"Hello, %s"</span>)</span><br><span class="line">    greeting: <span class="built_in">string</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">constructor</span>(<span class="params">message: <span class="built_in">string</span></span>) &#123;</span><br><span class="line">        <span class="keyword">this</span>.greeting = message;</span><br><span class="line">    &#125;</span><br><span class="line">    greet() &#123;</span><br><span class="line">        <span class="keyword">let</span> formatString = getFormat(<span class="keyword">this</span>, <span class="string">"greeting"</span>);</span><br><span class="line">        <span class="keyword">return</span> formatString.replace(<span class="string">"%s"</span>, <span class="keyword">this</span>.greeting);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+We can then define the `@format` decorator and `getFormat` functions using the following function declarations:
+"><p>我们可以通过如下函数声明定义 <code>@format</code> 装饰器和 <code>getFormat</code> 函数:</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> <span class="string">"reflect-metadata"</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> formatMetadataKey = Symbol(<span class="string">"format"</span>);</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">format</span>(<span class="params">formatString: <span class="built_in">string</span></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> Reflect.metadata(formatMetadataKey, formatString);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">getFormat</span>(<span class="params">target: <span class="built_in">any</span>, propertyKey: <span class="built_in">string</span></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> Reflect.getMetadata(formatMetadataKey, target, propertyKey);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+The `@format(&amp;quot;Hello, %s&amp;quot;)` decorator here is a [decorator factory](#decorator-factories).
+When `@format(&amp;quot;Hello, %s&amp;quot;)` is called, it adds a metadata entry for the property using the `Reflect.metadata` function from the `reflect-metadata` library.
+When `getFormat` is called, it reads the metadata value for the format.
+
+&amp;gt; NOTE&amp;amp;emsp; This example requires the `reflect-metadata` library.
+See [Metadata](#metadata) for more information about the `reflect-metadata` library.
+"><p>这里的 <code>@format(&quot;Hello, %s&quot;)</code> 装饰器是一个<a href="#">装饰器工厂</a>.<br>在 <code>@format(&quot;Hello, %s&quot;)</code> 被调用时, 它使用来自 <code>reflect-metadata</code> 库的 <code>Reflect.metadata</code> 函数为属性添加一条元数据记录.<br>当 <code>getFormat</code> 被调用, 它读取元数据获取格式控制串.</p>
+<blockquote>
+<p>注&emsp; 上例依赖 <code>reflect-metadata</code> 库.<br>阅读<a href="#">元数据</a>一节获取更多关于 <code>reflect-metadata</code> 库的信息. </p>
+</blockquote></div>
+<h2 id="参数装饰器" class="heading-control"><a href="#参数装饰器" class="headerlink" title="参数装饰器"></a>参数装饰器<a class="heading-anchor" href="#参数装饰器" aria-hidden="true"></a></h2><!-- ## Parameter Decorators -->
+<div class="translation-block" title="
+A *Parameter Decorator* is declared just before a parameter declaration.
+The parameter decorator is applied to the function for a class constructor or method declaration.
+A parameter decorator cannot be used in a declaration file, an overload, or in any other ambient context (such as in a `declare` class).
+
+The expression for the parameter decorator will be called as a function at runtime, with the following three arguments:
+
+1. Either the constructor function of the class for a static member, or the prototype of the class for an instance member.
+2. The name of the member.
+3. The ordinal index of the parameter in the function&amp;#39;s parameter list.
+
+&amp;gt; NOTE&amp;amp;emsp; A parameter decorator can only be used to observe that a parameter has been declared on a method.
+
+The return value of the parameter decorator is ignored.
+
+The following is an example of a parameter decorator (`@required`) applied to parameter of a member of the `Greeter` class:
+"><p><em>参数装饰器</em>附加在一个参数声明之前.<br>参数装饰器作用于类构造器函数或方法声明.<br>参数装饰器不能出现在声明文件, 重载, 或任何其他外部上下文环境中(比如以 <code>declare</code> 声明的类).</p>
+<p>参数装饰器的表达式作为函数在运行期被调用, 给定如下三个参数:</p>
+<ol>
+<li>对静态成员, 类的构造器函数; 对实例成员, 类的原型.</li>
+<li>成员名.</li>
+<li>参数在函数参数列表中的编号.</li>
+</ol>
+<blockquote>
+<p>注&emsp; 参数装饰器只能用来观测一方法已经声明某参数.</p>
+</blockquote>
+<p>参数装饰器的返回值被忽略.</p>
+<p>下面是一个作用于 <code>Greeter</code> 类一个成员的参数的参数装饰器(<code>@required</code>):</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> Greeter &#123;</span><br><span class="line">    greeting: <span class="built_in">string</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">constructor</span>(<span class="params">message: <span class="built_in">string</span></span>) &#123;</span><br><span class="line">        <span class="keyword">this</span>.greeting = message;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@validate</span></span><br><span class="line">    greet(<span class="meta">@required</span> name: <span class="built_in">string</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">"Hello "</span> + name + <span class="string">", "</span> + <span class="keyword">this</span>.greeting;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+We can then define the `@required` and `@validate` decorators using the following function declarations:
+"><p>我们可以通过如下函数声明定义 <code>@required</code> 和 <code>@validate</code> 装饰器:</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> <span class="string">"reflect-metadata"</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> requiredMetadataKey = Symbol(<span class="string">"required"</span>);</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">required</span>(<span class="params">target: <span class="built_in">Object</span>, propertyKey: <span class="built_in">string</span> | symbol, parameterIndex: <span class="built_in">number</span></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">let</span> existingRequiredParameters: <span class="built_in">number</span>[] = Reflect.getOwnMetadata(requiredMetadataKey, target, propertyKey) || [];</span><br><span class="line">    existingRequiredParameters.push(parameterIndex);</span><br><span class="line">    Reflect.defineMetadata(requiredMetadataKey, existingRequiredParameters, target, propertyKey);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">validate</span>(<span class="params">target: <span class="built_in">any</span>, propertyName: <span class="built_in">string</span>, descriptor: TypedPropertyDescriptor&lt;<span class="built_in">Function</span>&gt;</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">let</span> method = descriptor.value;</span><br><span class="line">    descriptor.value = <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">        <span class="keyword">let</span> requiredParameters: <span class="built_in">number</span>[] = Reflect.getOwnMetadata(requiredMetadataKey, target, propertyName);</span><br><span class="line">        <span class="keyword">if</span> (requiredParameters) &#123;</span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">let</span> parameterIndex of requiredParameters) &#123;</span><br><span class="line">                <span class="keyword">if</span> (parameterIndex &gt;= <span class="built_in">arguments</span>.length || <span class="built_in">arguments</span>[parameterIndex] === <span class="literal">undefined</span>) &#123;</span><br><span class="line">                    <span class="keyword">throw</span> <span class="keyword">new</span> <span class="built_in">Error</span>(<span class="string">"Missing required argument."</span>);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> method.apply(<span class="keyword">this</span>, <span class="built_in">arguments</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+The `@required` decorator adds a metadata entry that marks the parameter as required.
+The `@validate` decorator then wraps the existing `greet` method in a function that validates the arguments before invoking the original method.
+
+&amp;gt; NOTE&amp;amp;emsp; This example requires the `reflect-metadata` library.
+See [Metadata](#metadata) for more information about the `reflect-metadata` library.
+"><p><code>@required</code> 装饰器添加一条元数据记录标记一个参数是必要的.<br>然后 <code>@validate</code> 装饰器把现有 <code>greet</code> 方法包裹在一函数中, 在调用源方法前检验所有参数.</p>
+<blockquote>
+<p>注&emsp; 上例依赖 <code>reflect-metadata</code> 库.<br>阅读<a href="#">元数据</a>一节获取更多关于 <code>reflect-metadata</code> 库的信息. </p>
+</blockquote></div>
+<h2 id="元数据" class="heading-control"><a href="#元数据" class="headerlink" title="元数据"></a>元数据<a class="heading-anchor" href="#元数据" aria-hidden="true"></a></h2><!-- ## Metadata -->
+<div class="translation-block" title="
+Some examples use the `reflect-metadata` library which adds a polyfill for an [experimental metadata API](https:&amp;#x2F;&amp;#x2F;github.com&amp;#x2F;rbuckton&amp;#x2F;ReflectDecorators).
+This library is not yet part of the ECMAScript (JavaScript) standard.
+However, once decorators are officially adopted as part of the ECMAScript standard these extensions will be proposed for adoption.
+
+You can install this library via npm:
+"><p>一些例子运用了 <code>reflect-metadata</code> 库, 它为<a href="https://github.com/rbuckton/ReflectDecorators" target="_blank" rel="noopener">试验性元数据 API</a>添加了一个 polyfill (译注: <a href="https://en.wikipedia.org/wiki/Polyfill_%28programming%29" target="_blank" rel="noopener">https://en.wikipedia.org/wiki/Polyfill_(programming)</a>).<br>这个库还不是 ECMAScript (JavaScript) 标准的一部分.<br>不过, 只要装饰器正式被采纳成为 ECMAScript 标准的一部分, 这些扩展就会被提议采纳.</p>
+<p>你可以通过 npm 安装该库:</p></div>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm i reflect-metadata --save</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+TypeScript includes experimental support for emitting certain types of metadata for declarations that have decorators.
+To enable this experimental support, you must set the `emitDecoratorMetadata` compiler option either on the command line or in your `tsconfig.json`:
+"><p>TypeScript 包括为有装饰器的声明输出特定类型元数据的试验性支持.<br>要启用该试验性支持, 你必须在命令行或 <code>tsconfig.json</code> 文件设置 <code>emitDecoratorMetadata</code> 编译器选项.</p></div>
+<p><strong>命令行</strong></p>
+<!-- **Command Line**: -->
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tsc --target ES5 --experimentalDecorators --emitDecoratorMetadata</span><br></pre></td></tr></table></figure>
+<p><strong>tsconfig.json 文件</strong></p>
+<!-- **tsconfig.json**: -->
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="attr">"compilerOptions"</span>: &#123;</span><br><span class="line">        <span class="attr">"target"</span>: <span class="string">"ES5"</span>,</span><br><span class="line">        <span class="attr">"experimentalDecorators"</span>: <span class="literal">true</span>,</span><br><span class="line">        <span class="attr">"emitDecoratorMetadata"</span>: <span class="literal">true</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+When enabled, as long as the `reflect-metadata` library has been imported, additional design-time type information will be exposed at runtime.
+
+We can see this in action in the following example:
+"><p>启用后, 只要 <code>reflect-metadata</code> 库已经导入, 额外编译期类型信息就会在运行期可见.</p>
+<p>我们可以在下个例子看到这一点:</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> <span class="string">"reflect-metadata"</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> Point &#123;</span><br><span class="line">    x: <span class="built_in">number</span>;</span><br><span class="line">    y: <span class="built_in">number</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> Line &#123;</span><br><span class="line">    <span class="keyword">private</span> _p0: Point;</span><br><span class="line">    <span class="keyword">private</span> _p1: Point;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@validate</span></span><br><span class="line">    <span class="keyword">set</span> p0(value: Point) &#123; <span class="keyword">this</span>._p0 = value; &#125;</span><br><span class="line">    <span class="keyword">get</span> p0() &#123; <span class="keyword">return</span> <span class="keyword">this</span>._p0; &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@validate</span></span><br><span class="line">    <span class="keyword">set</span> p1(value: Point) &#123; <span class="keyword">this</span>._p1 = value; &#125;</span><br><span class="line">    <span class="keyword">get</span> p1() &#123; <span class="keyword">return</span> <span class="keyword">this</span>._p1; &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">validate</span>&lt;<span class="title">T</span>&gt;(<span class="params">target: <span class="built_in">any</span>, propertyKey: <span class="built_in">string</span>, descriptor: TypedPropertyDescriptor&lt;T&gt;</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="keyword">set</span> = descriptor.set;</span><br><span class="line">    descriptor.set = <span class="function"><span class="keyword">function</span> (<span class="params">value: T</span>) </span>&#123;</span><br><span class="line">        <span class="keyword">let</span> <span class="keyword">type</span> = Reflect.getMetadata(<span class="string">"design:type"</span>, target, propertyKey);</span><br><span class="line">        <span class="keyword">if</span> (!(value <span class="keyword">instanceof</span> <span class="keyword">type</span>)) &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> <span class="built_in">TypeError</span>(<span class="string">"Invalid type."</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">set</span>.call(target, value);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+The TypeScript compiler will inject design-time type information using the `@Reflect.metadata` decorator.
+You could consider it the equivalent of the following TypeScript:
+"><p>TypeScript 编译器使用 <code>@Reflect.metadata</code> 装饰器注入编译期类型信息.<br>你可以认为它等同于如下 TypeScript:</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> Line &#123;</span><br><span class="line">    <span class="keyword">private</span> _p0: Point;</span><br><span class="line">    <span class="keyword">private</span> _p1: Point;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@validate</span></span><br><span class="line">    <span class="meta">@Reflect</span>.metadata(<span class="string">"design:type"</span>, Point)</span><br><span class="line">    <span class="keyword">set</span> p0(value: Point) &#123; <span class="keyword">this</span>._p0 = value; &#125;</span><br><span class="line">    <span class="keyword">get</span> p0() &#123; <span class="keyword">return</span> <span class="keyword">this</span>._p0; &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@validate</span></span><br><span class="line">    <span class="meta">@Reflect</span>.metadata(<span class="string">"design:type"</span>, Point)</span><br><span class="line">    <span class="keyword">set</span> p1(value: Point) &#123; <span class="keyword">this</span>._p1 = value; &#125;</span><br><span class="line">    <span class="keyword">get</span> p1() &#123; <span class="keyword">return</span> <span class="keyword">this</span>._p1; &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+&amp;gt; NOTE&amp;amp;emsp; Decorator metadata is an experimental feature and may introduce breaking changes in future releases.
+"><blockquote>
+<p>注&emsp; 装饰器元数据属于试验特性, 可能将来版本中发生重大改变.</p>
+</blockquote></div>
+    </div>
+
+    
+    
+    
+        
+      
+        <div id="reward-container">
+  <div>如果这篇文章对您有用，可以考虑打赏:)</div>
+  <button id="reward-button" disable="enable" onclick="var qr = document.getElementById(&quot;qr&quot;); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+        
+      
+      <div style="display: inline-block">
+        <img src="/images/wechatpay.png" alt="Hyan Lee 微信支付">
+        <p>微信支付</p>
+      </div>
+
+  </div>
+</div>
+
+      
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>Hyan Lee</li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://hyan23.org/2019/11/20/ts-decorators/" title="装饰器">https://hyan23.org/2019/11/20/ts-decorators/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！</li>
+</ul>
+</div>
+
+      
+
+      <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+              
+                <a href="/2019/11/20/ts-jsx/" rel="next" title="JSX">
+                  <i class="fa fa-chevron-left"></i> JSX
+                </a>
+              
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+              
+                <a href="/2019/11/20/ts-mixins/" rel="prev" title="Mixins">
+                  Mixins <i class="fa fa-chevron-right"></i>
+                </a>
+              
+            </div>
+          </div>
+        
+      </footer>
+    
+  </div>
+  
+  
+  
+  </article>
+
+  </div>
+
+
+          </div>
+          
+    
+    <div class="comments" id="gitalk-container"></div>
+  
+
+        </div>
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+        
+        
+        
+        
+      
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#介绍"><span class="nav-number">1.</span> <span class="nav-text">介绍</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#装饰器"><span class="nav-number">2.</span> <span class="nav-text">装饰器</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#装饰器工厂"><span class="nav-number">2.1.</span> <span class="nav-text">装饰器工厂</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#装饰器复合"><span class="nav-number">2.2.</span> <span class="nav-text">装饰器复合</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#对装饰器求值"><span class="nav-number">2.3.</span> <span class="nav-text">对装饰器求值</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#类装饰器"><span class="nav-number">2.4.</span> <span class="nav-text">类装饰器</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#方法装饰器"><span class="nav-number">2.5.</span> <span class="nav-text">方法装饰器</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#存取方法装饰器"><span class="nav-number">2.6.</span> <span class="nav-text">存取方法装饰器</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#属性装饰器"><span class="nav-number">2.7.</span> <span class="nav-text">属性装饰器</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参数装饰器"><span class="nav-number">2.8.</span> <span class="nav-text">参数装饰器</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#元数据"><span class="nav-number">2.9.</span> <span class="nav-text">元数据</span></a></li></ol></li></ol></div>
+        
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image"
+      src="/images/avatar2.png"
+      alt="Hyan Lee">
+  <p class="site-author-name" itemprop="name">Hyan Lee</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">31</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-categories">
+        
+          
+            <a href="/categories/">
+          
+        
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">分类</span>
+        </a>
+      </div>
+    
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+      
+      
+        
+      
+      
+        
+      
+        <a href="https://github.com/hyan23" title="GitHub &rarr; https://github.com/hyan23" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+    
+      <span class="links-of-author-item">
+      
+      
+        
+      
+      
+        
+      
+        <a href="mailto:hyan23lee@hotmail.com" title="E-Mail &rarr; mailto:hyan23lee@hotmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+    
+      <span class="links-of-author-item">
+      
+      
+        
+      
+      
+        
+      
+        <a href="https://t.me/hyan23" title="Telegram &rarr; https://t.me/hyan23" rel="noopener" target="_blank"><i class="fa fa-fw fa-telegram"></i>Telegram</a>
+      </span>
+    
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    
+  
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+      
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2017 – <span itemprop="copyrightYear">2020</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Hyan Lee</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    
+    <span title="站点总字数">118k</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v3.9.0</div>
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js?v=3.1.0"></script>
+  <script src="//cdn.jsdelivr.net/npm/medium-zoom@1/dist/medium-zoom.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+<script src="/js/utils.js?v=7.4.0"></script>
+<script src="/js/schemes/pisces.js?v=7.4.0"></script>
+<script src="/js/next-boot.js?v=7.4.0"></script>
+
+
+
+  
+  <script>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+    mermaid.initialize({
+      theme: 'forest',
+      logLevel: 3,
+      flowchart: { curve: 'linear' },
+      gantt: { axisFormat: '%m/%d/%Y' },
+      sequence: { actorMargin: 50 }
+    });
+  }, window.mermaid);
+}
+</script>
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID: '442da4785490db3ece48',
+      clientSecret: '3bfa2829a34371ca37db636917e791d114bd338c',
+      repo: 'blog-comments',
+      owner: 'hyan23',
+      admin: ['hyan23'],
+      id: '2670e6306aae68a5ef53e5c37e8d16fa',
+        language: window.navigator.language || window.navigator.userLanguage,
+      
+      distractionFreeMode: 'true'
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+</script>
+
+</body>
+</html>

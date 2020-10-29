@@ -1,0 +1,1091 @@
+<!DOCTYPE html>
+
+
+
+
+
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/favicon/apple-touch-icon.png?v=7.4.0">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon/favicon-32x32.png?v=7.4.0">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon/favicon-16x16.png?v=7.4.0">
+  <link rel="mask-icon" href="/images/favicon/safari-pinned-tab.svg?v=7.4.0" color="#222">
+  <link rel="manifest" href="/images/favicon/site.webmanifest">
+  <meta name="msapplication-config" content="/images/favicon/browserconfig.xml">
+  <meta http-equiv="Cache-Control" content="no-transform">
+  <meta http-equiv="Cache-Control" content="no-siteapp">
+
+<link rel="stylesheet" href="/css/main.css?v=7.4.0">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '7.4.0',
+    exturl: false,
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false},
+    copycode: {"enable":false,"show_result":false,"style":null},
+    back2top: {"enable":true,"sidebar":true,"scrollpercent":false},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: true,
+    lazyload: true,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: "",
+      labels: ""
+    },
+    localsearch: {"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: '',
+    motion: {"enable":false},
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="状态: 初稿  对命名的说明:有必要说明, 在 TypeScript 1.5 中, 一些术语发生了变化.“内部模块” 现在叫做 “名字空间”.“外部模块” 简称 “模块”, 这是出于同 ECMAScript 2015 的命名保持一致的考虑, (module X { 等同于现在提出的 namespace X {).">
+<meta name="keywords" content="博客,个人博客,日志,在线工具">
+<meta property="og:type" content="article">
+<meta property="og:title" content="模块">
+<meta property="og:url" content="https://hyan23.org/2019/11/20/ts-modules/index.html">
+<meta property="og:site_name" content="Hyan Lee">
+<meta property="og:description" content="状态: 初稿  对命名的说明:有必要说明, 在 TypeScript 1.5 中, 一些术语发生了变化.“内部模块” 现在叫做 “名字空间”.“外部模块” 简称 “模块”, 这是出于同 ECMAScript 2015 的命名保持一致的考虑, (module X { 等同于现在提出的 namespace X {).">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2020-02-20T01:46:09.604Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="模块">
+<meta name="twitter:description" content="状态: 初稿  对命名的说明:有必要说明, 在 TypeScript 1.5 中, 一些术语发生了变化.“内部模块” 现在叫做 “名字空间”.“外部模块” 简称 “模块”, 这是出于同 ECMAScript 2015 的命名保持一致的考虑, (module X { 等同于现在提出的 namespace X {).">
+  <link rel="canonical" href="https://hyan23.org/2019/11/20/ts-modules/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>模块 | Hyan Lee</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+  <div class="container">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Hyan Lee</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+      
+      
+      
+        
+        <li class="menu-item menu-item-home">
+      
+    
+      
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-关于-/-留言板">
+      
+    
+      
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于 / 留言板</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-categories">
+      
+    
+      
+      
+        
+      
+        
+          
+        
+      
+        
+      
+    
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类<span class="badge">6</span></a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-archives">
+      
+    
+      
+      
+        
+          
+        
+      
+        
+      
+        
+      
+    
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">31</span></a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-精选-/-系列">
+      
+    
+      
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <a href="/selections/" rel="section"><i class="fa fa-fw fa-book"></i>精选 / 系列</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-摄影">
+      
+    
+      
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <a href="/gallery/" rel="section"><i class="fa fa-fw fa-camera"></i>摄影</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-工具">
+      
+    
+      
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <a href="/tools/" rel="section"><i class="fa fa-fw fa-calculator"></i>工具</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-友情链接">
+      
+    
+      
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <a href="/friends/" rel="section"><i class="fa fa-fw fa-external-link"></i>友情链接</a>
+
+  </li>
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+            
+
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+      <article itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block post">
+    <link itemprop="mainEntityOfPage" href="https://hyan23.org/2019/11/20/ts-modules/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Hyan Lee">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar2.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hyan Lee">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">模块
+
+          
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              
+                
+              
+
+              <time title="创建时间：2019-11-20 09:33:14" itemprop="dateCreated datePublished" datetime="2019-11-20T09:33:14+08:00">2019-11-20</time>
+            </span>
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-02-20 09:46:09" itemprop="dateModified" datetime="2020-02-20T09:46:09+08:00">2020-02-20</time>
+              </span>
+            
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/翻译稿/" itemprop="url" rel="index"><span itemprop="name">翻译稿</span></a></span>
+
+                
+                
+                  ，
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/翻译稿/TypeScript/" itemprop="url" rel="index"><span itemprop="name">TypeScript</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+          
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">本文字数：</span>
+              
+              <span>5.1k</span>
+            </span>
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <pre><code>状态: 初稿
+</code></pre><div class="translation-block" title="
+&amp;gt; **A note about terminology:**
+It&amp;#39;s important to note that in TypeScript 1.5, the nomenclature has changed.
+&amp;quot;Internal modules&amp;quot; are now &amp;quot;namespaces&amp;quot;.
+&amp;quot;External modules&amp;quot; are now simply &amp;quot;modules&amp;quot;, as to align with [ECMAScript 2015](http:&amp;#x2F;&amp;#x2F;www.ecma-international.org&amp;#x2F;ecma-262&amp;#x2F;6.0&amp;#x2F;)&amp;#39;s terminology, (namely that `module X {` is equivalent to the now-preferred `namespace X {`).
+"><blockquote>
+<p><strong>对命名的说明:</strong><br>有必要说明, 在 TypeScript 1.5 中, 一些术语发生了变化.<br>“内部模块” 现在叫做 “名字空间”.<br>“外部模块” 简称 “模块”, 这是出于同 <a href="http://www.ecma-international.org/ecma-262/6.0/" target="_blank" rel="noopener">ECMAScript 2015</a> 的命名保持一致的考虑, (<code>module X {</code> 等同于现在提出的 <code>namespace X {</code>).</p>
+</blockquote></div>
+<a id="more"></a>
+<h1 id="介绍" class="heading-control"><a href="#介绍" class="headerlink" title="介绍"></a>介绍<a class="heading-anchor" href="#介绍" aria-hidden="true"></a></h1><!-- # Introduction -->
+<div class="translation-block" title="
+Starting with ECMAScript 2015, JavaScript has a concept of modules. TypeScript shares this concept.
+
+Modules are executed within their own scope, not in the global scope; this means that variables, functions, classes, etc. declared in a module are not visible outside the module unless they are explicitly exported using one of the [`export` forms](#export).
+Conversely, to consume a variable, function, class, interface, etc. exported from a different module, it has to be imported using one of the [`import` forms](#import).
+"><p>JavaScript 自 ECMAScript 2015 提出了模块的概念. TypeScript 将共享此概念.</p>
+<p>一个模块不再在全局空间执行, 它们有了自己独有的模块空间; 也就是说, 模块外部看不到在模块内部定义的变量, 函数, 类等实体, 除非显式使用一种<a href="#"><code>export</code> 形式</a>导出.<br>相反地, 要使用不同模块导出的变量, 函数, 类, 接口等, 也需要采用一种<a href="#"><code>import</code> 形式</a>显式声明.</p></div>
+<div class="translation-block" title="
+Modules are declarative; the relationships between modules are specified in terms of imports and exports at the file level.
+
+Modules import one another using a module loader.
+At runtime the module loader is responsible for locating and executing all dependencies of a module before executing it.
+Well-known module loaders used in JavaScript are Node.js&amp;#39;s loader for [CommonJS](https:&amp;#x2F;&amp;#x2F;en.wikipedia.org&amp;#x2F;wiki&amp;#x2F;CommonJS) modules and the [RequireJS](http:&amp;#x2F;&amp;#x2F;requirejs.org&amp;#x2F;) loader for [AMD](https:&amp;#x2F;&amp;#x2F;github.com&amp;#x2F;amdjs&amp;#x2F;amdjs-api&amp;#x2F;blob&amp;#x2F;master&amp;#x2F;AMD.md) modules in Web applications.
+"><p>模块机制是声明式的, 模块间的关系由文件级的导入导出声明确定.</p>
+<p>一个模块借助模块加载器导入另一个模块.<br>在运行期间, 模块加载器的职责是在一个模块执行之前定位和执行它所有依赖.<br>JavaScript 众所周知的模块加载器有负责加载 <a href="https://en.wikipedia.org/wiki/CommonJS" target="_blank" rel="noopener">CommonJS</a> 模块的 Node.js 加载器, 为 Web 应用加载 <a href="https://github.com/amdjs/amdjs-api/blob/master/AMD.md" target="_blank" rel="noopener">AMD</a> 模块的 <a href="http://requirejs.org/" target="_blank" rel="noopener">RequireJS</a> 加载器.</p></div>
+<div class="translation-block" title="
+In TypeScript, just as in ECMAScript 2015, any file containing a top-level `import` or `export` is considered a module.
+Conversely, a file without any top-level `import` or `export` declarations is treated as a script whose contents are available in the global scope (and therefore to modules as well).
+"><p>在 TypeScript 中, 和 ECMAScript 2015 相同, 包含顶层 <code>import</code> 或 <code>export</code> 的任何文件都被认为是模块.<br>相反, 不包含顶层 <code>import</code> 或 <code>export</code> 声明的文件会按脚本文件对待, 它的内容全局可用 (也包括模块).</p></div>
+<h1 id="导出" class="heading-control"><a href="#导出" class="headerlink" title="导出"></a>导出<a class="heading-anchor" href="#导出" aria-hidden="true"></a></h1><!-- # Export -->
+<h2 id="导出一个定义" class="heading-control"><a href="#导出一个定义" class="headerlink" title="导出一个定义"></a>导出一个定义<a class="heading-anchor" href="#导出一个定义" aria-hidden="true"></a></h2><!-- ## Exporting a declaration -->
+<div class="translation-block" title="
+Any declaration (such as a variable, function, class, type alias, or interface) can be exported by adding the `export` keyword.
+"><p>任何定义 (例如变量, 函数, 类, 类型别名, 接口) 都可以通过附加 <code>export</code> 关键字导出.</p></div>
+<h5 id="StringValidator-ts" class="heading-control"><a href="#StringValidator-ts" class="headerlink" title="StringValidator.ts"></a>StringValidator.ts<a class="heading-anchor" href="#StringValidator-ts" aria-hidden="true"></a></h5><figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">export</span> <span class="keyword">interface</span> StringValidator &#123;</span><br><span class="line">    isAcceptable(s: <span class="built_in">string</span>): <span class="built_in">boolean</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h5 id="ZipCodeValidator-ts" class="heading-control"><a href="#ZipCodeValidator-ts" class="headerlink" title="ZipCodeValidator.ts"></a>ZipCodeValidator.ts<a class="heading-anchor" href="#ZipCodeValidator-ts" aria-hidden="true"></a></h5><figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; StringValidator &#125; <span class="keyword">from</span> <span class="string">"./StringValidator"</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">const</span> numberRegexp = <span class="regexp">/^[0-9]+$/</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">class</span> ZipCodeValidator <span class="keyword">implements</span> StringValidator &#123;</span><br><span class="line">    isAcceptable(s: <span class="built_in">string</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> s.length === <span class="number">5</span> &amp;&amp; numberRegexp.test(s);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="导出语句" class="heading-control"><a href="#导出语句" class="headerlink" title="导出语句"></a>导出语句<a class="heading-anchor" href="#导出语句" aria-hidden="true"></a></h2><!-- ## Export statements -->
+<div class="translation-block" title="
+Export statements are handy when exports need to be renamed for consumers, so the above example can be written as:
+"><p>用导出语句为用户重命名导出符号, 上例可以写成:</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> ZipCodeValidator <span class="keyword">implements</span> StringValidator &#123;</span><br><span class="line">    isAcceptable(s: <span class="built_in">string</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> s.length === <span class="number">5</span> &amp;&amp; numberRegexp.test(s);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">export</span> &#123; ZipCodeValidator &#125;;</span><br><span class="line"><span class="keyword">export</span> &#123; ZipCodeValidator <span class="keyword">as</span> mainValidator &#125;;</span><br></pre></td></tr></table></figure>
+<h2 id="重导出" class="heading-control"><a href="#重导出" class="headerlink" title="重导出"></a>重导出<a class="heading-anchor" href="#重导出" aria-hidden="true"></a></h2><!-- ## Re-exports -->
+<div class="translation-block" title="
+Often modules extend other modules, and partially expose some of their features.
+A re-export does not import it locally, or introduce a local variable.
+"><p>一般, 一个模块会扩充其他模块, 然后有选择性地导出它们的一些功能.<br>重导出不先将模块导入本地, 或引入本地变量.</p></div>
+<h5 id="ParseIntBasedZipCodeValidator-ts" class="heading-control"><a href="#ParseIntBasedZipCodeValidator-ts" class="headerlink" title="ParseIntBasedZipCodeValidator.ts"></a>ParseIntBasedZipCodeValidator.ts<a class="heading-anchor" href="#ParseIntBasedZipCodeValidator-ts" aria-hidden="true"></a></h5><figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">export</span> <span class="keyword">class</span> ParseIntBasedZipCodeValidator &#123;</span><br><span class="line">    isAcceptable(s: <span class="built_in">string</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> s.length === <span class="number">5</span> &amp;&amp; <span class="built_in">parseInt</span>(s).toString() === s;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Export original validator but rename it</span></span><br><span class="line"><span class="keyword">export</span> &#123;ZipCodeValidator <span class="keyword">as</span> RegExpBasedZipCodeValidator&#125; <span class="keyword">from</span> <span class="string">"./ZipCodeValidator"</span>;</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+Optionally, a module can wrap one or more modules and combine all their exports using `export * from &amp;quot;module&amp;quot;` syntax.
+"><p>如果你愿意的话, 可以用 <code>export * from &quot;module&quot;</code> 语法打包导出一个或多个模块的功能.</p></div>
+<h5 id="AllValidators-ts" class="heading-control"><a href="#AllValidators-ts" class="headerlink" title="AllValidators.ts"></a>AllValidators.ts<a class="heading-anchor" href="#AllValidators-ts" aria-hidden="true"></a></h5><figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">export</span> * <span class="keyword">from</span> <span class="string">"./StringValidator"</span>; <span class="comment">// exports 'StringValidator' interface</span></span><br><span class="line"><span class="keyword">export</span> * <span class="keyword">from</span> <span class="string">"./ZipCodeValidator"</span>;  <span class="comment">// exports 'ZipCodeValidator' and const 'numberRegexp' class</span></span><br><span class="line"><span class="keyword">export</span> * <span class="keyword">from</span> <span class="string">"./ParseIntBasedZipCodeValidator"</span>; <span class="comment">//  exports the 'ParseIntBasedZipCodeValidator' class</span></span><br><span class="line">                                                 <span class="comment">// and re-exports 'RegExpBasedZipCodeValidator' as alias</span></span><br><span class="line">                                                 <span class="comment">// of the 'ZipCodeValidator' class from 'ZipCodeValidator.ts'</span></span><br><span class="line">                                                 <span class="comment">// module.</span></span><br></pre></td></tr></table></figure>
+<h1 id="导入" class="heading-control"><a href="#导入" class="headerlink" title="导入"></a>导入<a class="heading-anchor" href="#导入" aria-hidden="true"></a></h1><!-- # Import -->
+<div class="translation-block" title="
+Importing is just about as easy as exporting from a module.
+Importing an exported declaration is done through using one of the `import` forms below:
+"><p>导入差不多与从模块导出一样简单.<br>导入一个导出符号以以下任一 <code>import</code> 形式完成:</p></div>
+<h2 id="从模块导入单一符号" class="heading-control"><a href="#从模块导入单一符号" class="headerlink" title="从模块导入单一符号"></a>从模块导入单一符号<a class="heading-anchor" href="#从模块导入单一符号" aria-hidden="true"></a></h2><!-- ## Import a single export from a module -->
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; ZipCodeValidator &#125; <span class="keyword">from</span> <span class="string">"./ZipCodeValidator"</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> myValidator = <span class="keyword">new</span> ZipCodeValidator();</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+imports can also be renamed
+"><p>导入符号也允许被重命名</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; ZipCodeValidator <span class="keyword">as</span> ZCV &#125; <span class="keyword">from</span> <span class="string">"./ZipCodeValidator"</span>;</span><br><span class="line"><span class="keyword">let</span> myValidator = <span class="keyword">new</span> ZCV();</span><br></pre></td></tr></table></figure>
+<h2 id="导入整个模块到一个变量-借助该变量访问模块的导出" class="heading-control"><a href="#导入整个模块到一个变量-借助该变量访问模块的导出" class="headerlink" title="导入整个模块到一个变量, 借助该变量访问模块的导出"></a>导入整个模块到一个变量, 借助该变量访问模块的导出<a class="heading-anchor" href="#导入整个模块到一个变量-借助该变量访问模块的导出" aria-hidden="true"></a></h2><!-- ## Import the entire module into a single variable, and use it to access the module exports -->
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> * <span class="keyword">as</span> validator <span class="keyword">from</span> <span class="string">"./ZipCodeValidator"</span>;</span><br><span class="line"><span class="keyword">let</span> myValidator = <span class="keyword">new</span> validator.ZipCodeValidator();</span><br></pre></td></tr></table></figure>
+<h2 id="为副作用而导入模块" class="heading-control"><a href="#为副作用而导入模块" class="headerlink" title="为副作用而导入模块"></a>为副作用而导入模块<a class="heading-anchor" href="#为副作用而导入模块" aria-hidden="true"></a></h2><!-- ## Import a module for side-effects only -->
+<div class="translation-block" title="
+Though not recommended practice, some modules set up some global state that can be used by other modules.
+These modules may not have any exports, or the consumer is not interested in any of their exports.
+To import these modules, use:
+"><p>有些模块设置全局状态以影响其他模块.<br>这样的模块通常没有任何导出, 或用户对它的导出不感兴趣.<br>尽管不推荐, 如果你想为副作用导入模块, 使用:</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> <span class="string">"./my-module.js"</span>;</span><br></pre></td></tr></table></figure>
+<h1 id="默认导出" class="heading-control"><a href="#默认导出" class="headerlink" title="默认导出"></a>默认导出<a class="heading-anchor" href="#默认导出" aria-hidden="true"></a></h1><!-- # Default exports -->
+<div class="translation-block" title="
+Each module can optionally export a `default` export.
+Default exports are marked with the keyword `default`; and there can only be one `default` export per module.
+`default` exports are imported using a different import form.
+
+`default` exports are really handy.
+For instance, a library like jQuery might have a default export of `jQuery` or `$`, which we&amp;#39;d probably also import under the name `$` or `jQuery`.
+"><p>每个模块都可选择导出一个<code>默认</code>导出.<br>默认导出用关键字 <code>default</code> 标注; 每个模块只能有一个<code>默认</code>导出.<br><code>默认</code>导出需要特殊的导入形式导入.</p>
+<p><code>默认</code>导出很是方便.<br>举个例子, jQuery 等库可能有一个默认导出 <code>jQuery</code> 或 <code>$</code>, 我们也很可能用名字 $ 或 <code>jQuery</code> 导入.</p></div>
+<h5 id="JQuery-d-ts" class="heading-control"><a href="#JQuery-d-ts" class="headerlink" title="JQuery.d.ts"></a><a href="https://github.com/DefinitelyTyped/DefinitelyTyped/blob/master/types/jquery/JQuery.d.ts" target="_blank" rel="noopener">JQuery.d.ts</a><a class="heading-anchor" href="#JQuery-d-ts" aria-hidden="true"></a></h5><figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">declare</span> <span class="keyword">let</span> $: JQuery;</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> $;</span><br></pre></td></tr></table></figure>
+<h5 id="App-ts" class="heading-control"><a href="#App-ts" class="headerlink" title="App.ts"></a>App.ts<a class="heading-anchor" href="#App-ts" aria-hidden="true"></a></h5><figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> $ <span class="keyword">from</span> <span class="string">"jquery"</span>;</span><br><span class="line"></span><br><span class="line">$(<span class="string">"button.continue"</span>).html( <span class="string">"Next Step..."</span> );</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+Classes and function declarations can be authored directly as default exports.
+Default export class and function declaration names are optional.
+"><p>类或函数定义可直接标注为默认导出.<br>默认导出的类和函数的名字是可选的.</p></div>
+<h5 id="ZipCodeValidator-ts-1" class="heading-control"><a href="#ZipCodeValidator-ts-1" class="headerlink" title="ZipCodeValidator.ts"></a>ZipCodeValidator.ts<a class="heading-anchor" href="#ZipCodeValidator-ts-1" aria-hidden="true"></a></h5><figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> <span class="keyword">class</span> ZipCodeValidator &#123;</span><br><span class="line">    <span class="keyword">static</span> numberRegexp = <span class="regexp">/^[0-9]+$/</span>;</span><br><span class="line">    isAcceptable(s: <span class="built_in">string</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> s.length === <span class="number">5</span> &amp;&amp; ZipCodeValidator.numberRegexp.test(s);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h5 id="Test-ts" class="heading-control"><a href="#Test-ts" class="headerlink" title="Test.ts"></a>Test.ts<a class="heading-anchor" href="#Test-ts" aria-hidden="true"></a></h5><figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> validator <span class="keyword">from</span> <span class="string">"./ZipCodeValidator"</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> myValidator = <span class="keyword">new</span> validator();</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+or
+"><p>或</p></div>
+<h5 id="StaticZipCodeValidator-ts" class="heading-control"><a href="#StaticZipCodeValidator-ts" class="headerlink" title="StaticZipCodeValidator.ts"></a>StaticZipCodeValidator.ts<a class="heading-anchor" href="#StaticZipCodeValidator-ts" aria-hidden="true"></a></h5><figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> numberRegexp = <span class="regexp">/^[0-9]+$/</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> <span class="function"><span class="keyword">function</span> (<span class="params">s: <span class="built_in">string</span></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> s.length === <span class="number">5</span> &amp;&amp; numberRegexp.test(s);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h5 id="Test-ts-1" class="heading-control"><a href="#Test-ts-1" class="headerlink" title="Test.ts"></a>Test.ts<a class="heading-anchor" href="#Test-ts-1" aria-hidden="true"></a></h5><figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> validate <span class="keyword">from</span> <span class="string">"./StaticZipCodeValidator"</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> strings = [<span class="string">"Hello"</span>, <span class="string">"98052"</span>, <span class="string">"101"</span>];</span><br><span class="line"></span><br><span class="line"><span class="comment">// Use function validate</span></span><br><span class="line">strings.forEach(<span class="function"><span class="params">s</span> =&gt;</span> &#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">`"<span class="subst">$&#123;s&#125;</span>" <span class="subst">$&#123;validate(s) ? <span class="string">"matches"</span> : <span class="string">"does not match"</span>&#125;</span>`</span>);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+`default` exports can also be just values:
+"><p><code>默认</code>导出还可以仅是一个值:</p></div>
+<h5 id="OneTwoThree-ts" class="heading-control"><a href="#OneTwoThree-ts" class="headerlink" title="OneTwoThree.ts"></a>OneTwoThree.ts<a class="heading-anchor" href="#OneTwoThree-ts" aria-hidden="true"></a></h5><figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> <span class="string">"123"</span>;</span><br></pre></td></tr></table></figure>
+<h5 id="Log-ts" class="heading-control"><a href="#Log-ts" class="headerlink" title="Log.ts"></a>Log.ts<a class="heading-anchor" href="#Log-ts" aria-hidden="true"></a></h5><figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> num <span class="keyword">from</span> <span class="string">"./OneTwoThree"</span>;</span><br><span class="line"></span><br><span class="line"><span class="built_in">console</span>.log(num); <span class="comment">// "123"</span></span><br></pre></td></tr></table></figure>
+<h1 id="export-和-import-require" class="heading-control"><a href="#export-和-import-require" class="headerlink" title="export = 和 import = require()"></a><code>export =</code> 和 <code>import = require()</code><a class="heading-anchor" href="#export-和-import-require" aria-hidden="true"></a></h1><!-- # `export =` and `import = require()` -->
+<div class="translation-block" title="
+Both CommonJS and AMD generally have the concept of an `exports` object which contains all exports from a module.
+
+They also support replacing the `exports` object with a custom single object.
+Default exports are meant to act as a replacement for this behavior; however, the two are incompatible.
+TypeScript supports `export =` to model the traditional CommonJS and AMD workflow.
+"><p>CommonJS 和 AMD 都有囊括一个模块所有导出的 <code>exports</code> 对象的概念.</p>
+<p>它们也允许用一个自定义对象替代 <code>exports</code> 对象.<br>默认导出意图作为该功能的替代; 不过两者互不兼容.<br>TypeScript 提供了 <code>export =</code> 语法来模拟 CommonJS 和 AMD 工作流.</p>
+<!-- TODO: 理解 --></div>
+<div class="translation-block" title="
+The `export =` syntax specifies a single object that is exported from the module.
+This can be a class, interface, namespace, function, or enum.
+
+When exporting a module using `export =`, TypeScript-specific `import module = require(&amp;quot;module&amp;quot;)` must be used to import the module.
+"><p><code>export =</code> 语法指定一个从模块导出的对象.<br>它可以是类, 接口, 名字空间, 或枚举.</p>
+<p>用 <code>export =</code> 导出一个模块后, 必须借助 TypeScript 特有的 <code>import module = require(&quot;module&quot;)</code> 导入它.</p></div>
+<h5 id="ZipCodeValidator-ts-2" class="heading-control"><a href="#ZipCodeValidator-ts-2" class="headerlink" title="ZipCodeValidator.ts"></a>ZipCodeValidator.ts<a class="heading-anchor" href="#ZipCodeValidator-ts-2" aria-hidden="true"></a></h5><figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> numberRegexp = <span class="regexp">/^[0-9]+$/</span>;</span><br><span class="line"><span class="keyword">class</span> ZipCodeValidator &#123;</span><br><span class="line">    isAcceptable(s: <span class="built_in">string</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> s.length === <span class="number">5</span> &amp;&amp; numberRegexp.test(s);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">export</span> = ZipCodeValidator;</span><br></pre></td></tr></table></figure>
+<h5 id="Test-ts-2" class="heading-control"><a href="#Test-ts-2" class="headerlink" title="Test.ts"></a>Test.ts<a class="heading-anchor" href="#Test-ts-2" aria-hidden="true"></a></h5><figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> zip = <span class="built_in">require</span>(<span class="string">"./ZipCodeValidator"</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// Some samples to try</span></span><br><span class="line"><span class="keyword">let</span> strings = [<span class="string">"Hello"</span>, <span class="string">"98052"</span>, <span class="string">"101"</span>];</span><br><span class="line"></span><br><span class="line"><span class="comment">// Validators to use</span></span><br><span class="line"><span class="keyword">let</span> validator = <span class="keyword">new</span> zip();</span><br><span class="line"></span><br><span class="line"><span class="comment">// Show whether each string passed each validator</span></span><br><span class="line">strings.forEach(<span class="function"><span class="params">s</span> =&gt;</span> &#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">`"<span class="subst">$&#123; s &#125;</span>" - <span class="subst">$&#123; validator.isAcceptable(s) ? <span class="string">"matches"</span> : <span class="string">"does not match"</span> &#125;</span>`</span>);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<h1 id="代码生成-mdash-模块" class="heading-control"><a href="#代码生成-mdash-模块" class="headerlink" title="代码生成 &mdash; 模块"></a>代码生成 &mdash; 模块<a class="heading-anchor" href="#代码生成-mdash-模块" aria-hidden="true"></a></h1><!-- # Code Generation for Modules -->
+<div class="translation-block" title="
+Depending on the module target specified during compilation, the compiler will generate appropriate code for Node.js ([CommonJS](http:&amp;#x2F;&amp;#x2F;wiki.commonjs.org&amp;#x2F;wiki&amp;#x2F;CommonJS)), require.js ([AMD](https:&amp;#x2F;&amp;#x2F;github.com&amp;#x2F;amdjs&amp;#x2F;amdjs-api&amp;#x2F;wiki&amp;#x2F;AMD)), [UMD](https:&amp;#x2F;&amp;#x2F;github.com&amp;#x2F;umdjs&amp;#x2F;umd), [SystemJS](https:&amp;#x2F;&amp;#x2F;github.com&amp;#x2F;systemjs&amp;#x2F;systemjs), or [ECMAScript 2015 native modules](http:&amp;#x2F;&amp;#x2F;www.ecma-international.org&amp;#x2F;ecma-262&amp;#x2F;6.0&amp;#x2F;#sec-modules) (ES6) module-loading systems.
+For more information on what the `define`, `require` and `register` calls in the generated code do, consult the documentation for each module loader.
+
+This simple example shows how the names used during importing and exporting get translated into the module loading code.
+"><p>取决于在编译期指定的模块系统, 编译器会为 Node.js (<a href="http://wiki.commonjs.org/wiki/CommonJS" target="_blank" rel="noopener">CommonJS</a>), require.js (<a href="https://github.com/amdjs/amdjs-api/wiki/AMD" target="_blank" rel="noopener">AMD</a>), <a href="https://github.com/umdjs/umd" target="_blank" rel="noopener">UMD</a>, <a href="https://github.com/systemjs/systemjs" target="_blank" rel="noopener">SystemJS</a>, 或 <a href="http://www.ecma-international.org/ecma-262/6.0/#sec-modules" target="_blank" rel="noopener">ECMAScript 2015 本地模块</a> (ES6) 模块加载系统生成合适的代码.<br>如要了解生成代码中 <code>define</code>, <code>require</code>, 和 <code>register</code> 调用的作用, 单独查询每个模块加载器的文档.</p>
+<p>这个例子展示导入导出中使用的名字怎样转换成模块加载代码.</p></div>
+<h5 id="SimpleModule-ts" class="heading-control"><a href="#SimpleModule-ts" class="headerlink" title="SimpleModule.ts"></a>SimpleModule.ts<a class="heading-anchor" href="#SimpleModule-ts" aria-hidden="true"></a></h5><figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> m = <span class="built_in">require</span>(<span class="string">"mod"</span>);</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">let</span> t = m.something + <span class="number">1</span>;</span><br></pre></td></tr></table></figure>
+<h5 id="AMD-RequireJS-SimpleModule-js" class="heading-control"><a href="#AMD-RequireJS-SimpleModule-js" class="headerlink" title="AMD / RequireJS SimpleModule.js"></a>AMD / RequireJS SimpleModule.js<a class="heading-anchor" href="#AMD-RequireJS-SimpleModule-js" aria-hidden="true"></a></h5><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">define([<span class="string">"require"</span>, <span class="string">"exports"</span>, <span class="string">"./mod"</span>], <span class="function"><span class="keyword">function</span> (<span class="params">require, exports, mod_1</span>) </span>&#123;</span><br><span class="line">    exports.t = mod_1.something + <span class="number">1</span>;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<h5 id="CommonJS-Node-SimpleModule-js" class="heading-control"><a href="#CommonJS-Node-SimpleModule-js" class="headerlink" title="CommonJS / Node SimpleModule.js"></a>CommonJS / Node SimpleModule.js<a class="heading-anchor" href="#CommonJS-Node-SimpleModule-js" aria-hidden="true"></a></h5><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> mod_1 = <span class="built_in">require</span>(<span class="string">"./mod"</span>);</span><br><span class="line">exports.t = mod_1.something + <span class="number">1</span>;</span><br></pre></td></tr></table></figure>
+<h5 id="UMD-SimpleModule-js" class="heading-control"><a href="#UMD-SimpleModule-js" class="headerlink" title="UMD SimpleModule.js"></a>UMD SimpleModule.js<a class="heading-anchor" href="#UMD-SimpleModule-js" aria-hidden="true"></a></h5><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">(<span class="function"><span class="keyword">function</span> (<span class="params">factory</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">typeof</span> <span class="built_in">module</span> === <span class="string">"object"</span> &amp;&amp; <span class="keyword">typeof</span> <span class="built_in">module</span>.exports === <span class="string">"object"</span>) &#123;</span><br><span class="line">        <span class="keyword">var</span> v = factory(<span class="built_in">require</span>, exports); <span class="keyword">if</span> (v !== <span class="literal">undefined</span>) <span class="built_in">module</span>.exports = v;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span> <span class="keyword">if</span> (<span class="keyword">typeof</span> define === <span class="string">"function"</span> &amp;&amp; define.amd) &#123;</span><br><span class="line">        define([<span class="string">"require"</span>, <span class="string">"exports"</span>, <span class="string">"./mod"</span>], factory);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;)(<span class="function"><span class="keyword">function</span> (<span class="params">require, exports</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> mod_1 = <span class="built_in">require</span>(<span class="string">"./mod"</span>);</span><br><span class="line">    exports.t = mod_1.something + <span class="number">1</span>;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<h5 id="System-SimpleModule-js" class="heading-control"><a href="#System-SimpleModule-js" class="headerlink" title="System SimpleModule.js"></a>System SimpleModule.js<a class="heading-anchor" href="#System-SimpleModule-js" aria-hidden="true"></a></h5><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">System.register([<span class="string">"./mod"</span>], <span class="function"><span class="keyword">function</span>(<span class="params">exports_1</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> mod_1;</span><br><span class="line">    <span class="keyword">var</span> t;</span><br><span class="line">    <span class="keyword">return</span> &#123;</span><br><span class="line">        setters:[</span><br><span class="line">            <span class="function"><span class="keyword">function</span> (<span class="params">mod_1_1</span>) </span>&#123;</span><br><span class="line">                mod_1 = mod_1_1;</span><br><span class="line">            &#125;],</span><br><span class="line">        execute: <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">            exports_1(<span class="string">"t"</span>, t = mod_1.something + <span class="number">1</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<h5 id="ECMAScript-2015-本地模块-SimpleModule-js" class="heading-control"><a href="#ECMAScript-2015-本地模块-SimpleModule-js" class="headerlink" title="ECMAScript 2015 本地模块 SimpleModule.js"></a>ECMAScript 2015 本地模块 SimpleModule.js<a class="heading-anchor" href="#ECMAScript-2015-本地模块-SimpleModule-js" aria-hidden="true"></a></h5><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; something &#125; <span class="keyword">from</span> <span class="string">"./mod"</span>;</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">var</span> t = something + <span class="number">1</span>;</span><br></pre></td></tr></table></figure>
+<h1 id="一个实例" class="heading-control"><a href="#一个实例" class="headerlink" title="一个实例"></a>一个实例<a class="heading-anchor" href="#一个实例" aria-hidden="true"></a></h1><!-- # Simple Example -->
+<div class="translation-block" title="
+Below, we&amp;#39;ve consolidated the Validator implementations used in previous examples to only export a single named export from each module.
+
+To compile, we must specify a module target on the command line. For Node.js, use `--module commonjs`;
+for require.js, use `--module amd`. For example:
+"><p>下面, 我们通过只导出每个模块的一个命名符号来加强先前 Validator 的实现.</p>
+<p>编译时, 在命令行参数指定所需模块系统. 对于 Node.js, 这参数是 <code>--module commonjs</code>;<br>对 require.js, 则是 <code>--module amd</code>. 请看示例:</p></div>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tsc --module commonjs Test.ts</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+When compiled, each module will become a separate `.js` file.
+As with reference tags, the compiler will follow `import` statements to compile dependent files.
+"><p>经过编译, 每个模块生成各自的 <code>.js</code> 文件.<br>类似于 reference 标签, 编译器会遵循 <code>import</code> 语句编译每个依赖文件.</p></div>
+<h5 id="Validation-ts" class="heading-control"><a href="#Validation-ts" class="headerlink" title="Validation.ts"></a>Validation.ts<a class="heading-anchor" href="#Validation-ts" aria-hidden="true"></a></h5><figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">export</span> <span class="keyword">interface</span> StringValidator &#123;</span><br><span class="line">    isAcceptable(s: <span class="built_in">string</span>): <span class="built_in">boolean</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h5 id="LettersOnlyValidator-ts" class="heading-control"><a href="#LettersOnlyValidator-ts" class="headerlink" title="LettersOnlyValidator.ts"></a>LettersOnlyValidator.ts<a class="heading-anchor" href="#LettersOnlyValidator-ts" aria-hidden="true"></a></h5><figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; StringValidator &#125; <span class="keyword">from</span> <span class="string">"./Validation"</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> lettersRegexp = <span class="regexp">/^[A-Za-z]+$/</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">class</span> LettersOnlyValidator <span class="keyword">implements</span> StringValidator &#123;</span><br><span class="line">    isAcceptable(s: <span class="built_in">string</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> lettersRegexp.test(s);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h5 id="ZipCodeValidator-ts-3" class="heading-control"><a href="#ZipCodeValidator-ts-3" class="headerlink" title="ZipCodeValidator.ts"></a>ZipCodeValidator.ts<a class="heading-anchor" href="#ZipCodeValidator-ts-3" aria-hidden="true"></a></h5><figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; StringValidator &#125; <span class="keyword">from</span> <span class="string">"./Validation"</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> numberRegexp = <span class="regexp">/^[0-9]+$/</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">class</span> ZipCodeValidator <span class="keyword">implements</span> StringValidator &#123;</span><br><span class="line">    isAcceptable(s: <span class="built_in">string</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> s.length === <span class="number">5</span> &amp;&amp; numberRegexp.test(s);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h5 id="Test-ts-3" class="heading-control"><a href="#Test-ts-3" class="headerlink" title="Test.ts"></a>Test.ts<a class="heading-anchor" href="#Test-ts-3" aria-hidden="true"></a></h5><figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; StringValidator &#125; <span class="keyword">from</span> <span class="string">"./Validation"</span>;</span><br><span class="line"><span class="keyword">import</span> &#123; ZipCodeValidator &#125; <span class="keyword">from</span> <span class="string">"./ZipCodeValidator"</span>;</span><br><span class="line"><span class="keyword">import</span> &#123; LettersOnlyValidator &#125; <span class="keyword">from</span> <span class="string">"./LettersOnlyValidator"</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Some samples to try</span></span><br><span class="line"><span class="keyword">let</span> strings = [<span class="string">"Hello"</span>, <span class="string">"98052"</span>, <span class="string">"101"</span>];</span><br><span class="line"></span><br><span class="line"><span class="comment">// Validators to use</span></span><br><span class="line"><span class="keyword">let</span> validators: &#123; [s: <span class="built_in">string</span>]: StringValidator; &#125; = &#123;&#125;;</span><br><span class="line">validators[<span class="string">"ZIP code"</span>] = <span class="keyword">new</span> ZipCodeValidator();</span><br><span class="line">validators[<span class="string">"Letters only"</span>] = <span class="keyword">new</span> LettersOnlyValidator();</span><br><span class="line"></span><br><span class="line"><span class="comment">// Show whether each string passed each validator</span></span><br><span class="line">strings.forEach(<span class="function"><span class="params">s</span> =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">let</span> name <span class="keyword">in</span> validators) &#123;</span><br><span class="line">        <span class="built_in">console</span>.log(<span class="string">`"<span class="subst">$&#123; s &#125;</span>" - <span class="subst">$&#123; validators[name].isAcceptable(s) ? <span class="string">"matches"</span> : <span class="string">"does not match"</span> &#125;</span> <span class="subst">$&#123; name &#125;</span>`</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<h1 id="模块按需加载及其他高级加载场景" class="heading-control"><a href="#模块按需加载及其他高级加载场景" class="headerlink" title="模块按需加载及其他高级加载场景"></a>模块按需加载及其他高级加载场景<a class="heading-anchor" href="#模块按需加载及其他高级加载场景" aria-hidden="true"></a></h1><!-- # Optional Module Loading and Other Advanced Loading Scenarios -->
+<div class="translation-block" title="
+In some cases, you may want to only load a module under some conditions.
+In TypeScript, we can use the pattern shown below to implement this and other advanced loading scenarios to directly invoke the module loaders without losing type safety.
+
+The compiler detects whether each module is used in the emitted JavaScript.
+If a module identifier is only ever used as part of a type annotations and never as an expression, then no `require` call is emitted for that module.
+This elision of unused references is a good performance optimization, and also allows for optional loading of those modules.
+"><p>在某些情况下, 你可能希望满足一定条件才加载所需模块.<br>在 TypeScript 中, 你可以使用以下模式实现模块按需加载和其他高级加载场景, 在不损失类型安全的前提下直接调用模块加载器.</p>
+<p>编译器检测输出的 JavaScript 是否使用了每个模块.<br>如果模块标识符总是出现在类型注解中, 从未在表达式中使用, 编译器便不会为这个模块生成相应的 <code>require</code> 调用.<br>对未使用引用的消除能优化性能, 也实现了对这些模块的按需加载.</p></div>
+<div class="translation-block" title="
+The core idea of the pattern is that the `import id = require(&amp;quot;...&amp;quot;)` statement gives us access to the types exposed by the module.
+The module loader is invoked (through `require`) dynamically, as shown in the `if` blocks below.
+This leverages the reference-elision optimization so that the module is only loaded when needed.
+For this pattern to work, it&amp;#39;s important that the symbol defined via an `import` is only used in type positions (i.e. never in a position that would be emitted into the JavaScript).
+
+To maintain type safety, we can use the `typeof` keyword.
+The `typeof` keyword, when used in a type position, produces the type of a value, in this case the type of the module.
+"><p>这模式的核心想法是 <code>import id = require(&quot;...&quot;)</code> 语句让我们能访问模块导出的类型.<br>在以下 <code>if</code> 块中, 对模块加载器的调用是动态的 (通过 <code>require</code>).<br>这里运用了引用消除优化, 所以模块只在必要时加载.<br>要使这模式奏效, 用 <code>import</code> 定义的标识符只能用在类型信息位置 (该位置不会输出至 JavaScript).</p>
+<p>为了维护类型安全, 我们可以利用 <code>typeof</code> 关键字.<br>在类型信息位置使用 <code>typeof</code> 关键字, 将产生一个值的类型, 此例是输出模块的类型.</p></div>
+<h5 id="Node-js-动态模块加载" class="heading-control"><a href="#Node-js-动态模块加载" class="headerlink" title="Node.js 动态模块加载"></a>Node.js 动态模块加载<a class="heading-anchor" href="#Node-js-动态模块加载" aria-hidden="true"></a></h5><!-- ##### Dynamic Module Loading in Node.js -->
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">declare</span> <span class="function"><span class="keyword">function</span> <span class="title">require</span>(<span class="params">moduleName: <span class="built_in">string</span></span>): <span class="title">any</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> &#123; ZipCodeValidator <span class="keyword">as</span> Zip &#125; <span class="keyword">from</span> <span class="string">"./ZipCodeValidator"</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> (needZipValidation) &#123;</span><br><span class="line">    <span class="keyword">let</span> ZipCodeValidator: <span class="keyword">typeof</span> Zip = <span class="built_in">require</span>(<span class="string">"./ZipCodeValidator"</span>);</span><br><span class="line">    <span class="keyword">let</span> validator = <span class="keyword">new</span> ZipCodeValidator();</span><br><span class="line">    <span class="keyword">if</span> (validator.isAcceptable(<span class="string">"..."</span>)) &#123; <span class="comment">/* ... */</span> &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h5 id="实例-require-js-动态模块加载" class="heading-control"><a href="#实例-require-js-动态模块加载" class="headerlink" title="实例: require.js 动态模块加载"></a>实例: require.js 动态模块加载<a class="heading-anchor" href="#实例-require-js-动态模块加载" aria-hidden="true"></a></h5><!-- ##### Sample: Dynamic Module Loading in require.js -->
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">declare</span> <span class="function"><span class="keyword">function</span> <span class="title">require</span>(<span class="params">moduleNames: <span class="built_in">string</span>[], onLoad: (...args: <span class="built_in">any</span>[]) =&gt; <span class="built_in">void</span></span>): <span class="title">void</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> * <span class="keyword">as</span> Zip <span class="keyword">from</span> <span class="string">"./ZipCodeValidator"</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> (needZipValidation) &#123;</span><br><span class="line">    <span class="built_in">require</span>([<span class="string">"./ZipCodeValidator"</span>], <span class="function">(<span class="params">ZipCodeValidator: <span class="keyword">typeof</span> Zip</span>) =&gt;</span> &#123;</span><br><span class="line">        <span class="keyword">let</span> validator = <span class="keyword">new</span> ZipCodeValidator.ZipCodeValidator();</span><br><span class="line">        <span class="keyword">if</span> (validator.isAcceptable(<span class="string">"..."</span>)) &#123; <span class="comment">/* ... */</span> &#125;</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h5 id="实例-System-js-动态模块加载" class="heading-control"><a href="#实例-System-js-动态模块加载" class="headerlink" title="实例: System.js 动态模块加载"></a>实例: System.js 动态模块加载<a class="heading-anchor" href="#实例-System-js-动态模块加载" aria-hidden="true"></a></h5><!-- ##### Sample: Dynamic Module Loading in System.js -->
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">declare</span> <span class="keyword">const</span> System: <span class="built_in">any</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> &#123; ZipCodeValidator <span class="keyword">as</span> Zip &#125; <span class="keyword">from</span> <span class="string">"./ZipCodeValidator"</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> (needZipValidation) &#123;</span><br><span class="line">    System.import(<span class="string">"./ZipCodeValidator"</span>).then(<span class="function">(<span class="params">ZipCodeValidator: <span class="keyword">typeof</span> Zip</span>) =&gt;</span> &#123;</span><br><span class="line">        <span class="keyword">var</span> x = <span class="keyword">new</span> ZipCodeValidator();</span><br><span class="line">        <span class="keyword">if</span> (x.isAcceptable(<span class="string">"..."</span>)) &#123; <span class="comment">/* ... */</span> &#125;</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="与其他-JavaScript-库协同工作" class="heading-control"><a href="#与其他-JavaScript-库协同工作" class="headerlink" title="与其他 JavaScript 库协同工作"></a>与其他 JavaScript 库协同工作<a class="heading-anchor" href="#与其他-JavaScript-库协同工作" aria-hidden="true"></a></h1><!-- # Working with Other JavaScript Libraries -->
+<div class="translation-block" title="
+To describe the shape of libraries not written in TypeScript, we need to declare the API that the library exposes.
+
+We call declarations that don&amp;#39;t define an implementation &amp;quot;ambient&amp;quot;.
+Typically, these are defined in `.d.ts` files.
+If you&amp;#39;re familiar with C&amp;#x2F;C++, you can think of these as `.h` files.
+Let&amp;#39;s look at a few examples.
+"><p>要描述非 TypeScript 库的形体, 我们需要声明该库暴露的 API.</p>
+<p>我们称没有定义实现的声明为 “外部的”.<br>按照惯例, 把这些声明放置在 <code>.d.ts</code> 文件中.<br>如果你熟悉 C/C++, 它们相当于 <code>.h</code> 文件.<br>一起来看些例子.</p></div>
+<h2 id="外部模块" class="heading-control"><a href="#外部模块" class="headerlink" title="外部模块"></a>外部模块<a class="heading-anchor" href="#外部模块" aria-hidden="true"></a></h2><!-- ## Ambient Modules -->
+<div class="translation-block" title="
+In Node.js, most tasks are accomplished by loading one or more modules.
+We could define each module in its own `.d.ts` file with top-level export declarations, but it&amp;#39;s more convenient to write them as one larger `.d.ts` file.
+To do so, we use a construct similar to ambient namespaces, but we use the `module` keyword and the quoted name of the module which will be available to a later import.
+For example:
+"><p>在 Node.js 中, 多数任务都要加载一个或多个模块才能完成.<br>我们可以声明顶层导出, 为每个模块建立专有的 <code>.d.ts</code> 文件, 但把所有导出声明放到一个大 <code>.d.ts</code> 文件更易使用.<br>我们采用与外部名字空间差不多的结构达成目的, 组合 <code>module</code> 关键字和以引号引起来的模块名, 提供对导入有用的信息.</p></div>
+<h5 id="node-d-ts-摘要" class="heading-control"><a href="#node-d-ts-摘要" class="headerlink" title="node.d.ts (摘要)"></a>node.d.ts (摘要)<a class="heading-anchor" href="#node-d-ts-摘要" aria-hidden="true"></a></h5><!-- ##### node.d.ts (simplified excerpt) -->
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">declare</span> <span class="keyword">module</span> "url" &#123;</span><br><span class="line">    <span class="keyword">export</span> <span class="keyword">interface</span> Url &#123;</span><br><span class="line">        protocol?: <span class="built_in">string</span>;</span><br><span class="line">        hostname?: <span class="built_in">string</span>;</span><br><span class="line">        pathname?: <span class="built_in">string</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">export</span> <span class="function"><span class="keyword">function</span> <span class="title">parse</span>(<span class="params">urlStr: <span class="built_in">string</span>, parseQueryString?, slashesDenoteHost?</span>): <span class="title">Url</span></span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">declare</span> <span class="keyword">module</span> "path" &#123;</span><br><span class="line">    <span class="keyword">export</span> <span class="function"><span class="keyword">function</span> <span class="title">normalize</span>(<span class="params">p: <span class="built_in">string</span></span>): <span class="title">string</span></span>;</span><br><span class="line">    <span class="keyword">export</span> <span class="function"><span class="keyword">function</span> <span class="title">join</span>(<span class="params">...paths: <span class="built_in">any</span>[]</span>): <span class="title">string</span></span>;</span><br><span class="line">    <span class="keyword">export</span> <span class="keyword">var</span> sep: <span class="built_in">string</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+Now we can `&amp;#x2F;&amp;#x2F;&amp;#x2F; &amp;lt;reference&amp;gt;` `node.d.ts` and then load the modules using `import url = require(&amp;quot;url&amp;quot;);` or `import * as URL from &amp;quot;url&amp;quot;`.
+"><p>此时, 先以 <code>/// &lt;reference&gt;</code> <code>node.d.ts</code> 添加引用, 然后用 <code>import url = require(&quot;url&quot;)</code> 或 <code>import * as URL from &quot;url&quot;</code> 加载模块.</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/// &lt;reference path="node.d.ts"/&gt;</span></span><br><span class="line"><span class="keyword">import</span> * <span class="keyword">as</span> URL <span class="keyword">from</span> <span class="string">"url"</span>;</span><br><span class="line"><span class="keyword">let</span> myUrl = URL.parse(<span class="string">"http://www.typescriptlang.org"</span>);</span><br></pre></td></tr></table></figure>
+<h3 id="原始外部模块" class="heading-control"><a href="#原始外部模块" class="headerlink" title="原始外部模块"></a>原始外部模块<a class="heading-anchor" href="#原始外部模块" aria-hidden="true"></a></h3><!-- ### Shorthand ambient modules -->
+<div class="translation-block" title="
+If you don&amp;#39;t want to take the time to write out declarations before using a new module, you can use a shorthand declaration to get started quickly.
+"><p>如果你不愿在使用一个新模块之前, 花时间编写模块声明, 原始外部模块让你快速开始.</p></div>
+<h5 id="declarations-d-ts" class="heading-control"><a href="#declarations-d-ts" class="headerlink" title="declarations.d.ts"></a>declarations.d.ts<a class="heading-anchor" href="#declarations-d-ts" aria-hidden="true"></a></h5><figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">declare</span> <span class="keyword">module</span> "hot-new-<span class="keyword">module</span>";</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+All imports from a shorthand module will have the `any` type.
+"><p>所有来自原始外部模块的导入的类型都是 <code>any</code>.</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> x, &#123;y&#125; <span class="keyword">from</span> <span class="string">"hot-new-module"</span>;</span><br><span class="line">x(y);</span><br></pre></td></tr></table></figure>
+<h3 id="带通配符的模块声明" class="heading-control"><a href="#带通配符的模块声明" class="headerlink" title="带通配符的模块声明"></a>带通配符的模块声明<a class="heading-anchor" href="#带通配符的模块声明" aria-hidden="true"></a></h3><!-- ### Wildcard module declarations -->
+<div class="translation-block" title="
+Some module loaders such as [SystemJS](https:&amp;#x2F;&amp;#x2F;github.com&amp;#x2F;systemjs&amp;#x2F;systemjs&amp;#x2F;blob&amp;#x2F;master&amp;#x2F;docs&amp;#x2F;overview.md#plugin-syntax)
+and [AMD](https:&amp;#x2F;&amp;#x2F;github.com&amp;#x2F;amdjs&amp;#x2F;amdjs-api&amp;#x2F;blob&amp;#x2F;master&amp;#x2F;LoaderPlugins.md) allow non-JavaScript content to be imported.
+These typically use a prefix or suffix to indicate the special loading semantics.
+Wildcard module declarations can be used to cover these cases.
+"><p><a href="https://github.com/systemjs/systemjs/blob/master/docs/overview.md#plugin-syntax" target="_blank" rel="noopener">SystemJS</a> 和 <a href="https://github.com/amdjs/amdjs-api/blob/master/LoaderPlugins.md" target="_blank" rel="noopener">AMD</a> 等模块加载器允许你加载非 JavaScript 内容.<br>它们一般依靠前缀或后缀指示特殊加载语义.<br>带通配符的模块声明可以发挥作用.</p>
+<!-- TODO: 理解 --></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">declare</span> <span class="keyword">module</span> "*!text" &#123;</span><br><span class="line">    <span class="keyword">const</span> content: <span class="built_in">string</span>;</span><br><span class="line">    <span class="keyword">export</span> <span class="keyword">default</span> content;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// Some do it the other way around.</span></span><br><span class="line"><span class="keyword">declare</span> <span class="keyword">module</span> "json!*" &#123;</span><br><span class="line">    <span class="keyword">const</span> value: <span class="built_in">any</span>;</span><br><span class="line">    <span class="keyword">export</span> <span class="keyword">default</span> value;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+Now you can import things that match `&amp;quot;*!text&amp;quot;` or `&amp;quot;json!*&amp;quot;`.
+"><p>现在你可以导入匹配 <code>&quot;*!text&quot;</code> 或 <code>&quot;json!*&quot;</code> 的定义了.</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> fileContent <span class="keyword">from</span> <span class="string">"./xyz.txt!text"</span>;</span><br><span class="line"><span class="keyword">import</span> data <span class="keyword">from</span> <span class="string">"json!http://example.com/data.json"</span>;</span><br><span class="line"><span class="built_in">console</span>.log(data, fileContent);</span><br></pre></td></tr></table></figure>
+<h3 id="UMD-模块" class="heading-control"><a href="#UMD-模块" class="headerlink" title="UMD 模块"></a>UMD 模块<a class="heading-anchor" href="#UMD-模块" aria-hidden="true"></a></h3><!-- ### UMD modules -->
+<div class="translation-block" title="
+Some libraries are designed to be used in many module loaders, or with no module loading (global variables).
+These are known as [UMD](https:&amp;#x2F;&amp;#x2F;github.com&amp;#x2F;umdjs&amp;#x2F;umd) modules.
+These libraries can be accessed through either an import or a global variable.
+For example:
+"><p>很多库设计为能为多个模块加载器所加载, 也有的不需要模块加载 (全局变量).<br>它们统称为 <a href="https://github.com/umdjs/umd" target="_blank" rel="noopener">UMD</a> 模块.<br>这些库可以通过导入语句或全局变量访问.<br>请看下例:</p></div>
+<h5 id="math-lib-d-ts" class="heading-control"><a href="#math-lib-d-ts" class="headerlink" title="math-lib.d.ts"></a>math-lib.d.ts<a class="heading-anchor" href="#math-lib-d-ts" aria-hidden="true"></a></h5><figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">export</span> <span class="function"><span class="keyword">function</span> <span class="title">isPrime</span>(<span class="params">x: <span class="built_in">number</span></span>): <span class="title">boolean</span></span>;</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">as</span> <span class="keyword">namespace</span> mathLib;</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+The library can then be used as an import within modules:
+"><p>随后, 在模块中, 用 import 导入这个库:</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; isPrime &#125; <span class="keyword">from</span> <span class="string">"math-lib"</span>;</span><br><span class="line">isPrime(<span class="number">2</span>);</span><br><span class="line">mathLib.isPrime(<span class="number">2</span>); <span class="comment">// ERROR: can't use the global definition from inside a module</span></span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+It can also be used as a global variable, but only inside of a script.
+(A script is a file with no imports or exports.)
+"><p>它也可以作为全局变量访问, 但只有脚本文件允许.<br>(脚本文件是不包含任何 import, export 语句的源文件)</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mathLib.isPrime(<span class="number">2</span>);</span><br></pre></td></tr></table></figure>
+<h1 id="模块组织指南" class="heading-control"><a href="#模块组织指南" class="headerlink" title="模块组织指南"></a>模块组织指南<a class="heading-anchor" href="#模块组织指南" aria-hidden="true"></a></h1><!-- # Guidance for structuring modules -->
+<h2 id="导出尽可能靠近顶层" class="heading-control"><a href="#导出尽可能靠近顶层" class="headerlink" title="导出尽可能靠近顶层"></a>导出尽可能靠近顶层<a class="heading-anchor" href="#导出尽可能靠近顶层" aria-hidden="true"></a></h2><!-- ## Export as close to top-level as possible -->
+<div class="translation-block" title="
+Consumers of your module should have as little friction as possible when using things that you export.
+Adding too many levels of nesting tends to be cumbersome, so think carefully about how you want to structure things.
+"><p>你模块的用户在使用你模块导出时阻力应越小越好.<br>向模块添加过多嵌套层次等于给用户制造麻烦, 在组织模块结构时必须深思熟虑.</p></div>
+<div class="translation-block" title="
+Exporting a namespace from your module is an example of adding too many layers of nesting.
+While namespaces sometime have their uses, they add an extra level of indirection when using modules.
+This can quickly become a pain point for users, and is usually unnecessary.
+
+Static methods on an exported class have a similar problem - the class itself adds a layer of nesting.
+Unless it increases expressivity or intent in a clearly useful way, consider simply exporting a helper function.
+"><p>从模块导出名字空间便是添加过多嵌套层次的反面教材.<br>在使用模块时, 名字空间为它添加了额外的一层间接访问, 有时是有用的.<br>但它很容易成为用户痛点, 同时很难说是必要的.</p>
+<p>导出类中的静态方法也存在同样的问题 - 类本身增加了额外的一层嵌套.<br>除非为了可读性考虑, 或有清晰的意图, 导出一个简单的帮助函数(helper function)更好.</p></div>
+<h3 id="导出单个类或函数-别忘记默认导出" class="heading-control"><a href="#导出单个类或函数-别忘记默认导出" class="headerlink" title="导出单个类或函数, 别忘记默认导出"></a>导出单个<code>类</code>或<code>函数</code>, 别忘记<code>默认导出</code><a class="heading-anchor" href="#导出单个类或函数-别忘记默认导出" aria-hidden="true"></a></h3><!-- ### If you're only exporting a single `class` or `function`, use `export default` -->
+<div class="translation-block" title="
+Just as &amp;quot;exporting near the top-level&amp;quot; reduces friction on your module&amp;#39;s consumers, so does introducing a default export.
+If a module&amp;#39;s primary purpose is to house one specific export, then you should consider exporting it as a default export.
+This makes both importing and actually using the import a little easier.
+For example:
+"><p>出于对”‘导出靠近顶层’能减轻模块用户使用阻力”这一原则的认同, 我们才有默认导出.<br>如果一个模块仅包含一特定功能, 你应该考虑将它默认导出.<br>这使得以后不论是导入或实际使用都更简单.<br>举个例子:</p></div>
+<h4 id="MyClass-ts" class="heading-control"><a href="#MyClass-ts" class="headerlink" title="MyClass.ts"></a>MyClass.ts<a class="heading-anchor" href="#MyClass-ts" aria-hidden="true"></a></h4><figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> <span class="keyword">class</span> SomeType &#123;</span><br><span class="line">  <span class="keyword">constructor</span>(<span class="params"></span>) &#123; ... &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="MyFunc-ts" class="heading-control"><a href="#MyFunc-ts" class="headerlink" title="MyFunc.ts"></a>MyFunc.ts<a class="heading-anchor" href="#MyFunc-ts" aria-hidden="true"></a></h4><figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> <span class="function"><span class="keyword">function</span> <span class="title">getThing</span>(<span class="params"></span>) </span>&#123; <span class="keyword">return</span> <span class="string">"thing"</span>; &#125;</span><br></pre></td></tr></table></figure>
+<h4 id="Consumer-ts" class="heading-control"><a href="#Consumer-ts" class="headerlink" title="Consumer.ts"></a>Consumer.ts<a class="heading-anchor" href="#Consumer-ts" aria-hidden="true"></a></h4><figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> t <span class="keyword">from</span> <span class="string">"./MyClass"</span>;</span><br><span class="line"><span class="keyword">import</span> f <span class="keyword">from</span> <span class="string">"./MyFunc"</span>;</span><br><span class="line"><span class="keyword">let</span> x = <span class="keyword">new</span> t();</span><br><span class="line"><span class="built_in">console</span>.log(f());</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+This is optimal for consumers. They can name your type whatever they want (`t` in this case) and don&amp;#39;t have to do any excessive dotting to find your objects.
+"><p>这是对用户最理想的方法. 他们可以按自己喜好给你的类型起名 (本例是 <code>t</code>), 同时不需过多点运算去寻找你的对象.</p></div>
+<h3 id="导出多个对象-把它们全置于顶层" class="heading-control"><a href="#导出多个对象-把它们全置于顶层" class="headerlink" title="导出多个对象, 把它们全置于顶层"></a>导出多个对象, 把它们全置于顶层<a class="heading-anchor" href="#导出多个对象-把它们全置于顶层" aria-hidden="true"></a></h3><!-- ### If you're exporting multiple objects, put them all at top-level -->
+<h4 id="MyThings-ts" class="heading-control"><a href="#MyThings-ts" class="headerlink" title="MyThings.ts"></a>MyThings.ts<a class="heading-anchor" href="#MyThings-ts" aria-hidden="true"></a></h4><figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">export</span> <span class="keyword">class</span> SomeType &#123; <span class="comment">/* ... */</span> &#125;</span><br><span class="line"><span class="keyword">export</span> <span class="function"><span class="keyword">function</span> <span class="title">someFunc</span>(<span class="params"></span>) </span>&#123; <span class="comment">/* ... */</span> &#125;</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+Conversely when importing:
+"><p>导入时:</p></div>
+<h3 id="显式列出导入名" class="heading-control"><a href="#显式列出导入名" class="headerlink" title="显式列出导入名"></a>显式列出导入名<a class="heading-anchor" href="#显式列出导入名" aria-hidden="true"></a></h3><!-- ### Explicitly list imported names -->
+<h4 id="Consumer-ts-1" class="heading-control"><a href="#Consumer-ts-1" class="headerlink" title="Consumer.ts"></a>Consumer.ts<a class="heading-anchor" href="#Consumer-ts-1" aria-hidden="true"></a></h4><figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; SomeType, someFunc &#125; <span class="keyword">from</span> <span class="string">"./MyThings"</span>;</span><br><span class="line"><span class="keyword">let</span> x = <span class="keyword">new</span> SomeType();</span><br><span class="line"><span class="keyword">let</span> y = someFunc();</span><br></pre></td></tr></table></figure>
+<h3 id="在导入大量目标时运用名字空间导入模式" class="heading-control"><a href="#在导入大量目标时运用名字空间导入模式" class="headerlink" title="在导入大量目标时运用名字空间导入模式"></a>在导入大量目标时运用名字空间导入模式<a class="heading-anchor" href="#在导入大量目标时运用名字空间导入模式" aria-hidden="true"></a></h3><!-- ### Use the namespace import pattern if you're importing a large number of things -->
+<h4 id="MyLargeModule-ts" class="heading-control"><a href="#MyLargeModule-ts" class="headerlink" title="MyLargeModule.ts"></a>MyLargeModule.ts<a class="heading-anchor" href="#MyLargeModule-ts" aria-hidden="true"></a></h4><figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">export</span> <span class="keyword">class</span> Dog &#123; ... &#125;</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">class</span> Cat &#123; ... &#125;</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">class</span> Tree &#123; ... &#125;</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">class</span> Flower &#123; ... &#125;</span><br></pre></td></tr></table></figure>
+<h4 id="Consumer-ts-2" class="heading-control"><a href="#Consumer-ts-2" class="headerlink" title="Consumer.ts"></a>Consumer.ts<a class="heading-anchor" href="#Consumer-ts-2" aria-hidden="true"></a></h4><figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> * <span class="keyword">as</span> myLargeModule <span class="keyword">from</span> <span class="string">"./MyLargeModule.ts"</span>;</span><br><span class="line"><span class="keyword">let</span> x = <span class="keyword">new</span> myLargeModule.Dog();</span><br></pre></td></tr></table></figure>
+<h2 id="重导出以扩充" class="heading-control"><a href="#重导出以扩充" class="headerlink" title="重导出以扩充"></a>重导出以扩充<a class="heading-anchor" href="#重导出以扩充" aria-hidden="true"></a></h2><!-- ## Re-export to extend -->
+<div class="translation-block" title="
+Often you will need to extend functionality on a module.
+A common JS pattern is to augment the original object with *extensions*, similar to how JQuery extensions work.
+As we&amp;#39;ve mentioned before, modules do not *merge* like global namespace objects would.
+The recommended solution is to *not* mutate the original object, but rather export a new entity that provides the new functionality.
+
+Consider a simple calculator implementation defined in module `Calculator.ts`.
+The module also exports a helper function to test the calculator functionality by passing a list of input strings and writing the result at the end.
+"><p>有时你需要扩充一个模块的功能.<br>用<em>扩展</em>增强原始对象是种 JS 设计模式, 与 JQuery 扩展的工作方式相仿.<br>前文已提到, 模块不像全局名字空间会<em>跨文件合并</em>.<br>受推荐的解决方案是<em>不</em>修改原始对象, 相反, 导出提供新功能的另一实体.</p>
+<p>考虑定义在 <code>Calculator.ts</code> 模块中的计算器实现.<br>该模块同时导出一个帮助函数, 它接受一个输入字符串列表, 在最后打印结果, 以测试计算器功能.</p></div>
+<h4 id="Calculator-ts" class="heading-control"><a href="#Calculator-ts" class="headerlink" title="Calculator.ts"></a>Calculator.ts<a class="heading-anchor" href="#Calculator-ts" aria-hidden="true"></a></h4><figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">export</span> <span class="keyword">class</span> Calculator &#123;</span><br><span class="line">    <span class="keyword">private</span> current = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">private</span> memory = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">private</span> operator: <span class="built_in">string</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">protected</span> processDigit(digit: <span class="built_in">string</span>, currentValue: <span class="built_in">number</span>) &#123;</span><br><span class="line">        <span class="keyword">if</span> (digit &gt;= <span class="string">"0"</span> &amp;&amp; digit &lt;= <span class="string">"9"</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span> currentValue * <span class="number">10</span> + (digit.charCodeAt(<span class="number">0</span>) - <span class="string">"0"</span>.charCodeAt(<span class="number">0</span>));</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">protected</span> processOperator(operator: <span class="built_in">string</span>) &#123;</span><br><span class="line">        <span class="keyword">if</span> ([<span class="string">"+"</span>, <span class="string">"-"</span>, <span class="string">"*"</span>, <span class="string">"/"</span>].indexOf(operator) &gt;= <span class="number">0</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span> operator;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">protected</span> evaluateOperator(operator: <span class="built_in">string</span>, left: <span class="built_in">number</span>, right: <span class="built_in">number</span>): <span class="built_in">number</span> &#123;</span><br><span class="line">        <span class="keyword">switch</span> (<span class="keyword">this</span>.operator) &#123;</span><br><span class="line">            <span class="keyword">case</span> <span class="string">"+"</span>: <span class="keyword">return</span> left + right;</span><br><span class="line">            <span class="keyword">case</span> <span class="string">"-"</span>: <span class="keyword">return</span> left - right;</span><br><span class="line">            <span class="keyword">case</span> <span class="string">"*"</span>: <span class="keyword">return</span> left * right;</span><br><span class="line">            <span class="keyword">case</span> <span class="string">"/"</span>: <span class="keyword">return</span> left / right;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> evaluate() &#123;</span><br><span class="line">        <span class="keyword">if</span> (<span class="keyword">this</span>.operator) &#123;</span><br><span class="line">            <span class="keyword">this</span>.memory = <span class="keyword">this</span>.evaluateOperator(<span class="keyword">this</span>.operator, <span class="keyword">this</span>.memory, <span class="keyword">this</span>.current);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">this</span>.memory = <span class="keyword">this</span>.current;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">this</span>.current = <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> handleChar(char: <span class="built_in">string</span>) &#123;</span><br><span class="line">        <span class="keyword">if</span> (char === <span class="string">"="</span>) &#123;</span><br><span class="line">            <span class="keyword">this</span>.evaluate();</span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">let</span> value = <span class="keyword">this</span>.processDigit(char, <span class="keyword">this</span>.current);</span><br><span class="line">            <span class="keyword">if</span> (value !== <span class="literal">undefined</span>) &#123;</span><br><span class="line">                <span class="keyword">this</span>.current = value;</span><br><span class="line">                <span class="keyword">return</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">else</span> &#123;</span><br><span class="line">                <span class="keyword">let</span> value = <span class="keyword">this</span>.processOperator(char);</span><br><span class="line">                <span class="keyword">if</span> (value !== <span class="literal">undefined</span>) &#123;</span><br><span class="line">                    <span class="keyword">this</span>.evaluate();</span><br><span class="line">                    <span class="keyword">this</span>.operator = value;</span><br><span class="line">                    <span class="keyword">return</span>;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> <span class="built_in">Error</span>(<span class="string">`Unsupported input: '<span class="subst">$&#123;char&#125;</span>'`</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> getResult() &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">this</span>.memory;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="function"><span class="keyword">function</span> <span class="title">test</span>(<span class="params">c: Calculator, input: <span class="built_in">string</span></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="number">0</span>; i &lt; input.length; i++) &#123;</span><br><span class="line">        c.handleChar(input[i]);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">`result of '<span class="subst">$&#123;input&#125;</span>' is '<span class="subst">$&#123;c.getResult()&#125;</span>'`</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+Here is a simple test for the calculator using the exposed `test` function.
+"><p>下面给出一个调用 <code>test</code> 函数对计算器的测试.</p></div>
+<h4 id="TestCalculator-ts" class="heading-control"><a href="#TestCalculator-ts" class="headerlink" title="TestCalculator.ts"></a>TestCalculator.ts<a class="heading-anchor" href="#TestCalculator-ts" aria-hidden="true"></a></h4><figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; Calculator, test &#125; <span class="keyword">from</span> <span class="string">"./Calculator"</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> c = <span class="keyword">new</span> Calculator();</span><br><span class="line">test(c, <span class="string">"1+2*33/11="</span>); <span class="comment">// prints 9</span></span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+Now to extend this to add support for input with numbers in bases other than 10, let&amp;#39;s create `ProgrammerCalculator.ts`
+"><p>现在, 扩充这个模块, 让它接受不以 10 为底的进制数作为输入, 创建新文件 <code>ProgrammerCalculator.ts</code></p></div>
+<h4 id="ProgrammerCalculator-ts" class="heading-control"><a href="#ProgrammerCalculator-ts" class="headerlink" title="ProgrammerCalculator.ts"></a>ProgrammerCalculator.ts<a class="heading-anchor" href="#ProgrammerCalculator-ts" aria-hidden="true"></a></h4><figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; Calculator &#125; <span class="keyword">from</span> <span class="string">"./Calculator"</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> ProgrammerCalculator <span class="keyword">extends</span> Calculator &#123;</span><br><span class="line">    <span class="keyword">static</span> digits = [<span class="string">"0"</span>, <span class="string">"1"</span>, <span class="string">"2"</span>, <span class="string">"3"</span>, <span class="string">"4"</span>, <span class="string">"5"</span>, <span class="string">"6"</span>, <span class="string">"7"</span>, <span class="string">"8"</span>, <span class="string">"9"</span>, <span class="string">"A"</span>, <span class="string">"B"</span>, <span class="string">"C"</span>, <span class="string">"D"</span>, <span class="string">"E"</span>, <span class="string">"F"</span>];</span><br><span class="line"></span><br><span class="line">    <span class="keyword">constructor</span>(<span class="params"><span class="keyword">public</span> base: <span class="built_in">number</span></span>) &#123;</span><br><span class="line">        <span class="keyword">super</span>();</span><br><span class="line">        <span class="keyword">const</span> maxBase = ProgrammerCalculator.digits.length;</span><br><span class="line">        <span class="keyword">if</span> (base &lt;= <span class="number">0</span> || base &gt; maxBase) &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> <span class="built_in">Error</span>(<span class="string">`base has to be within 0 to <span class="subst">$&#123;maxBase&#125;</span> inclusive.`</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">protected</span> processDigit(digit: <span class="built_in">string</span>, currentValue: <span class="built_in">number</span>) &#123;</span><br><span class="line">        <span class="keyword">if</span> (ProgrammerCalculator.digits.indexOf(digit) &gt;= <span class="number">0</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span> currentValue * <span class="keyword">this</span>.base + ProgrammerCalculator.digits.indexOf(digit);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Export the new extended calculator as Calculator</span></span><br><span class="line"><span class="keyword">export</span> &#123; ProgrammerCalculator <span class="keyword">as</span> Calculator &#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Also, export the helper function</span></span><br><span class="line"><span class="keyword">export</span> &#123; test &#125; <span class="keyword">from</span> <span class="string">"./Calculator"</span>;</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+The new module `ProgrammerCalculator` exports an API shape similar to that of the original `Calculator` module, but does not augment any objects in the original module.
+Here is a test for our ProgrammerCalculator class:
+"><p>新模块 <code>ProgrammerCalculator</code> 导出与原始 <code>Calculator</code> 模块相同的 API , 但没有增强原始模块中任何对象.<br>针对 ProgrammerCalculator 类的测试如下:</p></div>
+<h4 id="TestProgrammerCalculator-ts" class="heading-control"><a href="#TestProgrammerCalculator-ts" class="headerlink" title="TestProgrammerCalculator.ts"></a>TestProgrammerCalculator.ts<a class="heading-anchor" href="#TestProgrammerCalculator-ts" aria-hidden="true"></a></h4><figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; Calculator, test &#125; <span class="keyword">from</span> <span class="string">"./ProgrammerCalculator"</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> c = <span class="keyword">new</span> Calculator(<span class="number">2</span>);</span><br><span class="line">test(c, <span class="string">"001+010="</span>); <span class="comment">// prints 3</span></span><br></pre></td></tr></table></figure>
+<h2 id="不要在模块中使用名字空间" class="heading-control"><a href="#不要在模块中使用名字空间" class="headerlink" title="不要在模块中使用名字空间"></a>不要在模块中使用名字空间<a class="heading-anchor" href="#不要在模块中使用名字空间" aria-hidden="true"></a></h2><!-- ## Do not use namespaces in modules -->
+<div class="translation-block" title="
+When first moving to a module-based organization, a common tendency is to wrap exports in an additional layer of namespaces.
+Modules have their own scope, and only exported declarations are visible from outside the module.
+With this in mind, namespace provide very little, if any, value when working with modules.
+"><p>首次转移到基于模块的组织结构的人, 都倾向把导出符号包裹在额外的名字空间层中.<br>模块有自己独立的空间, 只有导出的声明才对模块外部可见.<br>以此为前提, 与模块一并使用, 名字空间即便还有价值, 也是极其有限的. </p></div>
+<div class="translation-block" title="
+On the organization front, namespaces are handy for grouping together logically-related objects and types in the global scope.
+For example, in C#, you&amp;#39;re going to find all the collection types in System.Collections.
+By organizing our types into hierarchical namespaces, we provide a good &amp;quot;discovery&amp;quot; experience for users of those types.
+Modules, on the other hand, are already present in a file system, necessarily.
+We have to resolve them by path and filename, so there&amp;#39;s a logical organization scheme for us to use.
+We can have a &amp;#x2F;collections&amp;#x2F;generic&amp;#x2F; folder with a list module in it.
+"><p>模块以先, 名字空间能够在全局空间内给逻辑上相关的对象和类型分组.<br>比如说, 在 C# 中, 你会在 System.Collections 名字空间找到所有与集合相关的类型.<br>分层次把我们的类型组织在名字空间中, 用户在这些类型上可获得某种”探索”体验.<br>另一方面, 模块, 存在于文件系统.<br>我们通过文件路径和文件名找到他们, 这本来就是一种逻辑组织形式.<br>你可以创建 /collections/generic/ 文件夹, 存放所有列表相关模块.</p></div>
+<div class="translation-block" title="
+Namespaces are important to avoid naming collisions in the global scope.
+For example, you might have `My.Application.Customer.AddForm` and `My.Application.Order.AddForm` -- two types with the same name, but a different namespace.
+This, however, is not an issue with modules.
+Within a module, there&amp;#39;s no plausible reason to have two objects with the same name.
+From the consumption side, the consumer of any given module gets to pick the name that they will use to refer to the module, so accidental naming conflicts are impossible.
+
+&amp;gt; For more discussion about modules and namespaces see [Namespaces and Modules](.&amp;#x2F;Namespaces%20and%20Modules.md).
+"><p>在全局空间中, 名字空间是避免命名冲突的重要手段.<br>比如, 你可以定义 <code>My.Application.Customer.AddForm</code> 和 <code>My.Application.Order.AddForm</code> — 两个名字一样, 所属名字空间不一样的两个类型.<br>而对于模块, 没必要担心命名冲突.<br>在一个模块内部, 出现两个名字一样的对象本身就不合理.<br>站在用户一端, 任一给定模块的用户会起一个它们用来引用该模块的名称, 避免了意外发生命名冲突.</p>
+<blockquote>
+<p>阅读<a href="#">名字空间和模块</a>获得更多相关讨论.</p>
+</blockquote></div>
+<h2 id="禁忌" class="heading-control"><a href="#禁忌" class="headerlink" title="禁忌"></a>禁忌<a class="heading-anchor" href="#禁忌" aria-hidden="true"></a></h2><!-- ## Red Flags -->
+<div class="translation-block" title="
+All of the following are red flags for module structuring. Double-check that you&amp;#39;re not trying to namespace your external modules if any of these apply to your files:
+
+* A file whose only top-level declaration is `export namespace Foo { ... }` (remove `Foo` and move everything &amp;#39;up&amp;#39; a level)
+* Multiple files that have the same `export namespace Foo {` at top-level (don&amp;#39;t think that these are going to combine into one `Foo`!)
+"><p>以下两点都是用模块组织的禁忌. 如果你的文件满足任意一条, 双重确认你没使用名字空间:</p>
+<ul>
+<li>它唯一顶层导出是 <code>export namesapce Foo { ... }</code> (移除 <code>Foo</code>, 所有东西’往上’移动一层)</li>
+<li>多个文件包含相同顶层 <code>export namespace Foo</code> (别期望它们会合并成一个 <code>Foo</code>!)</li>
+</ul></div>
+    </div>
+
+    
+    
+    
+        
+      
+        <div id="reward-container">
+  <div>如果这篇文章对您有用，可以考虑打赏:)</div>
+  <button id="reward-button" disable="enable" onclick="var qr = document.getElementById(&quot;qr&quot;); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+        
+      
+      <div style="display: inline-block">
+        <img src="/images/wechatpay.png" alt="Hyan Lee 微信支付">
+        <p>微信支付</p>
+      </div>
+
+  </div>
+</div>
+
+      
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>Hyan Lee</li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://hyan23.org/2019/11/20/ts-modules/" title="模块">https://hyan23.org/2019/11/20/ts-modules/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！</li>
+</ul>
+</div>
+
+      
+
+      <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+              
+                <a href="/2019/11/20/ts-iterators-and-generators/" rel="next" title="迭代器, 生成器">
+                  <i class="fa fa-chevron-left"></i> 迭代器, 生成器
+                </a>
+              
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+              
+                <a href="/2019/11/20/ts-namespaces/" rel="prev" title="名字空间">
+                  名字空间 <i class="fa fa-chevron-right"></i>
+                </a>
+              
+            </div>
+          </div>
+        
+      </footer>
+    
+  </div>
+  
+  
+  
+  </article>
+
+  </div>
+
+
+          </div>
+          
+    
+    <div class="comments" id="gitalk-container"></div>
+  
+
+        </div>
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+        
+        
+        
+        
+      
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#介绍"><span class="nav-number">1.</span> <span class="nav-text">介绍</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#导出"><span class="nav-number">2.</span> <span class="nav-text">导出</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#导出一个定义"><span class="nav-number">2.1.</span> <span class="nav-text">导出一个定义</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#导出语句"><span class="nav-number">2.2.</span> <span class="nav-text">导出语句</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#重导出"><span class="nav-number">2.3.</span> <span class="nav-text">重导出</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#导入"><span class="nav-number">3.</span> <span class="nav-text">导入</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#从模块导入单一符号"><span class="nav-number">3.1.</span> <span class="nav-text">从模块导入单一符号</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#导入整个模块到一个变量-借助该变量访问模块的导出"><span class="nav-number">3.2.</span> <span class="nav-text">导入整个模块到一个变量, 借助该变量访问模块的导出</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#为副作用而导入模块"><span class="nav-number">3.3.</span> <span class="nav-text">为副作用而导入模块</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#默认导出"><span class="nav-number">4.</span> <span class="nav-text">默认导出</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#export-和-import-require"><span class="nav-number">5.</span> <span class="nav-text">export = 和 import = require()</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#代码生成-mdash-模块"><span class="nav-number">6.</span> <span class="nav-text">代码生成 — 模块</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#一个实例"><span class="nav-number">7.</span> <span class="nav-text">一个实例</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#模块按需加载及其他高级加载场景"><span class="nav-number">8.</span> <span class="nav-text">模块按需加载及其他高级加载场景</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#与其他-JavaScript-库协同工作"><span class="nav-number">9.</span> <span class="nav-text">与其他 JavaScript 库协同工作</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#外部模块"><span class="nav-number">9.1.</span> <span class="nav-text">外部模块</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#原始外部模块"><span class="nav-number">9.1.1.</span> <span class="nav-text">原始外部模块</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#带通配符的模块声明"><span class="nav-number">9.1.2.</span> <span class="nav-text">带通配符的模块声明</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#UMD-模块"><span class="nav-number">9.1.3.</span> <span class="nav-text">UMD 模块</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#模块组织指南"><span class="nav-number">10.</span> <span class="nav-text">模块组织指南</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#导出尽可能靠近顶层"><span class="nav-number">10.1.</span> <span class="nav-text">导出尽可能靠近顶层</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#导出单个类或函数-别忘记默认导出"><span class="nav-number">10.1.1.</span> <span class="nav-text">导出单个类或函数, 别忘记默认导出</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#导出多个对象-把它们全置于顶层"><span class="nav-number">10.1.2.</span> <span class="nav-text">导出多个对象, 把它们全置于顶层</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#显式列出导入名"><span class="nav-number">10.1.3.</span> <span class="nav-text">显式列出导入名</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#在导入大量目标时运用名字空间导入模式"><span class="nav-number">10.1.4.</span> <span class="nav-text">在导入大量目标时运用名字空间导入模式</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#重导出以扩充"><span class="nav-number">10.2.</span> <span class="nav-text">重导出以扩充</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#不要在模块中使用名字空间"><span class="nav-number">10.3.</span> <span class="nav-text">不要在模块中使用名字空间</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#禁忌"><span class="nav-number">10.4.</span> <span class="nav-text">禁忌</span></a></li></ol></li></ol></div>
+        
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image"
+      src="/images/avatar2.png"
+      alt="Hyan Lee">
+  <p class="site-author-name" itemprop="name">Hyan Lee</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">31</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-categories">
+        
+          
+            <a href="/categories/">
+          
+        
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">分类</span>
+        </a>
+      </div>
+    
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+      
+      
+        
+      
+      
+        
+      
+        <a href="https://github.com/hyan23" title="GitHub &rarr; https://github.com/hyan23" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+    
+      <span class="links-of-author-item">
+      
+      
+        
+      
+      
+        
+      
+        <a href="mailto:hyan23lee@hotmail.com" title="E-Mail &rarr; mailto:hyan23lee@hotmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+    
+      <span class="links-of-author-item">
+      
+      
+        
+      
+      
+        
+      
+        <a href="https://t.me/hyan23" title="Telegram &rarr; https://t.me/hyan23" rel="noopener" target="_blank"><i class="fa fa-fw fa-telegram"></i>Telegram</a>
+      </span>
+    
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    
+  
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+      
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2017 – <span itemprop="copyrightYear">2020</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Hyan Lee</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    
+    <span title="站点总字数">118k</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v3.9.0</div>
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js?v=3.1.0"></script>
+  <script src="//cdn.jsdelivr.net/npm/medium-zoom@1/dist/medium-zoom.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+<script src="/js/utils.js?v=7.4.0"></script>
+<script src="/js/schemes/pisces.js?v=7.4.0"></script>
+<script src="/js/next-boot.js?v=7.4.0"></script>
+
+
+
+  
+  <script>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+    mermaid.initialize({
+      theme: 'forest',
+      logLevel: 3,
+      flowchart: { curve: 'linear' },
+      gantt: { axisFormat: '%m/%d/%Y' },
+      sequence: { actorMargin: 50 }
+    });
+  }, window.mermaid);
+}
+</script>
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID: '442da4785490db3ece48',
+      clientSecret: '3bfa2829a34371ca37db636917e791d114bd338c',
+      repo: 'blog-comments',
+      owner: 'hyan23',
+      admin: ['hyan23'],
+      id: '576f8fea3520195719b29357b933e7ca',
+        language: window.navigator.language || window.navigator.userLanguage,
+      
+      distractionFreeMode: 'true'
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+</script>
+
+</body>
+</html>

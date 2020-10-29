@@ -1,0 +1,873 @@
+<!DOCTYPE html>
+
+
+
+
+
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/favicon/apple-touch-icon.png?v=7.4.0">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon/favicon-32x32.png?v=7.4.0">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon/favicon-16x16.png?v=7.4.0">
+  <link rel="mask-icon" href="/images/favicon/safari-pinned-tab.svg?v=7.4.0" color="#222">
+  <link rel="manifest" href="/images/favicon/site.webmanifest">
+  <meta name="msapplication-config" content="/images/favicon/browserconfig.xml">
+  <meta http-equiv="Cache-Control" content="no-transform">
+  <meta http-equiv="Cache-Control" content="no-siteapp">
+
+<link rel="stylesheet" href="/css/main.css?v=7.4.0">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '7.4.0',
+    exturl: false,
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false},
+    copycode: {"enable":false,"show_result":false,"style":null},
+    back2top: {"enable":true,"sidebar":true,"scrollpercent":false},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: true,
+    lazyload: true,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: "",
+      labels: ""
+    },
+    localsearch: {"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: '',
+    motion: {"enable":false},
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="状态: 初稿 三斜线指令是一条包含单个 XML 标签的单行注释.注释内容可以改变编译器的工作方式.">
+<meta name="keywords" content="博客,个人博客,日志,在线工具">
+<meta property="og:type" content="article">
+<meta property="og:title" content="三斜线指令">
+<meta property="og:url" content="https://hyan23.org/2019/11/20/ts-triple-slash-directives/index.html">
+<meta property="og:site_name" content="Hyan Lee">
+<meta property="og:description" content="状态: 初稿 三斜线指令是一条包含单个 XML 标签的单行注释.注释内容可以改变编译器的工作方式.">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2020-02-29T10:01:00.571Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="三斜线指令">
+<meta name="twitter:description" content="状态: 初稿 三斜线指令是一条包含单个 XML 标签的单行注释.注释内容可以改变编译器的工作方式.">
+  <link rel="canonical" href="https://hyan23.org/2019/11/20/ts-triple-slash-directives/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>三斜线指令 | Hyan Lee</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+  <div class="container">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Hyan Lee</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+      
+      
+      
+        
+        <li class="menu-item menu-item-home">
+      
+    
+      
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-关于-/-留言板">
+      
+    
+      
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于 / 留言板</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-categories">
+      
+    
+      
+      
+        
+      
+        
+          
+        
+      
+        
+      
+    
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类<span class="badge">6</span></a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-archives">
+      
+    
+      
+      
+        
+          
+        
+      
+        
+      
+        
+      
+    
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">31</span></a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-精选-/-系列">
+      
+    
+      
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <a href="/selections/" rel="section"><i class="fa fa-fw fa-book"></i>精选 / 系列</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-摄影">
+      
+    
+      
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <a href="/gallery/" rel="section"><i class="fa fa-fw fa-camera"></i>摄影</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-工具">
+      
+    
+      
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <a href="/tools/" rel="section"><i class="fa fa-fw fa-calculator"></i>工具</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-友情链接">
+      
+    
+      
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <a href="/friends/" rel="section"><i class="fa fa-fw fa-external-link"></i>友情链接</a>
+
+  </li>
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+            
+
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+      <article itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block post">
+    <link itemprop="mainEntityOfPage" href="https://hyan23.org/2019/11/20/ts-triple-slash-directives/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Hyan Lee">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar2.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hyan Lee">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">三斜线指令
+
+          
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              
+                
+              
+
+              <time title="创建时间：2019-11-20 09:34:39" itemprop="dateCreated datePublished" datetime="2019-11-20T09:34:39+08:00">2019-11-20</time>
+            </span>
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-02-29 18:01:00" itemprop="dateModified" datetime="2020-02-29T18:01:00+08:00">2020-02-29</time>
+              </span>
+            
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/翻译稿/" itemprop="url" rel="index"><span itemprop="name">翻译稿</span></a></span>
+
+                
+                
+                  ，
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/翻译稿/TypeScript/" itemprop="url" rel="index"><span itemprop="name">TypeScript</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+          
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">本文字数：</span>
+              
+              <span>2.4k</span>
+            </span>
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <pre><code>状态: 初稿
+</code></pre><div class="translation-block" title="
+Triple-slash directives are single-line comments containing a single XML tag.
+The contents of the comment are used as compiler directives.
+"><p>三斜线指令是一条包含单个 XML 标签的单行注释.<br>注释内容可以改变编译器的工作方式.</p></div>
+<a id="more"></a>
+<div class="translation-block" title="
+Triple-slash directives are **only** valid at the top of their containing file.
+A triple-slash directive can only be preceded by single or multi-line comments, including other triple-slash directives.
+If they are encountered following a statement or a declaration they are treated as regular single-line comments, and hold no special meaning.
+"><p>一条有效的三斜线指令应放置在所属文件最上方.<br>只有单行或多行注释, 或其他三斜线指令能位于一条三斜线指令之前.<br>跟随任一语句或声明的三斜线指令被视作常规单行注释, 没有特殊含义.</p></div>
+<h2 id="lt-reference-path-quot-quot-gt" class="heading-control"><a href="#lt-reference-path-quot-quot-gt" class="headerlink" title="/// &lt;reference path=&quot;...&quot; /&gt;"></a><code>/// &lt;reference path=&quot;...&quot; /&gt;</code><a class="heading-anchor" href="#lt-reference-path-quot-quot-gt" aria-hidden="true"></a></h2><div class="translation-block" title="
+The `&amp;#x2F;&amp;#x2F;&amp;#x2F; &amp;lt;reference path=&amp;quot;...&amp;quot; &amp;#x2F;&amp;gt;` directive is the most common of this group.
+It serves as a declaration of *dependency* between files.
+
+Triple-slash references instruct the compiler to include additional files in the compilation process.
+
+They also serve as a method to order the output when using `--out` or `--outFile`.
+Files are emitted to the output file location in the same order as the input after preprocessing pass.
+"><p><code>/// &lt;reference path=&quot;...&quot; /&gt;</code> 指令是该组最常用的一条.<br>它将作为文件间<em>依赖</em>的声明.</p>
+<p>三斜线 reference 指示编译器在编译过程中包含额外文件.</p>
+<p>它也服务于 <code>--out</code> 或 <code>--outFile</code>, 作为调整输出顺序的方法.<br>文件按预处理轮后输入的相同顺序输出到目标位置.</p></div>
+<h3 id="预处理输入文件" class="heading-control"><a href="#预处理输入文件" class="headerlink" title="预处理输入文件"></a>预处理输入文件<a class="heading-anchor" href="#预处理输入文件" aria-hidden="true"></a></h3><!-- ### Preprocessing input files -->
+<div class="translation-block" title="
+The compiler performs a preprocessing pass on input files to resolve all triple-slash reference directives.
+During this process, additional files are added to the compilation.
+
+The process starts with a set of *root files*;
+these are the file names specified on the command-line or in the `&amp;quot;files&amp;quot;` list in the `tsconfig.json` file.
+These root files are preprocessed in the same order they are specified.
+Before a file is added to the list, all triple-slash references in it are processed, and their targets included.
+Triple-slash references are resolved in a depth first manner, in the order they have been seen in the file.
+
+A triple-slash reference path is resolved relative to the containing file, if unrooted.
+"><p>编译器对输入文件执行预处理轮解析所有三斜线 reference 指令.<br>在这个过程中, 额外文件被添加进编译.</p>
+<p>该过程从一组<em>根文件</em>开始;<br>它们由命令行或 <code>tsconfig.json</code> 文件中的 <code>&quot;files&quot;</code> 列表指定.<br>预处理器按列入顺序处理这些根文件.<br>一个文件在加入编译前, 它所有三斜线 reference 指令都已处理, 它们的目标已被包含.<br>预处理器按文件中出现先后顺序以深度优先方式解析所有三斜线 reference 指令.</p>
+<p>对非根文件, 三斜线 reference 指令解析出的路径相对于所属文件.</p></div>
+<h3 id="错误举例" class="heading-control"><a href="#错误举例" class="headerlink" title="错误举例"></a>错误举例<a class="heading-anchor" href="#错误举例" aria-hidden="true"></a></h3><!-- ### Errors -->
+<div class="translation-block" title="
+It is an error to reference a file that does not exist.
+It is an error for a file to have a triple-slash reference to itself.
+"><p>引用一个不存在的文件是错误的.<br>一个文件用三斜线 reference 引用自身是错误的.</p></div>
+<h3 id="使用-noResolve" class="heading-control"><a href="#使用-noResolve" class="headerlink" title="使用 --noResolve"></a>使用 <code>--noResolve</code><a class="heading-anchor" href="#使用-noResolve" aria-hidden="true"></a></h3><!-- ### Using `--noResolve` -->
+<div class="translation-block" title="
+If the compiler flag `--noResolve` is specified, triple-slash references are ignored; they neither result in adding new files, nor change the order of the files provided.
+"><p>如果指定了编译器选项 <code>--noResolve</code>, 所有三斜线 reference 都会被忽略; 它们既不导致添加新文件, 也不会改变供给文件顺序.</p></div>
+<h2 id="lt-reference-types-quot-quot-gt" class="heading-control"><a href="#lt-reference-types-quot-quot-gt" class="headerlink" title="/// &lt;reference types=&quot;...&quot; /&gt;"></a><code>/// &lt;reference types=&quot;...&quot; /&gt;</code><a class="heading-anchor" href="#lt-reference-types-quot-quot-gt" aria-hidden="true"></a></h2><div class="translation-block" title="
+Similar to a `&amp;#x2F;&amp;#x2F;&amp;#x2F; &amp;lt;reference path=&amp;quot;...&amp;quot; &amp;#x2F;&amp;gt;` directive, which serves as a declaration of *dependency*, a `&amp;#x2F;&amp;#x2F;&amp;#x2F; &amp;lt;reference types=&amp;quot;...&amp;quot; &amp;#x2F;&amp;gt;` directive declares a dependency on a package.
+
+The process of resolving these package names is similar to the process of resolving module names in an `import` statement.
+An easy way to think of triple-slash-reference-types directives are as an `import` for declaration packages.
+
+For example, including `&amp;#x2F;&amp;#x2F;&amp;#x2F; &amp;lt;reference types=&amp;quot;node&amp;quot; &amp;#x2F;&amp;gt;` in a declaration file declares that this file uses names declared in `@types&amp;#x2F;node&amp;#x2F;index.d.ts`;
+and thus, this package needs to be included in the compilation along with the declaration file.
+"><p>与作为<em>依赖</em>声明的 <code>/// &lt;reference path=&quot;...&quot; /&gt;</code> 指令相似, <code>/// &lt;reference types=&quot;...&quot; /&gt;</code> 指令声明包上的依赖.</p>
+<p>解析这些包名的过程类似解析 <code>import</code> 语句中模块名的过程.<br>可简单地把三斜线 reference-types 指令看作声明包的 <code>import</code>.</p>
+<p>例如, 在一个声明文件包含 <code>/// &lt;reference types=&quot;node&quot; /&gt;</code> 声明这个文件使用来自 <code>@types/node/index.d.ts</code> 的标识符.<br>所以, 这个包应该与该声明文件一并包含于编译中.</p></div>
+<div class="translation-block" title="
+Use these directives only when you&amp;#39;re authoring a `d.ts` file by hand.
+
+For declaration files generated during compilation, the compiler will automatically add `&amp;#x2F;&amp;#x2F;&amp;#x2F; &amp;lt;reference types=&amp;quot;...&amp;quot; &amp;#x2F;&amp;gt;` for you;
+A `&amp;#x2F;&amp;#x2F;&amp;#x2F; &amp;lt;reference types=&amp;quot;...&amp;quot; &amp;#x2F;&amp;gt;` in a generated declaration file is added *if and only if* the resulting file uses any declarations from the referenced package.
+
+For declaring a dependency on an `@types` package in a `.ts` file, use `--types` on the command line or in your `tsconfig.json` instead.
+See [using `@types`, `typeRoots` and `types` in `tsconfig.json` files](.&amp;#x2F;tsconfig.json.md#types-typeroots-and-types) for more details.
+"><p>仅当你手写 <code>d.ts</code> 文件时才使用这些指令.</p>
+<p>对编译过程中生成的声明文件, 编译器自动为你插入 <code>/// &lt;reference types=&quot;...&quot; /&gt;</code>;<br>一条 <code>/// &lt;reference types=&quot;...&quot; /&gt;</code> 被插入到生成的声明文件<em>当且仅当</em>结果文件使用了来自被引用包的任一声明.</p>
+<p>而要在 <code>.ts</code> 文件中声明一个 <code>@types</code> 包上的依赖, 可通过命令行或 <code>tsconfig.json</code> 文件中的 <code>--types</code> 选项.<br>阅读 <a href="./tsconfig.json.md#types-typeroots-and-types">using <code>@types</code>, <code>typeRoots</code> and <code>types</code> in <code>tsconfig.json</code> files</a> (在 <code>tscofnig.json</code> 文件使用 <code>@types</code>, <code>typeRoots</code>, <code>types</code>) 获得更多信息.</p></div>
+<h2 id="lt-reference-lib-quot-quot-gt" class="heading-control"><a href="#lt-reference-lib-quot-quot-gt" class="headerlink" title="/// &lt;reference lib=&quot;...&quot; /&gt;"></a><code>/// &lt;reference lib=&quot;...&quot; /&gt;</code><a class="heading-anchor" href="#lt-reference-lib-quot-quot-gt" aria-hidden="true"></a></h2><div class="translation-block" title="
+This directive allows a file to explicitly include an existing built-in _lib_ file.
+
+Built-in _lib_ files are referenced in the same fashion as the `&amp;quot;lib&amp;quot;` compiler option in _tsconfig.json_ (e.g. use `lib=&amp;quot;es2015&amp;quot;` and not `lib=&amp;quot;lib.es2015.d.ts&amp;quot;`, etc.).
+
+For declaration file authors who rely on built-in types, e.g. DOM APIs or built-in JS run-time constructors like `Symbol` or `Iterable`, triple-slash-reference lib directives are recommended. Previously these .d.ts files had to add forward&amp;#x2F;duplicate declarations of such types.
+
+For example, adding `&amp;#x2F;&amp;#x2F;&amp;#x2F; &amp;lt;reference lib=&amp;quot;es2017.string&amp;quot; &amp;#x2F;&amp;gt;` to one of the files in a compilation is equivalent to compiling with `--lib es2017.string`.
+"><p>这条指令允许显式包含一个现有的内建 <em>lib</em> 文件.</p>
+<p>内建 <em>lib</em> 文件按 <em>tsconfig.json</em> 中 <code>&quot;lib&quot;</code> 编译器选项 (例如: 使用 <code>lib=&quot;es2015&quot;</code>, 而非 <code>lib=&quot;lib.es2015.d.ts&quot;</code>, 等等.) 相同的方式引用.</p>
+<p>有些声明文件作者依赖内建类型, 如 DOM APIs 或 内建 JS run-time 构造器如 <code>Symbol</code> 或 <code>Iterable</code>,<br>推荐使用三斜线 reference-lib 指令. 以前这些 .d.ts 文件需要添加那些类型的 forward/duplicate 指令.</p>
+<p>举个例子, 添加 <code>/// &lt;reference lib=&quot;es2017.string&quot; /&gt;</code> 到一个编译中的文件等同于以 <code>--lib es2017.string</code> 选项编译.</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/// &lt;reference lib="es2017.string" /&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="string">"foo"</span>.padStart(<span class="number">4</span>);</span><br></pre></td></tr></table></figure>
+<h2 id="lt-reference-no-default-lib-quot-true-quot-gt" class="heading-control"><a href="#lt-reference-no-default-lib-quot-true-quot-gt" class="headerlink" title="/// &lt;reference no-default-lib=&quot;true&quot;/&gt;"></a><code>/// &lt;reference no-default-lib=&quot;true&quot;/&gt;</code><a class="heading-anchor" href="#lt-reference-no-default-lib-quot-true-quot-gt" aria-hidden="true"></a></h2><div class="translation-block" title="
+This directive marks a file as a *default library*.
+You will see this comment at the top of `lib.d.ts` and its different variants.
+
+This directive instructs the compiler to *not* include the default library (i.e. `lib.d.ts`) in the compilation.
+The impact here is similar to passing `--noLib` on the command line.
+
+Also note that when passing `--skipDefaultLibCheck`, the compiler will only skip checking files with `&amp;#x2F;&amp;#x2F;&amp;#x2F; &amp;lt;reference no-default-lib=&amp;quot;true&amp;quot;&amp;#x2F;&amp;gt;`.
+"><p>这条指令标记一个文件为<em>默认库</em>.<br>你会在 <code>lib.d.ts</code> 文件最上方看到这条注释及其变体.</p>
+<p>这条指令指示编译器<em>不要</em>在编译中包含默认库(即 <code>lib.d.st</code>).<br>它的影响相当于在命令行传递 <code>--noLib</code> 选项.</p>
+<p>还要注意, 如果你传递 <code>--skipDefaultLibCheck</code>, 编译器只会跳过对含有 <code>/// &lt;reference no-default-lib=&quot;true&quot;/&gt;</code> 的文件的检查.</p></div>
+<h2 id="lt-amd-module-gt" class="heading-control"><a href="#lt-amd-module-gt" class="headerlink" title="/// &lt;amd-module /&gt;"></a><code>/// &lt;amd-module /&gt;</code><a class="heading-anchor" href="#lt-amd-module-gt" aria-hidden="true"></a></h2><div class="translation-block" title="
+By default AMD modules are generated anonymous.
+This can lead to problems when other tools are used to process the resulting modules, such as bundlers (e.g. `r.js`).
+
+The `amd-module` directive allows passing an optional module name to the compiler:
+"><p>一般说来, AMD 模块是匿名生成的.<br>如果使用其他工具处理生成的模块, 如打包器 <code>r.js</code>, 可能会引发问题.</p>
+<p><code>amd-module</code> 指令允许向编译器传递可选的模块名:</p></div>
+<h5 id="amdModule-ts" class="heading-control"><a href="#amdModule-ts" class="headerlink" title="amdModule.ts"></a>amdModule.ts<a class="heading-anchor" href="#amdModule-ts" aria-hidden="true"></a></h5><figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">///&lt;amd-module name="NamedModule"/&gt;</span></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">class</span> C &#123;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+Will result in assigning the name `NamedModule` to the module as part of calling the AMD `define`:
+"><p>它会导致作为调用 AMD <code>define</code> 的一部分给模块指定模块名 <code>NamedModule</code>:</p></div>
+<h5 id="amdModule-js" class="heading-control"><a href="#amdModule-js" class="headerlink" title="amdModule.js"></a>amdModule.js<a class="heading-anchor" href="#amdModule-js" aria-hidden="true"></a></h5><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">define(<span class="string">"NamedModule"</span>, [<span class="string">"require"</span>, <span class="string">"exports"</span>], <span class="function"><span class="keyword">function</span> (<span class="params">require, exports</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> C = (<span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">        <span class="function"><span class="keyword">function</span> <span class="title">C</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> C;</span><br><span class="line">    &#125;)();</span><br><span class="line">    exports.C = C;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<h2 id="lt-amd-dependency-gt" class="heading-control"><a href="#lt-amd-dependency-gt" class="headerlink" title="/// &lt;amd-dependency /&gt;"></a><code>/// &lt;amd-dependency /&gt;</code><a class="heading-anchor" href="#lt-amd-dependency-gt" aria-hidden="true"></a></h2><div class="translation-block" title="
+&amp;gt; **Note**: this directive has been deprecated. Use `import &amp;quot;moduleName&amp;quot;;` statements instead.
+
+`&amp;#x2F;&amp;#x2F;&amp;#x2F; &amp;lt;amd-dependency path=&amp;quot;x&amp;quot; &amp;#x2F;&amp;gt;` informs the compiler about a non-TS module dependency that needs to be injected in the resulting module&amp;#39;s require call.
+
+The `amd-dependency` directive can also have an optional `name` property; this allows passing an optional name for an amd-dependency:
+"><blockquote>
+<p><strong>注</strong>: 这条指令已废弃. 使用 <code>import &quot;moduleName&quot;;</code> 语句作为替代.</p>
+</blockquote>
+<p><code>/// &lt;amd-dependency path=&quot;x&quot; /&gt;</code> 通知编译器需要注入到结果模块 require 调用的关于一个非 TS 模块的依赖信息.</p>
+<p><code>amd-dependency</code> 指令也有可选的 <code>name</code> 属性; 允许为 amd-dependency 传递可选名字:</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/// &lt;amd-dependency path="legacy/moduleA" name="moduleA"/&gt;</span></span><br><span class="line"><span class="keyword">declare</span> <span class="keyword">var</span> moduleA:MyType</span><br><span class="line">moduleA.callStuff()</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+Generated JS code:
+"><p>生成的 JS 代码:</p></div>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">define([<span class="string">"require"</span>, <span class="string">"exports"</span>, <span class="string">"legacy/moduleA"</span>], <span class="function"><span class="keyword">function</span> (<span class="params">require, exports, moduleA</span>) </span>&#123;</span><br><span class="line">    moduleA.callStuff()</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+    </div>
+
+    
+    
+    
+        
+      
+        <div id="reward-container">
+  <div>如果这篇文章对您有用，可以考虑打赏:)</div>
+  <button id="reward-button" disable="enable" onclick="var qr = document.getElementById(&quot;qr&quot;); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+        
+      
+      <div style="display: inline-block">
+        <img src="/images/wechatpay.png" alt="Hyan Lee 微信支付">
+        <p>微信支付</p>
+      </div>
+
+  </div>
+</div>
+
+      
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>Hyan Lee</li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://hyan23.org/2019/11/20/ts-triple-slash-directives/" title="三斜线指令">https://hyan23.org/2019/11/20/ts-triple-slash-directives/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！</li>
+</ul>
+</div>
+
+      
+
+      <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+              
+                <a href="/2019/11/20/ts-mixins/" rel="next" title="Mixins">
+                  <i class="fa fa-chevron-left"></i> Mixins
+                </a>
+              
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+              
+                <a href="/2019/11/20/ts-type-checking-javascript-files/" rel="prev" title="类型检查 JavaScript 文件">
+                  类型检查 JavaScript 文件 <i class="fa fa-chevron-right"></i>
+                </a>
+              
+            </div>
+          </div>
+        
+      </footer>
+    
+  </div>
+  
+  
+  
+  </article>
+
+  </div>
+
+
+          </div>
+          
+    
+    <div class="comments" id="gitalk-container"></div>
+  
+
+        </div>
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+        
+        
+        
+        
+      
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#lt-reference-path-quot-quot-gt"><span class="nav-number">1.</span> <span class="nav-text">/// &lt;reference path=&quot;...&quot; /&gt;</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#预处理输入文件"><span class="nav-number">1.1.</span> <span class="nav-text">预处理输入文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#错误举例"><span class="nav-number">1.2.</span> <span class="nav-text">错误举例</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#使用-noResolve"><span class="nav-number">1.3.</span> <span class="nav-text">使用 --noResolve</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#lt-reference-types-quot-quot-gt"><span class="nav-number">2.</span> <span class="nav-text">/// &lt;reference types=&quot;...&quot; /&gt;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#lt-reference-lib-quot-quot-gt"><span class="nav-number">3.</span> <span class="nav-text">/// &lt;reference lib=&quot;...&quot; /&gt;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#lt-reference-no-default-lib-quot-true-quot-gt"><span class="nav-number">4.</span> <span class="nav-text">/// &lt;reference no-default-lib=&quot;true&quot;/&gt;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#lt-amd-module-gt"><span class="nav-number">5.</span> <span class="nav-text">/// &lt;amd-module /&gt;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#lt-amd-dependency-gt"><span class="nav-number">6.</span> <span class="nav-text">/// &lt;amd-dependency /&gt;</span></a></li></ol></div>
+        
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image"
+      src="/images/avatar2.png"
+      alt="Hyan Lee">
+  <p class="site-author-name" itemprop="name">Hyan Lee</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">31</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-categories">
+        
+          
+            <a href="/categories/">
+          
+        
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">分类</span>
+        </a>
+      </div>
+    
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+      
+      
+        
+      
+      
+        
+      
+        <a href="https://github.com/hyan23" title="GitHub &rarr; https://github.com/hyan23" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+    
+      <span class="links-of-author-item">
+      
+      
+        
+      
+      
+        
+      
+        <a href="mailto:hyan23lee@hotmail.com" title="E-Mail &rarr; mailto:hyan23lee@hotmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+    
+      <span class="links-of-author-item">
+      
+      
+        
+      
+      
+        
+      
+        <a href="https://t.me/hyan23" title="Telegram &rarr; https://t.me/hyan23" rel="noopener" target="_blank"><i class="fa fa-fw fa-telegram"></i>Telegram</a>
+      </span>
+    
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    
+  
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+      
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2017 – <span itemprop="copyrightYear">2020</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Hyan Lee</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    
+    <span title="站点总字数">118k</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v3.9.0</div>
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js?v=3.1.0"></script>
+  <script src="//cdn.jsdelivr.net/npm/medium-zoom@1/dist/medium-zoom.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+<script src="/js/utils.js?v=7.4.0"></script>
+<script src="/js/schemes/pisces.js?v=7.4.0"></script>
+<script src="/js/next-boot.js?v=7.4.0"></script>
+
+
+
+  
+  <script>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+    mermaid.initialize({
+      theme: 'forest',
+      logLevel: 3,
+      flowchart: { curve: 'linear' },
+      gantt: { axisFormat: '%m/%d/%Y' },
+      sequence: { actorMargin: 50 }
+    });
+  }, window.mermaid);
+}
+</script>
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID: '442da4785490db3ece48',
+      clientSecret: '3bfa2829a34371ca37db636917e791d114bd338c',
+      repo: 'blog-comments',
+      owner: 'hyan23',
+      admin: ['hyan23'],
+      id: 'f855b05f805ee207a1cd41436384562d',
+        language: window.navigator.language || window.navigator.userLanguage,
+      
+      distractionFreeMode: 'true'
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+</script>
+
+</body>
+</html>

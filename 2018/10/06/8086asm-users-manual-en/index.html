@@ -1,0 +1,1633 @@
+<!DOCTYPE html>
+
+
+
+
+
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/favicon/apple-touch-icon.png?v=7.4.0">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon/favicon-32x32.png?v=7.4.0">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon/favicon-16x16.png?v=7.4.0">
+  <link rel="mask-icon" href="/images/favicon/safari-pinned-tab.svg?v=7.4.0" color="#222">
+  <link rel="manifest" href="/images/favicon/site.webmanifest">
+  <meta name="msapplication-config" content="/images/favicon/browserconfig.xml">
+  <meta http-equiv="Cache-Control" content="no-transform">
+  <meta http-equiv="Cache-Control" content="no-siteapp">
+
+<link rel="stylesheet" href="/css/main.css?v=7.4.0">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '7.4.0',
+    exturl: false,
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false},
+    copycode: {"enable":false,"show_result":false,"style":null},
+    back2top: {"enable":true,"sidebar":true,"scrollpercent":false},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: true,
+    lazyload: true,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: "",
+      labels: ""
+    },
+    localsearch: {"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: '',
+    motion: {"enable":false},
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="8086asm User’s Manual The latest version of this manual is available at 8086asm user&apos;s manualOpen source repository address: https://github.com/hyan23/8086asm 中文">
+<meta name="keywords" content="博客,个人博客,日志,在线工具">
+<meta property="og:type" content="article">
+<meta property="og:title" content="8086asm user&#39;s manual">
+<meta property="og:url" content="https://hyan23.org/2018/10/06/8086asm-users-manual-en/index.html">
+<meta property="og:site_name" content="Hyan Lee">
+<meta property="og:description" content="8086asm User’s Manual The latest version of this manual is available at 8086asm user&apos;s manualOpen source repository address: https://github.com/hyan23/8086asm 中文">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2019-11-30T13:33:53.146Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="8086asm user&#39;s manual">
+<meta name="twitter:description" content="8086asm User’s Manual The latest version of this manual is available at 8086asm user&apos;s manualOpen source repository address: https://github.com/hyan23/8086asm 中文">
+  <link rel="canonical" href="https://hyan23.org/2018/10/06/8086asm-users-manual-en/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>8086asm user's manual | Hyan Lee</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+  <div class="container">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Hyan Lee</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+      
+      
+      
+        
+        <li class="menu-item menu-item-home">
+      
+    
+      
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-关于-/-留言板">
+      
+    
+      
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于 / 留言板</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-categories">
+      
+    
+      
+      
+        
+      
+        
+          
+        
+      
+        
+      
+    
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类<span class="badge">6</span></a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-archives">
+      
+    
+      
+      
+        
+          
+        
+      
+        
+      
+        
+      
+    
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">31</span></a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-精选-/-系列">
+      
+    
+      
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <a href="/selections/" rel="section"><i class="fa fa-fw fa-book"></i>精选 / 系列</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-摄影">
+      
+    
+      
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <a href="/gallery/" rel="section"><i class="fa fa-fw fa-camera"></i>摄影</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-工具">
+      
+    
+      
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <a href="/tools/" rel="section"><i class="fa fa-fw fa-calculator"></i>工具</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-友情链接">
+      
+    
+      
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <a href="/friends/" rel="section"><i class="fa fa-fw fa-external-link"></i>友情链接</a>
+
+  </li>
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+            
+
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+      <article itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block post">
+    <link itemprop="mainEntityOfPage" href="https://hyan23.org/2018/10/06/8086asm-users-manual-en/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Hyan Lee">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar2.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hyan Lee">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">8086asm user's manual
+
+          
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              
+                
+              
+
+              <time title="创建时间：2018-10-06 00:00:00" itemprop="dateCreated datePublished" datetime="2018-10-06T00:00:00+08:00">2018-10-06</time>
+            </span>
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2019-11-30 21:33:53" itemprop="dateModified" datetime="2019-11-30T21:33:53+08:00">2019-11-30</time>
+              </span>
+            
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/文档/" itemprop="url" rel="index"><span itemprop="name">文档</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+          
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">本文字数：</span>
+              
+              <span>14k</span>
+            </span>
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="8086asm-User’s-Manual" class="heading-control"><a href="#8086asm-User’s-Manual" class="headerlink" title="8086asm User’s Manual"></a>8086asm User’s Manual<a class="heading-anchor" href="#8086asm-User’s-Manual" aria-hidden="true"></a></h1><blockquote>
+<p>The latest version of this manual is available at <a href="/2018/10/06/8086asm-users-manual-en/" title="8086asm user's manual">8086asm user's manual</a><br>Open source repository address: <a href="https://github.com/hyan23/8086asm" target="_blank">https://github.com/hyan23/8086asm</a></p>
+<a href="/2018/09/21/8086asm-users-manual/" title="中文">中文</a>
+</blockquote>
+<a id="more"></a>
+<h2 id="Introduction" class="heading-control"><a href="#Introduction" class="headerlink" title="Introduction "></a>Introduction <!-- omit in toc --><a class="heading-anchor" href="#Introduction" aria-hidden="true"></a></h2><p>TODO: Introduction</p>
+<h2 id="Table-of-Contents" class="heading-control"><a href="#Table-of-Contents" class="headerlink" title="Table of Contents "></a>Table of Contents <!-- omit in toc --><a class="heading-anchor" href="#Table-of-Contents" aria-hidden="true"></a></h2><ul>
+<li><a href="#8086asm-users-manual">8086asm User’s Manual</a><ul>
+<li><a href="#1-use-this-library">1 Use this library</a></li>
+<li><a href="#2-programming-specifications">2 Programming specifications</a></li>
+<li><a href="#3-function-list">3 Function list</a><ul>
+<li><a href="#31-basic-input-and-output">3.1 Basic input and output</a></li>
+<li><a href="#32-string">3.2 String</a></li>
+<li><a href="#33-arithmetic">3.3 Arithmetic</a></li>
+<li><a href="#34-file">3.4 File</a></li>
+<li><a href="#35-system">3.5 System</a></li>
+<li><a href="#36-utility-routines">3.6 Utility Routines</a></li>
+<li><a href="#37-macro-library">3.7 Macro Library</a></li>
+</ul>
+</li>
+<li><a href="#4-common-assembly-instructions-and-their-introductions">4 Common assembly instructions and their introductions</a></li>
+</ul>
+</li>
+</ul>
+<h2 id="1-Use-this-library" class="heading-control"><a href="#1-Use-this-library" class="headerlink" title="1 Use this library"></a>1 Use this library<a class="heading-anchor" href="#1-Use-this-library" aria-hidden="true"></a></h2><p>To use the functions defined in this library, there are two ways:</p>
+<ol>
+<li>Copy the function library <code>*.inc</code> file you need to use to your personal working directory, and insert a line in the blank area of ​​the code snippet<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">include filename.inc</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<p>to include a single library file;</p>
+<ol>
+<li>Find the original function definition in the corresponding library file by looking up the user’s manual - <a href="#3-function-list">function list</a>, copy all the contents of the code from (include)<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">function-name proc near</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<p>to<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">function-name endp</span><br></pre></td></tr></table></figure></p>
+<p>into the blank area of ​​the code segment. When copying, also pay attention to whether the function calls other functions(this is rare, I also stated the file name of the called function for each cross-file call), and copy the called function into your personal code as well.</p>
+<blockquote>
+<p>Note: The second method is recommended. By this way, the library function interface will not affect the written programs when it changes.</p>
+</blockquote>
+<h2 id="2-Programming-specifications" class="heading-control"><a href="#2-Programming-specifications" class="headerlink" title="2 Programming specifications"></a>2 Programming specifications<a class="heading-anchor" href="#2-Programming-specifications" aria-hidden="true"></a></h2><ol>
+<li>In general, the ax register is used as the argument and returned value of the function.</li>
+<li>For address parameters of a function, unless particularly specified, the segment register is assumed to be ds, i.e., if an address parameter is declared as dx, the function will get its data from ds:dx</li>
+<li>Use the dx register to point to the read-only memory area and the bx register to the writable memory area.</li>
+<li>The string ends with the ‘$’ symbol</li>
+<li>32-bit register combination: dx:ax, 64-bit register combination: dx:ax:cx:bx</li>
+<li>When calling a subroutine in file.inc, you must also include common.inc, which contains the constant definitions used by file.inc</li>
+<li>There are also functions that return a boolean type, which will use the @TRUE and @FALSE constants defined in common.inc</li>
+<li>There are other functions that operate on arrays that use the @WORD constant defined in common.inc</li>
+</ol>
+<p>The constants defined in common.inc are described as follows:</p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>constant name</th>
+<th>value</th>
+<th>meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>@WORD</td>
+<td>2</td>
+<td>word size</td>
+</tr>
+<tr>
+<td>@TRUE</td>
+<td>1</td>
+<td>logical true</td>
+</tr>
+<tr>
+<td>@FALSE</td>
+<td>0</td>
+<td>logical false</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>This set of constants listed below is for the <code>open</code> function in file.inc, passed as the second argument with ax, used to indicate how the file is opened, @ORD for read-only, @OWR for write-only, @ORDWR represent readable and writable<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">; file.inc.open</span><br><span class="line">@ORD equ 0</span><br><span class="line">@OWR equ 1</span><br><span class="line">@ORDWR equ 2</span><br></pre></td></tr></table></figure></p>
+<p>This set of constants listed below is for the <code>seek</code> function in file.inc, passed as the second argument with cx, used to indicate the movement mode, @SEEK_SET means the movement relative to the beginning of the file, @SEEK_CUR means the movement relative to The current position, @SEEK_END indicates that the movement is relative to the end of the file. For specific usage, refer to the c language <code>fseek</code> function.<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">; file.inc.seek</span><br><span class="line">@SEEK_SET equ 0</span><br><span class="line">@SEEK_CUR equ 1</span><br><span class="line">@SEEK_END equ 2</span><br></pre></td></tr></table></figure></p>
+<h2 id="3-Function-list" class="heading-control"><a href="#3-Function-list" class="headerlink" title="3 Function list"></a>3 Function list<a class="heading-anchor" href="#3-Function-list" aria-hidden="true"></a></h2><blockquote>
+<p>Note: The function name which preceded by a ‘*’ flag is to indicate that the function is used internally by the library. Users should not call these functions separately.</p>
+</blockquote>
+<h3 id="3-1-Basic-input-and-output" class="heading-control"><a href="#3-1-Basic-input-and-output" class="headerlink" title="3.1 Basic input and output"></a>3.1 Basic input and output<a class="heading-anchor" href="#3-1-Basic-input-and-output" aria-hidden="true"></a></h3><p>Source code file name: iopt.inc</p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>Function Name</th>
+<th>Description</th>
+<th>Parameter List</th>
+<th>Return Value/Result</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>clear</td>
+<td>Clear the screen</td>
+<td>　</td>
+<td>　</td>
+<td>　</td>
+</tr>
+<tr>
+<td>cursor</td>
+<td>Set cursor position</td>
+<td>ah: line number, al: column number</td>
+<td>　</td>
+<td>Parameter description: line number, column number value starts from 0, the range of values ​​depends on the current display mode. The default display mode is: 25* 80, therefore ah has a value ranged 0-24, and al has a value ranged 0-79</td>
+</tr>
+<tr>
+<td>putc</td>
+<td>Print a character at the cursor position with specified attribute</td>
+<td>al: character to be printed, bl: attribute value</td>
+<td>　</td>
+<td>　</td>
+</tr>
+<tr>
+<td>space</td>
+<td>Print a space at the cursor position</td>
+<td>　</td>
+<td>　</td>
+<td>　</td>
+</tr>
+<tr>
+<td>crlf</td>
+<td>Print carriage return (CR, 0dh), line feed (LF, 0ah), which will cause the cursor to jump to the beginning of the next line</td>
+<td>　</td>
+<td>　</td>
+<td>　</td>
+</tr>
+<tr>
+<td>getch</td>
+<td>Enter a character from the keyboard</td>
+<td>　</td>
+<td>ax: character entered</td>
+<td>1. This function does not require input confirmation, that means you do not need to type an extra ‘carriage return’ or ‘space’ blank character to complete the input after the input is completed, so whitespace characters are also read in. 2. Left most 8 bits of returned value ax are always zero</td>
+</tr>
+<tr>
+<td>gets</td>
+<td>Enter a string from the keyboard, end with ‘carriage’, and append the ‘$’ end tag</td>
+<td>bx: buffer address</td>
+<td>bx: string entered</td>
+<td>　</td>
+</tr>
+<tr>
+<td>iptpwd</td>
+<td>Enter a password string from the keyboard, end with ‘carriage’, and append the ‘$’ end tag. Unlike gets, this function does not echo what the user has typed to screen</td>
+<td>bx: buffer address</td>
+<td>bx: passwork entered</td>
+<td>　</td>
+</tr>
+<tr>
+<td>pause</td>
+<td>Print a line of prompts, waiting for the user to type ‘carriage’</td>
+<td>　</td>
+<td>　</td>
+<td>　</td>
+</tr>
+<tr>
+<td>optch</td>
+<td>Print a character at the cursor position</td>
+<td>al: character to be printed</td>
+<td>　</td>
+<td>　</td>
+</tr>
+<tr>
+<td>iptch</td>
+<td>Enter a character from the keyboard, type ‘carriage’ or ‘space’ blank character to confirm</td>
+<td>　</td>
+<td>ax: character entered</td>
+<td>The left most 8 bits of the returned value ax are always zero</td>
+</tr>
+<tr>
+<td>optstr</td>
+<td>Print a string ending with the ‘$’ symbol at the cursor position</td>
+<td>dx: string to be printed</td>
+<td>　</td>
+<td>　</td>
+</tr>
+<tr>
+<td>optstrq</td>
+<td>Print a string ending with the ‘$’ symbol at the cursor position and add quotation marks at both sides</td>
+<td>dx: string to be printed</td>
+<td>　</td>
+<td>　</td>
+</tr>
+<tr>
+<td>puts</td>
+<td>Print a string ending with the ‘$’ symbol at the cursor position, add carriage return, line feed</td>
+<td>dx: string to be printed</td>
+<td>　</td>
+<td>　</td>
+</tr>
+<tr>
+<td>putsq</td>
+<td>Print a string ending with the ‘$’ symbol at the cursor position, add quotation marks at both sides, add carriage return, line feed</td>
+<td>dx: string to be printed</td>
+<td>　</td>
+<td>　</td>
+</tr>
+<tr>
+<td>optdec</td>
+<td>Print a number in decimal at the cursor position</td>
+<td>ax: number to print</td>
+<td>　</td>
+<td>Range: 0-65535</td>
+</tr>
+<tr>
+<td>optdecdw</td>
+<td>Print a number in decimal at the cursor</td>
+<td>dx:ax number to print</td>
+<td>　</td>
+<td>Range: 0-4294967295</td>
+</tr>
+<tr>
+<td>iptdec</td>
+<td>Enter a decimal number from the keyboard, type ‘carriage return’ or ‘space’ blank character to confirm</td>
+<td>　</td>
+<td>ax: number entered</td>
+<td>　</td>
+</tr>
+<tr>
+<td>optdecs</td>
+<td>Print a signed decimal number at the cursor position</td>
+<td>ax: number to print</td>
+<td>　</td>
+<td>Range: -32768-32767</td>
+</tr>
+<tr>
+<td>iptdecs</td>
+<td>Enter a signed decimal number from the keyboard, type ‘carriage return’ or ‘space’ blank character to confirm</td>
+<td>　</td>
+<td>ax: number entered</td>
+<td>　</td>
+</tr>
+<tr>
+<td>*hex2ascii</td>
+<td>　</td>
+<td>　</td>
+<td>　</td>
+<td>Internal use</td>
+</tr>
+<tr>
+<td>*opt0x</td>
+<td>　</td>
+<td>　</td>
+<td>　</td>
+<td>Internal use</td>
+</tr>
+<tr>
+<td>opthex</td>
+<td>Print a number in hexadecimal at the cursor position</td>
+<td>ax: number to be printed</td>
+<td>　</td>
+<td>　</td>
+</tr>
+<tr>
+<td>opthexb</td>
+<td>Print a byte in hexadecimal</td>
+<td>al: byte to be printed</td>
+<td>　</td>
+<td>With leading ‘0x’</td>
+</tr>
+<tr>
+<td>opthexw</td>
+<td>Print a word in hexadecimal</td>
+<td>ax: word to be printed</td>
+<td>　</td>
+<td>With leading ‘0x’</td>
+</tr>
+<tr>
+<td>opthexdw</td>
+<td>Print a double word in hexadecimal</td>
+<td>dx:ax double word to be printed</td>
+<td>　</td>
+<td>with leading ‘0x’</td>
+</tr>
+<tr>
+<td>opthexqw</td>
+<td>Print a quadra-word in hexadecimal</td>
+<td>dx:ax:cx:bx quadra-word to be printed</td>
+<td>　</td>
+<td>with leading ‘0x’</td>
+</tr>
+<tr>
+<td>*ascii2hex</td>
+<td>　</td>
+<td>　</td>
+<td>　</td>
+<td>Internal use</td>
+</tr>
+<tr>
+<td>ipthex</td>
+<td>Enter a hexadecimal number from the keyboard</td>
+<td>　</td>
+<td>ax: number entered</td>
+<td>　</td>
+</tr>
+<tr>
+<td>optbin</td>
+<td>Print a number in binary at the cursor position</td>
+<td>ax: number to be printed</td>
+<td>　</td>
+<td>　</td>
+</tr>
+<tr>
+<td>iptbin</td>
+<td>Enter a binary number from the keyboard</td>
+<td>　</td>
+<td>ax: number entered</td>
+<td>　</td>
+</tr>
+<tr>
+<td>optbcd</td>
+<td>Print a number in compressed BCD code at the cursor position</td>
+<td>ax: number to be printed</td>
+<td>　</td>
+<td>Max digits: 4 digits</td>
+</tr>
+<tr>
+<td>iptbcd</td>
+<td>Enter a number from the keyboard in BCD code, store as compressed BCD form</td>
+<td>　</td>
+<td>ax: number entered</td>
+<td>Max digits: 4 digits</td>
+</tr>
+<tr>
+<td>printArray</td>
+<td>Print an unsigned word array separated by spaces at the cursor position</td>
+<td>dx: array address, cx: number of elements</td>
+<td>　</td>
+<td>　</td>
+</tr>
+<tr>
+<td>printArrayS</td>
+<td>Print a signed word array separated by spaces at the cursor position</td>
+<td>dx: array address, cx: number of elements</td>
+<td>　</td>
+<td>　</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h3 id="3-2-String" class="heading-control"><a href="#3-2-String" class="headerlink" title="3.2 String"></a>3.2 String<a class="heading-anchor" href="#3-2-String" aria-hidden="true"></a></h3><p>Source code file name: string.inc</p>
+<blockquote>
+<p>Note: C-style string, that is, a string with the number 0 as the terminator; DOS-style string, that is, a string with the character ‘$’ as the terminator, in this function library, the functions related to file operation require C-style string, and other functions require DOS-style string.</p>
+</blockquote>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>Function Name</th>
+<th>Description</th>
+<th>Parameter List</th>
+<th>Return Value/Result</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>convert</td>
+<td>Convert a C-style string to a DOS-style string</td>
+<td>bx: the string to be converted</td>
+<td>bx: the converted string</td>
+<td>　</td>
+</tr>
+<tr>
+<td>convertC</td>
+<td>Convert a DOS-style string to a C-style string</td>
+<td>bx: string to be converted</td>
+<td>bx: converted string</td>
+<td>　</td>
+</tr>
+<tr>
+<td>lower</td>
+<td>converts all English letters in a given string to lowercase</td>
+<td>bx: string to be converted</td>
+<td>bx: converted string</td>
+<td>　</td>
+</tr>
+<tr>
+<td>upper</td>
+<td>converts all English letters in a given string to uppercase</td>
+<td>bx: string to be converted</td>
+<td>bx: converted string</td>
+<td>　</td>
+</tr>
+<tr>
+<td>strlen</td>
+<td>Calculate the length of the string</td>
+<td>dx: the string to be calculated</td>
+<td>ax: the length of the string</td>
+<td>Can be applied to two styles of strings</td>
+</tr>
+<tr>
+<td>strequ</td>
+<td>See if two strings are equal</td>
+<td>dx: string 1, bx: string 2</td>
+<td>ax: boolean result</td>
+<td>　</td>
+</tr>
+<tr>
+<td>strcmp</td>
+<td>Compare two strings in ASCII order</td>
+<td>dx: string 1, bx: string 2</td>
+<td>ax: signed integer result</td>
+<td>Return value description: 0 means two strings are equal, -1 means string 1 is lower than string 2, 1 means string 1 is greater than string 2</td>
+</tr>
+<tr>
+<td>strcpy</td>
+<td>String copy</td>
+<td>dx: source string, bx: destination string</td>
+<td>bx: copied string</td>
+<td>Applicable to two styles of strings</td>
+</tr>
+<tr>
+<td>concat</td>
+<td>String concatenation</td>
+<td>dx: source string, bx: destination string</td>
+<td>bx: concatenated string</td>
+<td>Can be applied to two styles of strings, or mixed, but the style of the resulting string depends on the style of source string</td>
+</tr>
+<tr>
+<td>index</td>
+<td>String lookup</td>
+<td>dx: source string, bx: string to be searched</td>
+<td>ax: signed integer result</td>
+<td>Return value description: -1 means that the string to be found is not found in the source string, positive number represents the index of the first occurrence of the string to be found in the source string</td>
+</tr>
+<tr>
+<td>rands</td>
+<td>Generate a random string</td>
+<td>bx: buffer address, cx: length of string to be generated</td>
+<td>bx: random string</td>
+<td>　</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h3 id="3-3-Arithmetic" class="heading-control"><a href="#3-3-Arithmetic" class="headerlink" title="3.3 Arithmetic"></a>3.3 Arithmetic<a class="heading-anchor" href="#3-3-Arithmetic" aria-hidden="true"></a></h3><p>Source code file name: arith.inc</p>
+<blockquote>
+<p>Note: In the 8086 architecture, when div or idiv instruction is executed. If the operand (divisor) is one byte, the dividend is considered to be a word stored in the ax register. After the instruction is executed, the quotient is stored in al as one byte, the remainder is stored in ah as one byte. However, to divide a word, the quotient is likely to be larger than one byte, especially when the divisor is small, consider <code>1000 / 2</code>, In this case, al is not enough for this “big quotient”, this is the so-called “division overflow”. The operand (divisor) has a similar situation for a word.</p>
+</blockquote>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>Function Name</th>
+<th>Description</th>
+<th>Parameter List</th>
+<th>Return Value/Result</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>bcd2dec</td>
+<td>Converts 4 digit compressed BCD code to 8421 code</td>
+<td>ax: 4 digit BCD code to be converted</td>
+<td>ax: converted data</td>
+<td>　</td>
+</tr>
+<tr>
+<td>mul32</td>
+<td>Performs 32-bit unsigned multiplication, multiplier and multiplicand are 32 bits</td>
+<td>dx:ax multiplicand, cx:bx multiplier</td>
+<td>dx:ax:cx:bx product</td>
+<td>　</td>
+</tr>
+<tr>
+<td>div32</td>
+<td>Perform 32-bit safe unsigned division</td>
+<td>dx:ax dividend, cx: divisor</td>
+<td>dx:ax quotient, bx: remainder</td>
+<td>　</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h3 id="3-4-File" class="heading-control"><a href="#3-4-File" class="headerlink" title="3.4 File"></a>3.4 File<a class="heading-anchor" href="#3-4-File" aria-hidden="true"></a></h3><p>Source code file name: file.inc</p>
+<blockquote>
+<ol>
+<li>The string type parameter received by the function defined in this file is required to be a C style string, <a href="#3-2-string">What is a C style string?</a></li>
+<li>Relative path can be used</li>
+</ol>
+</blockquote>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>Function Name</th>
+<th>Description</th>
+<th>Parameter List</th>
+<th>Return Value/Result</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>mkdir</td>
+<td>Create folder</td>
+<td>dx: folder name with path</td>
+<td>ax: boolean result</td>
+<td>　</td>
+</tr>
+<tr>
+<td>rmdir</td>
+<td>Delete folder</td>
+<td>dx: folder name with path</td>
+<td>ax: boolean result</td>
+<td>　</td>
+</tr>
+<tr>
+<td>mkfile</td>
+<td>Create an empty file</td>
+<td>dx: filename with path</td>
+<td>ax: boolean result</td>
+<td>　</td>
+</tr>
+<tr>
+<td>rmfile</td>
+<td>Delete a file</td>
+<td>dx: file name with path</td>
+<td>ax: boolean result</td>
+<td>　</td>
+</tr>
+<tr>
+<td>exists</td>
+<td>See whether a file is existed</td>
+<td>dx: filename with path</td>
+<td>ax: boolean result</td>
+<td>　</td>
+</tr>
+<tr>
+<td>open</td>
+<td>Open a file</td>
+<td>dx: file name with path, ax: mode</td>
+<td>ax: file handle</td>
+<td>1. Mode: @ORD means open in read-only mode, @OWR means open in write-only mode, @ORDWR means read and write mode. <a href="#2-programming specification">Constant definition location</a>; 2. Return value description: If the file handle is -1, it means that the file is failed to open</td>
+</tr>
+<tr>
+<td>close</td>
+<td>Close file</td>
+<td>ax: file handle</td>
+<td>ax: boolean result</td>
+<td>　</td>
+</tr>
+<tr>
+<td>properties</td>
+<td>Get file properties</td>
+<td>ax: file handle</td>
+<td>ax: file attribute</td>
+<td>File attribute: Bit 0 - read only bit, Bit 1 - implicit bit, Bit 2 - system bit, Bit 3 - volume label, Bit 5 - archive , other bits are reserved, set to 1</td>
+</tr>
+<tr>
+<td>read</td>
+<td>Reads a number of bytes from an open file and stores them in the specified buffer</td>
+<td>ax: file handle, cx: number of bytes to read, bx: buffer address</td>
+<td>ax: boolean result, cx: number of bytes actually read, bx: data read</td>
+<td>if the remaining number of bytes in the file is less than the number of bytes specified by cx, cx is updated to the actual number of bytes read, ax is updated to @FALSE (unverified)</td>
+</tr>
+<tr>
+<td>write</td>
+<td>Writes several bytes of data to an open file</td>
+<td>ax: file handle, cx: number of bytes to write, dx: first address of the data to be written</td>
+<td>ax: boolean result, cx: actual number of bytes written</td>
+<td>(failed condition not verified)</td>
+</tr>
+<tr>
+<td>seek</td>
+<td>Move file pointer</td>
+<td>ax: file handle, cx: mode, dx: signed displacement</td>
+<td>ax: boolean result</td>
+<td>mode: @SEEK_SET indicates that the offset is relative to the beginning of the file, @SEEK_CUR indicates the offset is relative to the current position, @SEEK_END indicates that the offset is relative to the end of the file. <a href="#2-Programming Specification">Constant Definition Location</a></td>
+</tr>
+<tr>
+<td>rewind</td>
+<td>Rewind the file pointer back to the begining of the file</td>
+<td>ax: file handle</td>
+<td>ax: boolean result</td>
+<td>　</td>
+</tr>
+<tr>
+<td>tell</td>
+<td>Get file pointer position</td>
+<td>　</td>
+<td>　</td>
+<td>Unimplemented</td>
+</tr>
+<tr>
+<td>mvfile</td>
+<td>Move file</td>
+<td>dx: source file name with path, bx: target file name with path</td>
+<td>ax: boolean result</td>
+<td>If the target file already existed, the function will silently overwrite this file</td>
+</tr>
+<tr>
+<td>mvdir</td>
+<td>Move folders</td>
+<td>　</td>
+<td>　</td>
+<td>Unimplemented</td>
+</tr>
+<tr>
+<td>cpfile</td>
+<td>Copy file</td>
+<td>dx: source file name with path, bx: target file name with path</td>
+<td>ax: boolean result</td>
+<td>If the target file already existed, the function will silently overwrite this file</td>
+</tr>
+<tr>
+<td>cpdir</td>
+<td>copy folder</td>
+<td>　</td>
+<td>　</td>
+<td>Not implemented</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h3 id="3-5-System" class="heading-control"><a href="#3-5-System" class="headerlink" title="3.5 System"></a>3.5 System<a class="heading-anchor" href="#3-5-System" aria-hidden="true"></a></h3><p>Source code file name: sys.inc</p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>Function Name</th>
+<th>Description</th>
+<th>Parameter List</th>
+<th>Return Value/Result</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>exit</td>
+<td>Exit the user program, transfer control to the DOS system</td>
+<td>al: set the status code</td>
+<td>　</td>
+<td>　</td>
+</tr>
+<tr>
+<td>reside</td>
+<td>Exit user program in resident mode</td>
+<td>dx</td>
+<td>　</td>
+<td>I don’t quite understand</td>
+</tr>
+<tr>
+<td>memory</td>
+<td>Get memory capacity</td>
+<td>　</td>
+<td>ax: system memory capacity (in K)</td>
+<td>　</td>
+</tr>
+<tr>
+<td>date</td>
+<td>Get system date</td>
+<td>　</td>
+<td>dx: year, ah: month, al: day</td>
+<td>　</td>
+</tr>
+<tr>
+<td>time</td>
+<td>Get system time</td>
+<td>　</td>
+<td>dx: hour, ah: minute, al: second</td>
+<td>　</td>
+</tr>
+<tr>
+<td>get_interrupt</td>
+<td>Get an interrupt vector</td>
+<td>cx: interrupt number</td>
+<td>dx:ax segment address:offset address</td>
+<td>　</td>
+</tr>
+<tr>
+<td>set_interrupt</td>
+<td>Install an interrupt vector</td>
+<td>cx: interrupt number, dx:ax segment address:offset address</td>
+<td>　</td>
+<td>　</td>
+</tr>
+<tr>
+<td>pspseg</td>
+<td>Get the current program PSP segment</td>
+<td>　</td>
+<td>ax: PSP segment address</td>
+<td>　</td>
+</tr>
+<tr>
+<td>cmdlen</td>
+<td>Get the length of the command line arguments</td>
+<td>　</td>
+<td>ax: the length of the command line arguments</td>
+<td>　</td>
+</tr>
+<tr>
+<td>cmdline</td>
+<td>Get command line arguments</td>
+<td>bx: buffer address</td>
+<td>bx: command line arguments</td>
+<td>　</td>
+</tr>
+<tr>
+<td>arg</td>
+<td>Gets each space-separated parameter in turn</td>
+<td>dx: command line parameter address, bx: buffer address used to store the parameter</td>
+<td>ax: processed dx</td>
+<td>1. Since the return value ax is dx after processing, should transfer ax to dx and make another call to get the next parameter; 2. After calling this function, if [ax]=’$’ or strlen(dx)=0, indicates the command line parameters have been processed.</td>
+</tr>
+<tr>
+<td>drive</td>
+<td>Get the drive letter of the program’s current working path</td>
+<td>　</td>
+<td>ax: drive number</td>
+<td>　</td>
+</tr>
+<tr>
+<td>pwd</td>
+<td>Get the current working path of the program</td>
+<td>bx: buffer address</td>
+<td>bx: current working path</td>
+<td>　</td>
+</tr>
+<tr>
+<td>alloc</td>
+<td>Allocate memory</td>
+<td>　</td>
+<td>　</td>
+<td>Unimplemented</td>
+</tr>
+<tr>
+<td>free</td>
+<td>Free memory</td>
+<td>　</td>
+<td>　</td>
+<td>Not implemented</td>
+</tr>
+<tr>
+<td>memcpy</td>
+<td>Memory copy</td>
+<td>dx: source address, bx: destination address, cx: number of bytes to copy</td>
+<td>bx: copied data</td>
+<td>　</td>
+</tr>
+<tr>
+<td>dump</td>
+<td>Print read time CPU status</td>
+<td>　</td>
+<td>　</td>
+<td>“Real Time” refers to the time before the call instruction to call the dump function is officially executed, ip should point to the next instruction of call dump</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h3 id="3-6-Utility-Routines" class="heading-control"><a href="#3-6-Utility-Routines" class="headerlink" title="3.6 Utility Routines"></a>3.6 Utility Routines<a class="heading-anchor" href="#3-6-Utility-Routines" aria-hidden="true"></a></h3><p>Source code file name: util.inc</p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>Function Name</th>
+<th>Description</th>
+<th>Parameter List</th>
+<th>Return Value/Result</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>srand</td>
+<td>Initialize random number seed</td>
+<td>　</td>
+<td>　</td>
+<td>　</td>
+</tr>
+<tr>
+<td>rand</td>
+<td>Generate a random number</td>
+<td>　</td>
+<td>ax: random number</td>
+<td>　</td>
+</tr>
+<tr>
+<td>sort</td>
+<td>Sort an array of signed words, in ascending order</td>
+<td>bx: address of the array, cx: number of array elements</td>
+<td>bx: sorted array</td>
+<td>　</td>
+</tr>
+<tr>
+<td>*swap</td>
+<td>　</td>
+<td>　</td>
+<td>　</td>
+<td>Internal use</td>
+</tr>
+<tr>
+<td>*partition</td>
+<td>　</td>
+<td>　</td>
+<td>　</td>
+<td>Internal use</td>
+</tr>
+<tr>
+<td>*quick_sort</td>
+<td>　</td>
+<td>　</td>
+<td>　</td>
+<td>Internal use</td>
+</tr>
+<tr>
+<td>qsort</td>
+<td>Quick sort a signed word array, in ascending order</td>
+<td>bx: array address, cx: array element number</td>
+<td>bx: sorted array</td>
+<td>　</td>
+</tr>
+<tr>
+<td>reverse</td>
+<td>Reverse a word array</td>
+<td>bx: array address, cx: array element number</td>
+<td>bx: reversed array</td>
+<td>This function can be used after sort, qsort to invert array order</td>
+</tr>
+<tr>
+<td>shuffle</td>
+<td>Disorganize the order of a word array</td>
+<td>bx: the address of the array, cx: the number of array elements</td>
+<td>bx: shuffled array</td>
+<td>　</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h3 id="3-7-Macro-Library" class="heading-control"><a href="#3-7-Macro-Library" class="headerlink" title="3.7 Macro Library"></a>3.7 Macro Library<a class="heading-anchor" href="#3-7-Macro-Library" aria-hidden="true"></a></h3><p>Source code file name: macros.inc</p>
+<blockquote>
+<ol>
+<li>“Macro” is like a function based on macro substitution and macro expansion. During source code compilation, the assembler replaces the call statement with the expanded macro function body. The macro function is more flexible than the function, usually also faster than function.</li>
+<li>Instructions for use: Copy the macro function body or insert include macros.inc to <strong>user code</strong>, the assembler must see its definition before expanding a macro</li>
+<li>How to call the macro function (using WriteString as an example):<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">WriteString &apos;hello world&apos;</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+</blockquote>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>Macro Name</th>
+<th>Description</th>
+<th>Parameter List</th>
+<th>Return Value/Result</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>WriteString</td>
+<td>Print a string at the cursor position</td>
+<td>1: a string</td>
+<td>　</td>
+<td>　</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h2 id="4-Common-assembly-instructions-and-their-introductions" class="heading-control"><a href="#4-Common-assembly-instructions-and-their-introductions" class="headerlink" title="4 Common assembly instructions and their introductions"></a>4 Common assembly instructions and their introductions<a class="heading-anchor" href="#4-Common-assembly-instructions-and-their-introductions" aria-hidden="true"></a></h2><div class="table-container">
+<table>
+<thead>
+<tr>
+<th>Mnemonic</th>
+<th>Features</th>
+<th>Usage</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>mov</td>
+<td>　</td>
+<td>　</td>
+<td>　</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+    </div>
+
+    
+    
+    
+        
+      
+        <div id="reward-container">
+  <div>如果这篇文章对您有用，可以考虑打赏:)</div>
+  <button id="reward-button" disable="enable" onclick="var qr = document.getElementById(&quot;qr&quot;); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+        
+      
+      <div style="display: inline-block">
+        <img src="/images/wechatpay.png" alt="Hyan Lee 微信支付">
+        <p>微信支付</p>
+      </div>
+
+  </div>
+</div>
+
+      
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>Hyan Lee</li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://hyan23.org/2018/10/06/8086asm-users-manual-en/" title="8086asm user's manual">https://hyan23.org/2018/10/06/8086asm-users-manual-en/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！</li>
+</ul>
+</div>
+
+      
+
+      <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+              
+                <a href="/2018/09/21/8086asm-users-manual/" rel="next" title="8086asm 用户手册">
+                  <i class="fa fa-chevron-left"></i> 8086asm 用户手册
+                </a>
+              
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+              
+                <a href="/2018/10/09/a-tour-of-go/" rel="prev" title="A Tour Of Go">
+                  A Tour Of Go <i class="fa fa-chevron-right"></i>
+                </a>
+              
+            </div>
+          </div>
+        
+      </footer>
+    
+  </div>
+  
+  
+  
+  </article>
+
+  </div>
+
+
+          </div>
+          
+    
+    <div class="comments" id="gitalk-container"></div>
+  
+
+        </div>
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+        
+        
+        
+        
+      
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#8086asm-User’s-Manual"><span class="nav-number">1.</span> <span class="nav-text">8086asm User’s Manual</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Introduction"><span class="nav-number">1.1.</span> <span class="nav-text">Introduction </span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Table-of-Contents"><span class="nav-number">1.2.</span> <span class="nav-text">Table of Contents </span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-Use-this-library"><span class="nav-number">1.3.</span> <span class="nav-text">1 Use this library</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-Programming-specifications"><span class="nav-number">1.4.</span> <span class="nav-text">2 Programming specifications</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-Function-list"><span class="nav-number">1.5.</span> <span class="nav-text">3 Function list</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-Basic-input-and-output"><span class="nav-number">1.5.1.</span> <span class="nav-text">3.1 Basic input and output</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-String"><span class="nav-number">1.5.2.</span> <span class="nav-text">3.2 String</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-3-Arithmetic"><span class="nav-number">1.5.3.</span> <span class="nav-text">3.3 Arithmetic</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-4-File"><span class="nav-number">1.5.4.</span> <span class="nav-text">3.4 File</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-5-System"><span class="nav-number">1.5.5.</span> <span class="nav-text">3.5 System</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-6-Utility-Routines"><span class="nav-number">1.5.6.</span> <span class="nav-text">3.6 Utility Routines</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-7-Macro-Library"><span class="nav-number">1.5.7.</span> <span class="nav-text">3.7 Macro Library</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-Common-assembly-instructions-and-their-introductions"><span class="nav-number">1.6.</span> <span class="nav-text">4 Common assembly instructions and their introductions</span></a></li></ol></li></ol></div>
+        
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image"
+      src="/images/avatar2.png"
+      alt="Hyan Lee">
+  <p class="site-author-name" itemprop="name">Hyan Lee</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">31</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-categories">
+        
+          
+            <a href="/categories/">
+          
+        
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">分类</span>
+        </a>
+      </div>
+    
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+      
+      
+        
+      
+      
+        
+      
+        <a href="https://github.com/hyan23" title="GitHub &rarr; https://github.com/hyan23" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+    
+      <span class="links-of-author-item">
+      
+      
+        
+      
+      
+        
+      
+        <a href="mailto:hyan23lee@hotmail.com" title="E-Mail &rarr; mailto:hyan23lee@hotmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+    
+      <span class="links-of-author-item">
+      
+      
+        
+      
+      
+        
+      
+        <a href="https://t.me/hyan23" title="Telegram &rarr; https://t.me/hyan23" rel="noopener" target="_blank"><i class="fa fa-fw fa-telegram"></i>Telegram</a>
+      </span>
+    
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    
+  
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+      
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2017 – <span itemprop="copyrightYear">2020</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Hyan Lee</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    
+    <span title="站点总字数">118k</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v3.9.0</div>
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js?v=3.1.0"></script>
+  <script src="//cdn.jsdelivr.net/npm/medium-zoom@1/dist/medium-zoom.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+<script src="/js/utils.js?v=7.4.0"></script>
+<script src="/js/schemes/pisces.js?v=7.4.0"></script>
+<script src="/js/next-boot.js?v=7.4.0"></script>
+
+
+
+  
+  <script>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+    mermaid.initialize({
+      theme: 'forest',
+      logLevel: 3,
+      flowchart: { curve: 'linear' },
+      gantt: { axisFormat: '%m/%d/%Y' },
+      sequence: { actorMargin: 50 }
+    });
+  }, window.mermaid);
+}
+</script>
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID: '442da4785490db3ece48',
+      clientSecret: '3bfa2829a34371ca37db636917e791d114bd338c',
+      repo: 'blog-comments',
+      owner: 'hyan23',
+      admin: ['hyan23'],
+      id: '28e9b44c00bcc9e88a498935fe1bca8a',
+        language: window.navigator.language || window.navigator.userLanguage,
+      
+      distractionFreeMode: 'true'
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+</script>
+
+</body>
+</html>

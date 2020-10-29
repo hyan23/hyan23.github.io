@@ -1,0 +1,831 @@
+<!DOCTYPE html>
+
+
+
+
+
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/favicon/apple-touch-icon.png?v=7.4.0">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon/favicon-32x32.png?v=7.4.0">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon/favicon-16x16.png?v=7.4.0">
+  <link rel="mask-icon" href="/images/favicon/safari-pinned-tab.svg?v=7.4.0" color="#222">
+  <link rel="manifest" href="/images/favicon/site.webmanifest">
+  <meta name="msapplication-config" content="/images/favicon/browserconfig.xml">
+  <meta http-equiv="Cache-Control" content="no-transform">
+  <meta http-equiv="Cache-Control" content="no-siteapp">
+
+<link rel="stylesheet" href="/css/main.css?v=7.4.0">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '7.4.0',
+    exturl: false,
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false},
+    copycode: {"enable":false,"show_result":false,"style":null},
+    back2top: {"enable":true,"sidebar":true,"scrollpercent":false},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: true,
+    lazyload: true,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: "",
+      labels: ""
+    },
+    localsearch: {"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: '',
+    motion: {"enable":false},
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="状态: 初稿 介绍 在这一章, 我们将探讨 TypeScript 类型推导机制. 包括两个主题: 1. 类型推导在何处发生, 2. 具体推导方法.">
+<meta name="keywords" content="博客,个人博客,日志,在线工具">
+<meta property="og:type" content="article">
+<meta property="og:title" content="类型推导">
+<meta property="og:url" content="https://hyan23.org/2019/11/20/ts-type-inference/index.html">
+<meta property="og:site_name" content="Hyan Lee">
+<meta property="og:description" content="状态: 初稿 介绍 在这一章, 我们将探讨 TypeScript 类型推导机制. 包括两个主题: 1. 类型推导在何处发生, 2. 具体推导方法.">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2020-02-03T11:45:13.322Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="类型推导">
+<meta name="twitter:description" content="状态: 初稿 介绍 在这一章, 我们将探讨 TypeScript 类型推导机制. 包括两个主题: 1. 类型推导在何处发生, 2. 具体推导方法.">
+  <link rel="canonical" href="https://hyan23.org/2019/11/20/ts-type-inference/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>类型推导 | Hyan Lee</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+  <div class="container">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Hyan Lee</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+      
+      
+      
+        
+        <li class="menu-item menu-item-home">
+      
+    
+      
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-关于-/-留言板">
+      
+    
+      
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于 / 留言板</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-categories">
+      
+    
+      
+      
+        
+      
+        
+          
+        
+      
+        
+      
+    
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类<span class="badge">6</span></a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-archives">
+      
+    
+      
+      
+        
+          
+        
+      
+        
+      
+        
+      
+    
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">31</span></a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-精选-/-系列">
+      
+    
+      
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <a href="/selections/" rel="section"><i class="fa fa-fw fa-book"></i>精选 / 系列</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-摄影">
+      
+    
+      
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <a href="/gallery/" rel="section"><i class="fa fa-fw fa-camera"></i>摄影</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-工具">
+      
+    
+      
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <a href="/tools/" rel="section"><i class="fa fa-fw fa-calculator"></i>工具</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-友情链接">
+      
+    
+      
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <a href="/friends/" rel="section"><i class="fa fa-fw fa-external-link"></i>友情链接</a>
+
+  </li>
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+            
+
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+      <article itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block post">
+    <link itemprop="mainEntityOfPage" href="https://hyan23.org/2019/11/20/ts-type-inference/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Hyan Lee">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar2.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hyan Lee">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">类型推导
+
+          
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              
+                
+              
+
+              <time title="创建时间：2019-11-20 09:29:15" itemprop="dateCreated datePublished" datetime="2019-11-20T09:29:15+08:00">2019-11-20</time>
+            </span>
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-02-03 19:45:13" itemprop="dateModified" datetime="2020-02-03T19:45:13+08:00">2020-02-03</time>
+              </span>
+            
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/翻译稿/" itemprop="url" rel="index"><span itemprop="name">翻译稿</span></a></span>
+
+                
+                
+                  ，
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/翻译稿/TypeScript/" itemprop="url" rel="index"><span itemprop="name">TypeScript</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+          
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">本文字数：</span>
+              
+              <span>1.1k</span>
+            </span>
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <pre><code>状态: 初稿
+</code></pre><h1 id="介绍" class="heading-control"><a href="#介绍" class="headerlink" title="介绍"></a>介绍<a class="heading-anchor" href="#介绍" aria-hidden="true"></a></h1><!-- # Introduction -->
+<div class="translation-block" title="
+In this section, we will cover type inference in TypeScript. Namely, we&amp;#39;ll discuss where and how types are inferred.
+"><p>在这一章, 我们将探讨 TypeScript 类型推导机制. 包括两个主题: 1. 类型推导在何处发生, 2. 具体推导方法.</p></div>
+<a id="more"></a>
+<h1 id="基础" class="heading-control"><a href="#基础" class="headerlink" title="基础"></a>基础<a class="heading-anchor" href="#基础" aria-hidden="true"></a></h1><div class="translation-block" title="
+In TypeScript, there are several places where type inference is used to provide type information when there is no explicit type annotation. For example, in this code
+"><p>在 TypeScript 中, 类型推导的作用是为缺少显式类型注解的语境补全类型信息.<br>考虑这个例子</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> x = <span class="number">3</span>;</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+The type of the `x` variable is inferred to be `number`.
+This kind of inference takes place when initializing variables and members, setting parameter default values, and determining function return types.
+
+In most cases, type inference is straightforward.
+In the following sections, we&amp;#39;ll explore some of the nuances in how types are inferred.
+"><p>类型推导推出变量 <code>x</code> 的类型是 <code>number</code>.<br>这种类型的推导发生在初始化变量和成员变量时, 指定函数参数默认值时, 以及定出函数返回值类型时.</p>
+<p>在多数情况下, 类型推导足够简单直接.<br>以下各节. 我们将更细致地探索类型推导方法.</p></div>
+<h1 id="最佳公共类型" class="heading-control"><a href="#最佳公共类型" class="headerlink" title="最佳公共类型"></a>最佳公共类型<a class="heading-anchor" href="#最佳公共类型" aria-hidden="true"></a></h1><!-- # Best common type -->
+<div class="translation-block" title="
+When a type inference is made from several expressions, the types of those expressions are used to calculate a &amp;quot;best common type&amp;quot;. For example,
+"><p>如果类型推导的输入是多个表达式, 它需要从这些子表达式的类型中找出一个 “最佳公共类型”. 如:</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> x = [<span class="number">0</span>, <span class="number">1</span>, <span class="literal">null</span>];</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+To infer the type of `x` in the example above, we must consider the type of each array element.
+Here we are given two choices for the type of the array: `number` and `null`.
+The best common type algorithm considers each candidate type, and picks the type that is compatible with all the other candidates.
+
+Because the best common type has to be chosen from the provided candidate types, there are some cases where types share a common structure, but no one type is the super type of all candidate types. For example:
+"><p>要推导 <code>x</code>, 我们必须考虑每个数组元素类型.<br>易知, 共有 <code>number[]</code> 和 <code>null[]</code> 两种选择.<br>“最佳公共类型”算法考虑每个候选类型, 选出与所有候选相容的那一个.</p>
+<p>由于算法从所有候选类型中挑选最佳公共类型, 有种情况是所有候选类型共享一部分结构, 但是没有一个类型是所有类型的父类型. 例如:</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> zoo = [<span class="keyword">new</span> Rhino(), <span class="keyword">new</span> Elephant(), <span class="keyword">new</span> Snake()];</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+Ideally, we may want `zoo` to be inferred as an `Animal[]`, but because there is no object that is strictly of type `Animal` in the array, we make no inference about the array element type.
+To correct this, instead explicitly provide the type when no one type is a super type of all other candidates:
+"><p><code>zoo</code> 理想推导结果应该是 <code>Animal[]</code>, 但数组中没有一个元素是严格意义上的 <code>Animal</code>, 类型推导无法给出我们想要的结果.<br>此时, 最好显式为 <code>zoo</code> 提供类型信息:</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> zoo: Animal[] = [<span class="keyword">new</span> Rhino(), <span class="keyword">new</span> Elephant(), <span class="keyword">new</span> Snake()];</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+When no best common type is found, the resulting inference is the union array type, `(Rhino | Elephant | Snake)[]`.
+"></div>
+<h1 id="上下文类型" class="heading-control"><a href="#上下文类型" class="headerlink" title="上下文类型"></a>上下文类型<a class="heading-anchor" href="#上下文类型" aria-hidden="true"></a></h1><!-- # Contextual Typing -->
+<div class="translation-block" title="
+Type inference also works in &amp;quot;the other direction&amp;quot; in some cases in TypeScript.
+This is known as &amp;quot;contextual typing&amp;quot;. Contextual typing occurs when the type of an expression is implied by its location. For example:
+"><p>类型推导有时也反方向地进行.<br>这叫做”上下文类型”. 上下文类型推导的依据是表达式的类型已由它所处位置体现. 例如:</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">window</span>.onmousedown = <span class="function"><span class="keyword">function</span>(<span class="params">mouseEvent</span>) </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(mouseEvent.button);   <span class="comment">//&lt;- OK</span></span><br><span class="line">    <span class="built_in">console</span>.log(mouseEvent.kangaroo); <span class="comment">//&lt;- Error!</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+Here, the Typescript type checker used the type of the `Window.onmousedown` function to infer the type of the function expression on the right hand side of the assignment.
+When it did so, it was able to infer the [type](https:&amp;#x2F;&amp;#x2F;developer.mozilla.org&amp;#x2F;en-US&amp;#x2F;docs&amp;#x2F;Web&amp;#x2F;API&amp;#x2F;MouseEvent) of the `mouseEvent` parameter, which does contain a `button` property, but not a `kangaroo` property.
+
+Typescript is smart enough to infer the type of things in other contexts as well:
+"><p>这里, TypeScript 类型检查器根据类型已知的 <code>window.onmousedown</code> 成员自动推导赋值号右侧的函数表达式.<br>函数参数 <code>mouseEvent</code> 的<a href="#">类型</a>随函数表达式类型的确定而明确下来, 该参数有 <code>button</code> 属性, 没有 <code>kangaroo</code> 属性.</p>
+<p>换个场景, TypeScript 同样聪明:</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">window</span>.onscroll = <span class="function"><span class="keyword">function</span>(<span class="params">uiEvent</span>) </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(uiEvent.button); <span class="comment">//&lt;- Error!</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+Based on the fact that the above function is being assigned to `Window.onscroll`, Typescript knows that `uiEvent` is a [UIEvent](https:&amp;#x2F;&amp;#x2F;developer.mozilla.org&amp;#x2F;en-US&amp;#x2F;docs&amp;#x2F;Web&amp;#x2F;API&amp;#x2F;UIEvent), and not a [MouseEvent](https:&amp;#x2F;&amp;#x2F;developer.mozilla.org&amp;#x2F;en-US&amp;#x2F;docs&amp;#x2F;Web&amp;#x2F;API&amp;#x2F;MouseEvent) like the previous example. `UIEvent` objects contain no `button` property, and so Typescript will throw an error.
+
+If this function were not in a contextually typed position, the function&amp;#39;s argument would implicitly have type `any`, and no error would be issued (unless you are using the `--noImplicitAny` option):
+"><p>基于以上函数表达式赋值给 <code>window.onscroll</code> 的事实, TypeScript 知道 <code>uiEvent</code> 的类型是 <a href="#">UIEvent</a>, 而不再前一个例子中的 <a href="#">MouseEvent</a>. 因为 <code>UIEvent</code> 没有 <code>button</code> 属性, TypeScript 将报错.</p>
+<p>如果函数所处位置不含上下文类型信息, <code>any</code> 隐式地成为所有函数参数的类型, 编译器不会报错(除非你开启 <code>--noImplicitAny</code> 选项).</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> handler = <span class="function"><span class="keyword">function</span>(<span class="params">uiEvent</span>) </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(uiEvent.button); <span class="comment">//&lt;- OK</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+We can also explicitly give type information to the function&amp;#39;s argument to override any contextual type:
+"><p>我们可以显式写下函数参数类型, 从而阻止上下文类型推导:</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">window</span>.onscroll = <span class="function"><span class="keyword">function</span>(<span class="params">uiEvent: <span class="built_in">any</span></span>) </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(uiEvent.button);  <span class="comment">//&lt;- Now, no error is given</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+However, this code will log `undefined`, since `uiEvent` has no property called `button`.
+
+Contextual typing applies in many cases.
+Common cases include arguments to function calls, right hand sides of assignments, type assertions, members of object and array literals, and return statements.
+The contextual type also acts as a candidate type in best common type. For example:
+"><p>然而, 由于 <code>uiEvent</code> 实际上没有叫 <code>button</code> 的属性, 这个函数会输出 <code>undefined</code>.</p>
+<p>上下文类型覆盖 TypeScript 程序的方方面面.<br>常见的有函数实参, 右值, 类型担保, 类成员和数组字面量, return 语句.<br>上下文类型推导丰富了最佳公共类型的候选. 对于下例:</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">createZoo</span>(<span class="params"></span>): <span class="title">Animal</span>[] </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> [<span class="keyword">new</span> Rhino(), <span class="keyword">new</span> Elephant(), <span class="keyword">new</span> Snake()];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+In this example, best common type has a set of four candidates: `Animal`, `Rhino`, `Elephant`, and `Snake`.
+Of these, `Animal` can be chosen by the best common type algorithm.
+"><p>在这个例子中, 最佳公共类型有四个候选: <code>Animal</code>, <code>Rhino</code>, <code>Elephant</code>, 和 <code>Snake</code>.<br>我们知道, 现在最佳公共类型算法可以选择 <code>Animal</code>.</p></div>
+    </div>
+
+    
+    
+    
+        
+      
+        <div id="reward-container">
+  <div>如果这篇文章对您有用，可以考虑打赏:)</div>
+  <button id="reward-button" disable="enable" onclick="var qr = document.getElementById(&quot;qr&quot;); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+        
+      
+      <div style="display: inline-block">
+        <img src="/images/wechatpay.png" alt="Hyan Lee 微信支付">
+        <p>微信支付</p>
+      </div>
+
+  </div>
+</div>
+
+      
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>Hyan Lee</li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://hyan23.org/2019/11/20/ts-type-inference/" title="类型推导">https://hyan23.org/2019/11/20/ts-type-inference/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！</li>
+</ul>
+</div>
+
+      
+
+      <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+              
+                <a href="/2019/11/20/ts-enums/" rel="next" title="枚举">
+                  <i class="fa fa-chevron-left"></i> 枚举
+                </a>
+              
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+              
+                <a href="/2019/11/20/ts-type-compatibility/" rel="prev" title="类型兼容性">
+                  类型兼容性 <i class="fa fa-chevron-right"></i>
+                </a>
+              
+            </div>
+          </div>
+        
+      </footer>
+    
+  </div>
+  
+  
+  
+  </article>
+
+  </div>
+
+
+          </div>
+          
+    
+    <div class="comments" id="gitalk-container"></div>
+  
+
+        </div>
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+        
+        
+        
+        
+      
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#介绍"><span class="nav-number">1.</span> <span class="nav-text">介绍</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#基础"><span class="nav-number">2.</span> <span class="nav-text">基础</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#最佳公共类型"><span class="nav-number">3.</span> <span class="nav-text">最佳公共类型</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#上下文类型"><span class="nav-number">4.</span> <span class="nav-text">上下文类型</span></a></li></ol></div>
+        
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image"
+      src="/images/avatar2.png"
+      alt="Hyan Lee">
+  <p class="site-author-name" itemprop="name">Hyan Lee</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">31</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-categories">
+        
+          
+            <a href="/categories/">
+          
+        
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">分类</span>
+        </a>
+      </div>
+    
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+      
+      
+        
+      
+      
+        
+      
+        <a href="https://github.com/hyan23" title="GitHub &rarr; https://github.com/hyan23" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+    
+      <span class="links-of-author-item">
+      
+      
+        
+      
+      
+        
+      
+        <a href="mailto:hyan23lee@hotmail.com" title="E-Mail &rarr; mailto:hyan23lee@hotmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+    
+      <span class="links-of-author-item">
+      
+      
+        
+      
+      
+        
+      
+        <a href="https://t.me/hyan23" title="Telegram &rarr; https://t.me/hyan23" rel="noopener" target="_blank"><i class="fa fa-fw fa-telegram"></i>Telegram</a>
+      </span>
+    
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    
+  
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+      
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2017 – <span itemprop="copyrightYear">2020</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Hyan Lee</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    
+    <span title="站点总字数">118k</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v3.9.0</div>
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js?v=3.1.0"></script>
+  <script src="//cdn.jsdelivr.net/npm/medium-zoom@1/dist/medium-zoom.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+<script src="/js/utils.js?v=7.4.0"></script>
+<script src="/js/schemes/pisces.js?v=7.4.0"></script>
+<script src="/js/next-boot.js?v=7.4.0"></script>
+
+
+
+  
+  <script>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+    mermaid.initialize({
+      theme: 'forest',
+      logLevel: 3,
+      flowchart: { curve: 'linear' },
+      gantt: { axisFormat: '%m/%d/%Y' },
+      sequence: { actorMargin: 50 }
+    });
+  }, window.mermaid);
+}
+</script>
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID: '442da4785490db3ece48',
+      clientSecret: '3bfa2829a34371ca37db636917e791d114bd338c',
+      repo: 'blog-comments',
+      owner: 'hyan23',
+      admin: ['hyan23'],
+      id: '9cfac8e6b4e3c0fac95218c97c4f906c',
+        language: window.navigator.language || window.navigator.userLanguage,
+      
+      distractionFreeMode: 'true'
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+</script>
+
+</body>
+</html>

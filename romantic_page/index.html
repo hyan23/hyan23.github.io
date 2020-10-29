@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta name="renderer" content="webkit">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+    <title>改什么你说了算</title>
+    <style>
+        body {
+            /* https://stackoverflow.com/questions/5662735/stretch-background-image-css?answertab=votes#tab-top */
+            background: url('bg.jpg') no-repeat center center fixed;
+            -webkit-background-size: cover;
+            -moz-background-size: cover;
+            -o-background-size: cover;
+            background-size: cover;
+            -webkit-font-smoothing: antialiased;
+            font-family: Helvetica Neue, Helvetica, Hiragino Sans GB, Microsoft YaHei, Arial, sans-serif;
+            font-size: 85%;
+            margin: 0;
+        }
+
+        h2 {
+            font-size: 160%;
+            font-weight: 400;
+            color: aliceblue;
+        }
+
+        .content {
+            position: absolute;
+            width: 100%;
+            top: 40%;
+            transform: translate(0, -50%);
+            text-align: center;
+        }
+
+        .timer {
+            font-size: 120%;
+            line-height: 1.5;
+            color: aliceblue;
+            margin: 1em 0;
+        }
+
+        .timer b {
+            color: rgb(253, 99, 125);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="content">
+        <h2>狗蛋哥🍓，我们已经在一起了</h2>
+        <div class="timer">
+            <b id="d"></b> 天 <b id="h"></b> 时 <b id="m"></b> 分 <b id="s"></b> 秒
+        </div>
+    </div>
+
+    <script>
+        function timer() {
+            var start = new Date(2020, 01, 19, 01, 23, 27); // 2020.02.19 01:23:27
+            var t = new Date() - start;
+            var d = ~~(t / 1000 / 60 / 60 / 24);
+            var h = ~~(t / 1000 / 60 / 60 % 24);
+            if (h < 10) {
+                h = "0" + h;
+            }
+            var m = ~~(t / 1000 / 60 % 60);
+            if (m < 10) {
+                m = "0" + m;
+            }
+            var s = ~~(t / 1000 % 60);
+            if (s < 10) {
+                s = "0" + s;
+            }
+
+            document.getElementById('d').innerHTML = d;
+            document.getElementById('h').innerHTML = h;
+            document.getElementById('m').innerHTML = m;
+            document.getElementById('s').innerHTML = s;
+        }
+        timer();
+        setInterval(timer, 1000);
+    </script>
+</body>
+
+</html>

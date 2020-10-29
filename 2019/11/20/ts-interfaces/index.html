@@ -1,0 +1,1030 @@
+<!DOCTYPE html>
+
+
+
+
+
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/favicon/apple-touch-icon.png?v=7.4.0">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon/favicon-32x32.png?v=7.4.0">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon/favicon-16x16.png?v=7.4.0">
+  <link rel="mask-icon" href="/images/favicon/safari-pinned-tab.svg?v=7.4.0" color="#222">
+  <link rel="manifest" href="/images/favicon/site.webmanifest">
+  <meta name="msapplication-config" content="/images/favicon/browserconfig.xml">
+  <meta http-equiv="Cache-Control" content="no-transform">
+  <meta http-equiv="Cache-Control" content="no-siteapp">
+
+<link rel="stylesheet" href="/css/main.css?v=7.4.0">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '7.4.0',
+    exturl: false,
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false},
+    copycode: {"enable":false,"show_result":false,"style":null},
+    back2top: {"enable":true,"sidebar":true,"scrollpercent":false},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: true,
+    lazyload: true,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: "",
+      labels: ""
+    },
+    localsearch: {"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: '',
+    motion: {"enable":false},
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="状态: 初稿 介绍 TypeScript 的一个核心理念是: 类型检查只关注值的形体.有时我们叫它鸭式类型, 或结构化子类型.在 TypeScript 中, 接口不仅起着命名类型的作用, 同时也定义项目内外一致遵守的约定.">
+<meta name="keywords" content="博客,个人博客,日志,在线工具">
+<meta property="og:type" content="article">
+<meta property="og:title" content="接口">
+<meta property="og:url" content="https://hyan23.org/2019/11/20/ts-interfaces/index.html">
+<meta property="og:site_name" content="Hyan Lee">
+<meta property="og:description" content="状态: 初稿 介绍 TypeScript 的一个核心理念是: 类型检查只关注值的形体.有时我们叫它鸭式类型, 或结构化子类型.在 TypeScript 中, 接口不仅起着命名类型的作用, 同时也定义项目内外一致遵守的约定.">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2020-02-03T11:45:13.322Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="接口">
+<meta name="twitter:description" content="状态: 初稿 介绍 TypeScript 的一个核心理念是: 类型检查只关注值的形体.有时我们叫它鸭式类型, 或结构化子类型.在 TypeScript 中, 接口不仅起着命名类型的作用, 同时也定义项目内外一致遵守的约定.">
+  <link rel="canonical" href="https://hyan23.org/2019/11/20/ts-interfaces/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>接口 | Hyan Lee</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+  <div class="container">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Hyan Lee</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+      
+      
+      
+        
+        <li class="menu-item menu-item-home">
+      
+    
+      
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-关于-/-留言板">
+      
+    
+      
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于 / 留言板</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-categories">
+      
+    
+      
+      
+        
+      
+        
+          
+        
+      
+        
+      
+    
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类<span class="badge">6</span></a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-archives">
+      
+    
+      
+      
+        
+          
+        
+      
+        
+      
+        
+      
+    
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">31</span></a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-精选-/-系列">
+      
+    
+      
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <a href="/selections/" rel="section"><i class="fa fa-fw fa-book"></i>精选 / 系列</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-摄影">
+      
+    
+      
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <a href="/gallery/" rel="section"><i class="fa fa-fw fa-camera"></i>摄影</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-工具">
+      
+    
+      
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <a href="/tools/" rel="section"><i class="fa fa-fw fa-calculator"></i>工具</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-友情链接">
+      
+    
+      
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <a href="/friends/" rel="section"><i class="fa fa-fw fa-external-link"></i>友情链接</a>
+
+  </li>
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+            
+
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+      <article itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block post">
+    <link itemprop="mainEntityOfPage" href="https://hyan23.org/2019/11/20/ts-interfaces/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Hyan Lee">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar2.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hyan Lee">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">接口
+
+          
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              
+                
+              
+
+              <time title="创建时间：2019-11-20 09:26:14" itemprop="dateCreated datePublished" datetime="2019-11-20T09:26:14+08:00">2019-11-20</time>
+            </span>
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-02-03 19:45:13" itemprop="dateModified" datetime="2020-02-03T19:45:13+08:00">2020-02-03</time>
+              </span>
+            
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/翻译稿/" itemprop="url" rel="index"><span itemprop="name">翻译稿</span></a></span>
+
+                
+                
+                  ，
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/翻译稿/TypeScript/" itemprop="url" rel="index"><span itemprop="name">TypeScript</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+          
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">本文字数：</span>
+              
+              <span>4.1k</span>
+            </span>
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <pre><code>状态: 初稿
+</code></pre><h1 id="介绍" class="heading-control"><a href="#介绍" class="headerlink" title="介绍"></a>介绍<a class="heading-anchor" href="#介绍" aria-hidden="true"></a></h1><!-- # Introduction -->
+<div class="translation-block" title="
+One of TypeScript&amp;#39;s core principles is that type checking focuses on the *shape* that values have.
+This is sometimes called &amp;quot;duck typing&amp;quot; or &amp;quot;structural subtyping&amp;quot;.
+In TypeScript, interfaces fill the role of naming these types, and are a powerful way of defining contracts within your code as well as contracts with code outside of your project.
+"><p>TypeScript 的一个核心理念是: 类型检查只关注值的<em>形体</em>.<br>有时我们叫它鸭式类型, 或结构化子类型.<br>在 TypeScript 中, 接口不仅起着命名类型的作用, 同时也定义项目内外一致遵守的约定.</p></div>
+<a id="more"></a>
+<h1 id="接口初探" class="heading-control"><a href="#接口初探" class="headerlink" title="接口初探"></a>接口初探<a class="heading-anchor" href="#接口初探" aria-hidden="true"></a></h1><!-- # Our First Interface -->
+<div class="translation-block" title="
+The easiest way to see how interfaces work is to start with a simple example:
+"><p>我们先通过一个简单的例子来看接口是如何工作的:</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">printLabel</span>(<span class="params">labeledObj: &#123; label: <span class="built_in">string</span> &#125;</span>) </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(labeledObj.label);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> myObj = &#123;size: <span class="number">10</span>, label: <span class="string">"Size 10 Object"</span>&#125;;</span><br><span class="line">printLabel(myObj);</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+The type checker checks the call to `printLabel`.
+The `printLabel` function has a single parameter that requires that the object passed in has a property called `label` of type `string`.
+Notice that our object actually has more properties than this, but the compiler only checks that *at least* the ones required are present and match the types required.
+There are some cases where TypeScript isn&amp;#39;t as lenient, which we&amp;#39;ll cover in a bit.
+
+We can write the same example again, this time using an interface to describe the requirement of having the `label` property that is a string:
+"><p>类型检查器检查对方法 <code>printLabel</code> 的调用.<br>这个函数有一个参数, 它要求实参有一个类型为 <code>string</code> 的属性 <code>label</code>.<br>你可以看到我们的对象实际上还有一个属性 <code>size</code>, 但是编译器只关心必要属性存在, 类型一致.<br>编译器并不总是这么宽松, 后期再讲.</p>
+<p>重写我们的例子, 用接口来约定函数参数须满足的条件:</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">interface</span> LabeledValue &#123;</span><br><span class="line">    label: <span class="built_in">string</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">printLabel</span>(<span class="params">labeledObj: LabeledValue</span>) </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(labeledObj.label);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> myObj = &#123;size: <span class="number">10</span>, label: <span class="string">"Size 10 Object"</span>&#125;;</span><br><span class="line">printLabel(myObj);</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+The interface `LabeledValue` is a name we can now use to describe the requirement in the previous example.
+It still represents having a single property called `label` that is of type `string`.
+Notice we didn&amp;#39;t have to explicitly say that the object we pass to `printLabel` implements this interface like we might have to in other languages.
+Here, it&amp;#39;s only the shape that matters. If the object we pass to the function meets the requirements listed, then it&amp;#39;s allowed.
+
+It&amp;#39;s worth pointing out that the type checker does not require that these properties come in any sort of order, only that the properties the interface requires are present and have the required type.
+"><p>我们现在可以用接口名 <code>LabeledValue</code> 来描述上例函数参数的要求.<br>它同样表示函数参数要有一个类型为 <code>string</code> 的属性 <code>label</code>.<br>注意跟其他语言不一样, 我们没必要显式声明实参 <code>printLabel</code> 实现了接口.<br>TypeScript 只关注形体. 如果实参满足接口描述的形体, 函数调用就是有效的.</p>
+<p>类型检查器对属性的顺序亦不做要求, 重要的是接口属性已呈现, 类型一一对应.</p></div>
+<h1 id="可选属性" class="heading-control"><a href="#可选属性" class="headerlink" title="可选属性"></a>可选属性<a class="heading-anchor" href="#可选属性" aria-hidden="true"></a></h1><!-- # Optional Properties -->
+<div class="translation-block" title="
+Not all properties of an interface may be required.
+Some exist under certain conditions or may not be there at all.
+These optional properties are popular when creating patterns like &amp;quot;option bags&amp;quot; where you pass an object to a function that only has a couple of properties filled in.
+
+Here&amp;#39;s an example of this pattern:
+"><p>不是每个接口属性都被实际需要.<br>有的属性存在与否取决于特定条件.<br>“可选” 属性广泛应用于只给函数参数提供一部分属性的 “option bags” 等模式.</p>
+<p>让我们看一个应用该模式的例子:</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">interface</span> SquareConfig &#123;</span><br><span class="line">    color?: <span class="built_in">string</span>;</span><br><span class="line">    width?: <span class="built_in">number</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">createSquare</span>(<span class="params">config: SquareConfig</span>): </span>&#123;color: <span class="built_in">string</span>; area: <span class="built_in">number</span>&#125; &#123;</span><br><span class="line">    <span class="keyword">let</span> newSquare = &#123;color: <span class="string">"white"</span>, area: <span class="number">100</span>&#125;;</span><br><span class="line">    <span class="keyword">if</span> (config.color) &#123;</span><br><span class="line">        newSquare.color = config.color;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (config.width) &#123;</span><br><span class="line">        newSquare.area = config.width * config.width;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> newSquare;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> mySquare = createSquare(&#123;color: <span class="string">"black"</span>&#125;);</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+Interfaces with optional properties are written similar to other interfaces, with each optional property denoted by a `?` at the end of the property name in the declaration.
+
+The advantage of optional properties is that you can describe these possibly available properties while still also preventing use of properties that are not part of the interface.
+For example, had we mistyped the name of the `color` property in `createSquare`, we would get an error message letting us know:
+"><p>定义中紧跟属性名的问号 <code>?</code> 表明接口属性是 “可选” 的.</p>
+<p>可选属性的优势是你在避免访问接口不存在属性的同时声明偶尔可用的属性.<br>例如: 如果我们错误输入 <code>createSquare</code> 的属性 <code>color</code>, 编译器会提醒:</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">interface</span> SquareConfig &#123;</span><br><span class="line">    color?: <span class="built_in">string</span>;</span><br><span class="line">    width?: <span class="built_in">number</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">createSquare</span>(<span class="params">config: SquareConfig</span>): </span>&#123; color: <span class="built_in">string</span>; area: <span class="built_in">number</span> &#125; &#123;</span><br><span class="line">    <span class="keyword">let</span> newSquare = &#123;color: <span class="string">"white"</span>, area: <span class="number">100</span>&#125;;</span><br><span class="line">    <span class="keyword">if</span> (config.clor) &#123;</span><br><span class="line">        <span class="comment">// Error: Property 'clor' does not exist on type 'SquareConfig'</span></span><br><span class="line">        newSquare.color = config.clor;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (config.width) &#123;</span><br><span class="line">        newSquare.area = config.width * config.width;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> newSquare;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> mySquare = createSquare(&#123;color: <span class="string">"black"</span>&#125;);</span><br></pre></td></tr></table></figure>
+<h1 id="只读属性" class="heading-control"><a href="#只读属性" class="headerlink" title="只读属性"></a>只读属性<a class="heading-anchor" href="#只读属性" aria-hidden="true"></a></h1><!-- # Readonly properties -->
+<div class="translation-block" title="
+Some properties should only be modifiable when an object is first created.
+You can specify this by putting `readonly` before the name of the property:
+"><p>有的属性应该只能在创建时修改.<br>用 <code>readonly</code> 关键字声明一个 “只读” 属性:</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">interface</span> Point &#123;</span><br><span class="line">    readonly x: <span class="built_in">number</span>;</span><br><span class="line">    readonly y: <span class="built_in">number</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+You can construct a `Point` by assigning an object literal.
+After the assignment, `x` and `y` can&amp;#39;t be changed.
+"><p>你可以赋值对象字面量创建一个 <code>Point</code> 变量.<br><code>x</code>, <code>y</code> 在赋值后无法再改变.</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> p1: Point = &#123; x: <span class="number">10</span>, y: <span class="number">20</span> &#125;;</span><br><span class="line">p1.x = <span class="number">5</span>; <span class="comment">// error!</span></span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+TypeScript comes with a `ReadonlyArray&amp;lt;T&amp;gt;` type that is the same as `Array&amp;lt;T&amp;gt;` with all mutating methods removed, so you can make sure you don&amp;#39;t change your arrays after creation:
+"><p>TypeScript 附带的 <code>ReadonlyArray&lt;T&gt;</code> 将 <code>Array&lt;T&gt;</code> 所有可写方法移除, 你可以确保新创建的数组一直保持原状.</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> a: <span class="built_in">number</span>[] = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>];</span><br><span class="line"><span class="keyword">let</span> ro: ReadonlyArray&lt;<span class="built_in">number</span>&gt; = a;</span><br><span class="line">ro[<span class="number">0</span>] = <span class="number">12</span>; <span class="comment">// error!</span></span><br><span class="line">ro.push(<span class="number">5</span>); <span class="comment">// error!</span></span><br><span class="line">ro.length = <span class="number">100</span>; <span class="comment">// error!</span></span><br><span class="line">a = ro; <span class="comment">// error!</span></span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+On the last line of the snippet you can see that even assigning the entire `ReadonlyArray` back to a normal array is illegal.
+You can still override it with a type assertion, though:
+"><p>代码片段最后一行, 你可以看到把 <code>ReadonlyArray&lt;T&gt;</code> 赋值给普通数组也是非法的.<br>你可以用类型担保打破该限制:</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">a = ro <span class="keyword">as</span> <span class="built_in">number</span>[];</span><br></pre></td></tr></table></figure>
+<h2 id="readonly-对比-const" class="heading-control"><a href="#readonly-对比-const" class="headerlink" title="readonly 对比 const"></a><code>readonly</code> 对比 <code>const</code><a class="heading-anchor" href="#readonly-对比-const" aria-hidden="true"></a></h2><!-- ## `readonly` vs `const` -->
+<div class="translation-block" title="
+The easiest way to remember whether to use `readonly` or `const` is to ask whether you&amp;#39;re using it on a variable or a property.
+Variables use `const` whereas properties use `readonly`.
+"><p>选择 <code>readonly</code> 和 <code>const</code> 的原则很容易记住, 问问自己是要创建变量还是属性.<br><code>const</code> 修饰变量, <code>readonly</code> 修饰属性.</p></div>
+<h1 id="超量属性检查" class="heading-control"><a href="#超量属性检查" class="headerlink" title="超量属性检查"></a>超量属性检查<a class="heading-anchor" href="#超量属性检查" aria-hidden="true"></a></h1><!-- # Excess Property Checks -->
+<div class="translation-block" title="
+In our first example using interfaces, TypeScript lets us pass `{ size: number; label: string; }` to something that only expected a `{ label: string; }`.
+We also just learned about optional properties, and how they&amp;#39;re useful when describing so-called &amp;quot;option bags&amp;quot;.
+
+However, combining the two naively would allow an error to sneak in. For example, taking our last example using `createSquare`:
+"><p>在第一个运用接口的例子中, TypeScript 允许你把 <code>{ size: number; label: string; }</code> 传递给 <code>{ label: string; }</code>.<br>我们也学习了可选属性, 及它们在描述 “option bags” 模式方面的才能.</p>
+<p>然而, 不假思索组合二者有犯错可能. 以我们上个例子作为演示:</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">interface</span> SquareConfig &#123;</span><br><span class="line">    color?: <span class="built_in">string</span>;</span><br><span class="line">    width?: <span class="built_in">number</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">createSquare</span>(<span class="params">config: SquareConfig</span>): </span>&#123; color: <span class="built_in">string</span>; area: <span class="built_in">number</span> &#125; &#123;</span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> mySquare = createSquare(&#123; colour: <span class="string">"red"</span>, width: <span class="number">100</span> &#125;);</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+Notice the given argument to `createSquare` is spelled *`colour`* instead of `color`.
+In plain JavaScript, this sort of thing fails silently.
+
+You could argue that this program is correctly typed, since the `width` properties are compatible, there&amp;#39;s no `color` property present, and the extra `colour` property is insignificant.
+
+However, TypeScript takes the stance that there&amp;#39;s probably a bug in this code.
+Object literals get special treatment and undergo *excess property checking* when assigning them to other variables, or passing them as arguments.
+If an object literal has any properties that the &amp;quot;target type&amp;quot; doesn&amp;#39;t have, you&amp;#39;ll get an error:
+"><p>注意到我们把 <code>SqureConfig.color</code> 错拼成 <code>colour</code>.<br>原始 JavaScript 不能感知这类错误.</p>
+<p>该程序语法正确无误, <code>width</code> 属性是相容的, 缺失可选属性 <code>color</code>, 额外 <code>colour</code> 属性并不重要.</p>
+<p>然而, TypeScript 的立场是: 你的程序中可能隐藏 bug.<br>把对象字面量赋值给其他变量, 传递给函数参数参数, 都受到特殊对待 — 要通过超量属性检查.<br>当一个对象字面量含有<em>目的类型</em>不具备的属性, 你会收到错误提示:</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// error: Object literal may only specify known properties, but 'colour' does not exist in type 'SquareConfig'. Did you mean to write 'color'?</span></span><br><span class="line"><span class="keyword">let</span> mySquare = createSquare(&#123; colour: <span class="string">"red"</span>, width: <span class="number">100</span> &#125;);</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+Getting around these checks is actually really simple.
+The easiest method is to just use a type assertion:
+"><p>绕过超量属性检查并不复杂.<br>最直接的选项是类型担保:</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> mySquare = createSquare(&#123; width: <span class="number">100</span>, opacity: <span class="number">0.5</span> &#125; <span class="keyword">as</span> SquareConfig);</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+However, a better approach might be to add a string index signature if you&amp;#39;re sure that the object can have some extra properties that are used in some special way.
+If `SquareConfig` can have `color` and `width` properties with the above types, but could *also* have any number of other properties, then we could define it like so:
+"><p>话说回来, 如果真的有表示额外属性的需要, 添加一个字符串<strong>索引签名</strong>会更好.<br>如下定义 <code>SquareConfig</code>, 使它包含的额外属性数量不受限制:</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">interface</span> SquareConfig &#123;</span><br><span class="line">    color?: <span class="built_in">string</span>;</span><br><span class="line">    width?: <span class="built_in">number</span>;</span><br><span class="line">    [propName: <span class="built_in">string</span>]: <span class="built_in">any</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+We&amp;#39;ll discuss index signatures in a bit, but here we&amp;#39;re saying a `SquareConfig` can have any number of properties, and as long as they aren&amp;#39;t `color` or `width`, their types don&amp;#39;t matter.
+
+One final way to get around these checks, which might be a bit surprising, is to assign the object to another variable:
+Since `squareOptions` won&amp;#39;t undergo excess property checks, the compiler won&amp;#39;t give you an error.
+"><p>我们很快会认识索引签名, 在这里, 它的意思是除 <code>color</code>, <code>width</code> 外, <code>SquareConfig</code> 可以有任何属性, 它们的类型并不重要.</p>
+<p>还有一种方法绕过检查, 很是巧妙 — 先把字面量赋值给一个变量.<br>编译器不会对变量 <code>squareOptions</code> 执行超量属性检查, 这错误也就消除了.</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> squareOptions = &#123; colour: <span class="string">"red"</span>, width: <span class="number">100</span> &#125;;</span><br><span class="line"><span class="keyword">let</span> mySquare = createSquare(squareOptions);</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+The above workaround will work as long as you have a common property between `squareOptions` and `SquareConfig`.
+In this example, it was the property `width`. It will however, fail if the variable does not have any common object property. For example:
+"><p>只要 <code>squareOptions</code> 和 <code>SquareConfig</code> 有共有属性, 上例就能编译.<br>在这个例子中, 共有属性是 <code>width</code>. 而下例恰恰相反, 因为 <code>squareOptions</code> 与 <code>SquareConfig</code> 没有任何共有属性:</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> squareOptions = &#123; colour: <span class="string">"red"</span> &#125;;</span><br><span class="line"><span class="keyword">let</span> mySquare = createSquare(squareOptions);</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+Keep in mind that for simple code like above, you probably shouldn&amp;#39;t be trying to &amp;quot;get around&amp;quot; these checks.
+For more complex object literals that have methods and hold state, you might need to keep these techniques in mind, but a majority of excess property errors are actually bugs.
+That means if you&amp;#39;re running into excess property checking problems for something like option bags, you might need to revise some of your type declarations.
+In this instance, if it&amp;#39;s okay to pass an object with both a `color` or `colour` property to `createSquare`, you should fix up the definition of `SquareConfig` to reflect that.
+"><p>注意就算是修改以上简单代码, 也最好不要想办法绕过检查.<br>在更复杂的, 包含方法和状态对象字面量前, 永远把我们介绍的方法当成思维训练, 大量超量属性问题都证明是实实在在的 bug.<br>假如你的 option bags 遇到超量属性问题, 首先考察能否修改一部分类型定义.<br>对于我们的例子, 如果 <code>color</code> 和 <code>colour</code> 都可接受, 我们应该修改 <code>SquareConfig</code> 的定义以反映该意愿.</p></div>
+<h1 id="函数类型" class="heading-control"><a href="#函数类型" class="headerlink" title="函数类型"></a>函数类型<a class="heading-anchor" href="#函数类型" aria-hidden="true"></a></h1><!-- # Function Types -->
+<div class="translation-block" title="
+Interfaces are capable of describing the wide range of shapes that JavaScript objects can take.
+In addition to describing an object with properties, interfaces are also capable of describing function types.
+
+To describe a function type with an interface, we give the interface a call signature.
+This is like a function declaration with only the parameter list and return type given. Each parameter in the parameter list requires both name and type.
+"><p>接口可以描述多种供 JavaScript 对象参照的形体.<br>除了描述对象(具备哪些属性), 接口也能描述函数.</p>
+<p>要用接口描述函数, 我们把函数的调用签名放到接口中.<br>调用签名只有参数列表和返回值类型, 像一个没有实现的函数. 每个参数都需要参数名和类型.</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">interface</span> SearchFunc &#123;</span><br><span class="line">    (source: <span class="built_in">string</span>, subString: <span class="built_in">string</span>): <span class="built_in">boolean</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+Once defined, we can use this function type interface like we would other interfaces.
+Here, we show how you can create a variable of a function type and assign it a function value of the same type.
+"><p>一旦定义, 我们就可以使用这个函数类型接口.<br>这里, 我们演示创建一个函数类型变量, 再赋值一个同类型函数给它.</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> mySearch: SearchFunc;</span><br><span class="line">mySearch = <span class="function"><span class="keyword">function</span>(<span class="params">source: <span class="built_in">string</span>, subString: <span class="built_in">string</span></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">let</span> result = source.search(subString);</span><br><span class="line">    <span class="keyword">return</span> result &gt; <span class="number">-1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+For function types to correctly type check, the names of the parameters do not need to match.
+We could have, for example, written the above example like this:
+"><p>实际函数的参数名不需要与调用签名匹配.<br>我们也可以如下书写以上片段:</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> mySearch: SearchFunc;</span><br><span class="line">mySearch = <span class="function"><span class="keyword">function</span>(<span class="params">src: <span class="built_in">string</span>, sub: <span class="built_in">string</span></span>): <span class="title">boolean</span> </span>&#123;</span><br><span class="line">    <span class="keyword">let</span> result = src.search(sub);</span><br><span class="line">    <span class="keyword">return</span> result &gt; <span class="number">-1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+Function parameters are checked one at a time, with the type in each corresponding parameter position checked against each other.
+If you do not want to specify types at all, TypeScript&amp;#39;s contextual typing can infer the argument types since the function value is assigned directly to a variable of type `SearchFunc`.
+Here, also, the return type of our function expression is implied by the values it returns (here `false` and `true`).
+"><p>编译器按序造访每个函数参数, 确认相对参数位置类型正确匹配.<br>这里实际函数直接赋值的变量 <code>mySearch</code> 类型确定, 如果你懒得指定参数类型, TypeScript <strong>上下文类型推导</strong>功能可以替你推出你函数每个参数的类型.<br>函数返回值类型同样可以通过返回表达式(false 或 true)推导.</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> mySearch: SearchFunc;</span><br><span class="line">mySearch = <span class="function"><span class="keyword">function</span>(<span class="params">src, sub</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">let</span> result = src.search(sub);</span><br><span class="line">    <span class="keyword">return</span> result &gt; <span class="number">-1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+Had the function expression returned numbers or strings, the type checker would have made an error that indicates return type doesn&amp;#39;t match the return type described in the `SearchFunc` interface.
+"><p>假如函数返回 <code>number</code> 或 <code>string</code>, 类型检查器会敏锐地指出返回值类型与接口描述不匹配.</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> mySearch: SearchFunc;</span><br><span class="line"></span><br><span class="line"><span class="comment">// error: Type '(src: string, sub: string) =&gt; string' is not assignable to type 'SearchFunc'.</span></span><br><span class="line"><span class="comment">// Type 'string' is not assignable to type 'boolean'.</span></span><br><span class="line">mySearch = <span class="function"><span class="keyword">function</span>(<span class="params">src, sub</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">let</span> result = src.search(sub);</span><br><span class="line">  <span class="keyword">return</span> <span class="string">"string"</span>;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<h1 id="可索引类型" class="heading-control"><a href="#可索引类型" class="headerlink" title="可索引类型"></a>可索引类型<a class="heading-anchor" href="#可索引类型" aria-hidden="true"></a></h1><!-- # Indexable Types -->
+<div class="translation-block" title="
+Similarly to how we can use interfaces to describe function types, we can also describe types that we can &amp;quot;index into&amp;quot; like `a[10]`, or `ageMap[&amp;quot;daniel&amp;quot;]`.
+Indexable types have an *index signature* that describes the types we can use to index into the object, along with the corresponding return types when indexing.
+Let&amp;#39;s take an example:
+"><p>接口还可以表明一个类型是”可索引”的, 表达式 <code>a[10]</code>, <code>ageMap[&quot;daniel&quot;]</code> 只适用于可索引对象.<br>可索引类型都有一个<strong>索引签名</strong>, 索引签名象征索引类型的特殊”身份”, 声明索引操作的返回值类型.<br>请看下例:</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">interface</span> StringArray &#123;</span><br><span class="line">    [index: <span class="built_in">number</span>]: <span class="built_in">string</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> myArray: StringArray;</span><br><span class="line">myArray = [<span class="string">"Bob"</span>, <span class="string">"Fred"</span>];</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> myStr: <span class="built_in">string</span> = myArray[<span class="number">0</span>];</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+Above, we have a `StringArray` interface that has an index signature.
+This index signature states that when a `StringArray` is indexed with a `number`, it will return a `string`.
+
+There are two types of supported index signatures: string and number.
+It is possible to support both types of indexers, but the type returned from a numeric indexer must be a subtype of the type returned from the string indexer.
+This is because when indexing with a `number`, JavaScript will actually convert that to a `string` before indexing into an object.
+That means that indexing with `100` (a `number`) is the same thing as indexing with `&amp;quot;100&amp;quot;` (a `string`), so the two need to be consistent.
+"><p>上面, <code>StringArray</code> 接口有一个索引签名.<br>它的索引签名声明如果用 <code>number</code> 去索引 <code>StringArray</code>, 它返回一个 <code>string</code>.</p>
+<p>有两种索引签名类型: <code>string 型</code> 和 <code>number 型</code> (译注: “型”也对应它们的参数类型).<br>两种索引签名可以共存, 但有一个前提: <code>number 型</code>索引签名的返回值必须是 <code>string 型</code>索引签名返回值的子类型.<br>这是因为在操作正式提交前, TypeScript 自动将 <code>number 型</code>索引参数转换成 <code>string</code>.<br>即: 用 <code>100</code> (<code>number</code>) 索引等同于用 <code>&quot;100&quot;</code> (<code>string</code>) 索引, 有必要维持两个签名一致性.</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> Animal &#123;</span><br><span class="line">    name: <span class="built_in">string</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">class</span> Dog <span class="keyword">extends</span> Animal &#123;</span><br><span class="line">    breed: <span class="built_in">string</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Error: indexing with a numeric string might get you a completely separate type of Animal!</span></span><br><span class="line"><span class="keyword">interface</span> NotOkay &#123;</span><br><span class="line">    [x: <span class="built_in">number</span>]: Animal;</span><br><span class="line">    [x: <span class="built_in">string</span>]: Dog;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+While string index signatures are a powerful way to describe the &amp;quot;dictionary&amp;quot; pattern, they also enforce that all properties match their return type.
+This is because a string index declares that `obj.property` is also available as `obj[&amp;quot;property&amp;quot;]`.
+In the following example, `name`&amp;#39;s type does not match the string index&amp;#39;s type, and the type checker gives an error:
+"><p><code>string 型</code>索引签名是描述”字典”模式的有力途径, 它强调所有属性满足自己的返回值类型.<br>因为 <code>string 型</code>索引签名表示所有 <code>obj.property</code> 也以表达式 <code>obj[&quot;property&quot;]</code> 呈现.<br>下例, 属性 <code>name</code> 的类型不满足 <code>string 型</code>索引签名返回值类型, 于是类型检查器报错:</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">interface</span> NumberDictionary &#123;</span><br><span class="line">    [index: <span class="built_in">string</span>]: <span class="built_in">number</span>;</span><br><span class="line">    length: <span class="built_in">number</span>;    <span class="comment">// ok, length is a number</span></span><br><span class="line">    name: <span class="built_in">string</span>;      <span class="comment">// error, the type of 'name' is not a subtype of the indexer</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+However, properties of different types are acceptable if the index signature is a union of the property types:
+"><p>如果 <code>string 型</code>索引签名返回值类型是一个联合, 你就可以定义有限种不同类型的属性了.</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">interface</span> NumberOrStringDictionary &#123;</span><br><span class="line">    [index: <span class="built_in">string</span>]: <span class="built_in">number</span> | <span class="built_in">string</span>;</span><br><span class="line">    length: <span class="built_in">number</span>;    <span class="comment">// ok, length is a number</span></span><br><span class="line">    name: <span class="built_in">string</span>;      <span class="comment">// ok, name is a string</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+Finally, you can make index signatures `readonly` in order to prevent assignment to their indices:
+"><p>最后, 用 <code>readonly</code> 修饰索引签名防止索引表达式成为左值:</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">interface</span> ReadonlyStringArray &#123;</span><br><span class="line">    readonly [index: <span class="built_in">number</span>]: <span class="built_in">string</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">let</span> myArray: ReadonlyStringArray = [<span class="string">"Alice"</span>, <span class="string">"Bob"</span>];</span><br><span class="line">myArray[<span class="number">2</span>] = <span class="string">"Mallory"</span>; <span class="comment">// error!</span></span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+You can&amp;#39;t set `myArray[2]` because the index signature is readonly.
+"><p>索引签名是”只读”的, 你不能修改 <code>myArray[2]</code>.</p></div>
+<h1 id="类" class="heading-control"><a href="#类" class="headerlink" title="类"></a>类<a class="heading-anchor" href="#类" aria-hidden="true"></a></h1><!-- # Class Types -->
+<h2 id="实现接口" class="heading-control"><a href="#实现接口" class="headerlink" title="实现接口"></a>实现接口<a class="heading-anchor" href="#实现接口" aria-hidden="true"></a></h2><!-- ## Implementing an interface -->
+<div class="translation-block" title="
+One of the most common uses of interfaces in languages like C# and Java, that of explicitly enforcing that a class meets a particular contract, is also possible in TypeScript.
+"><p>回顾 C#, Java 等语言, 接口的一个惯用法是显式要求一个类必须满足特定规范, 这同样适用于 TypeScript.</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">interface</span> ClockInterface &#123;</span><br><span class="line">    currentTime: <span class="built_in">Date</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> Clock <span class="keyword">implements</span> ClockInterface &#123;</span><br><span class="line">    currentTime: <span class="built_in">Date</span> = <span class="keyword">new</span> <span class="built_in">Date</span>();</span><br><span class="line">    <span class="keyword">constructor</span>(<span class="params">h: <span class="built_in">number</span>, m: <span class="built_in">number</span></span>) &#123; &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+You can also describe methods in an interface that are implemented in the class, as we do with `setTime` in the below example:
+"><p>你可以在接口中声明类必须实现的方法, 下例 <code>setTime</code> 展现该思想:</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">interface</span> ClockInterface &#123;</span><br><span class="line">    currentTime: <span class="built_in">Date</span>;</span><br><span class="line">    setTime(d: <span class="built_in">Date</span>): <span class="built_in">void</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> Clock <span class="keyword">implements</span> ClockInterface &#123;</span><br><span class="line">    currentTime: <span class="built_in">Date</span> = <span class="keyword">new</span> <span class="built_in">Date</span>();</span><br><span class="line">    setTime(d: <span class="built_in">Date</span>) &#123;</span><br><span class="line">        <span class="keyword">this</span>.currentTime = d;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">constructor</span>(<span class="params">h: <span class="built_in">number</span>, m: <span class="built_in">number</span></span>) &#123; &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+Interfaces describe the public side of the class, rather than both the public and private side.
+This prohibits you from using them to check that a class also has particular types for the private side of the class instance.
+"><p>接口只描述一个类公开的那部分.<br>你不能借助它确保一个实现类包含特定私有属性和方法.</p></div>
+<h2 id="静态面-实例面" class="heading-control"><a href="#静态面-实例面" class="headerlink" title="静态面, 实例面"></a>静态面, 实例面<a class="heading-anchor" href="#静态面-实例面" aria-hidden="true"></a></h2><!-- ## Difference between the static and instance sides of classes -->
+<div class="translation-block" title="
+When working with classes and interfaces, it helps to keep in mind that a class has *two* types: the type of the static side and the type of the instance side.
+You may notice that if you create an interface with a construct signature and try to create a class that implements this interface you get an error:
+"><p>为了正确使用类和接口, 我们还需要理解每个类的<strong>静态面</strong>与<strong>实例面</strong>.<br>下例是错的, 因为它试图以接口规定实现类构造器方法的形式.</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">interface</span> ClockConstructor &#123;</span><br><span class="line">    <span class="keyword">new</span> (hour: <span class="built_in">number</span>, minute: <span class="built_in">number</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> Clock <span class="keyword">implements</span> ClockConstructor &#123;</span><br><span class="line">    currentTime: <span class="built_in">Date</span>;</span><br><span class="line">    <span class="keyword">constructor</span>(<span class="params">h: <span class="built_in">number</span>, m: <span class="built_in">number</span></span>) &#123; &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+This is because when a class implements an interface, only the instance side of the class is checked.
+Since the constructor sits in the static side, it is not included in this check.
+
+Instead, you would need to work with the static side of the class directly.
+In this example, we define two interfaces, `ClockConstructor` for the constructor and `ClockInterface` for the instance methods.
+Then, for convenience, we define a constructor function `createClock` that creates instances of the type that is passed to it:
+"><p>原因是编译器在评估一个类对接口的实现程度时, 只检查类的实例面.<br>而构造器属于类的静态面, 不包括在内.</p>
+<p>所以, 静态面应当单独考虑.<br>作为示例, 我们定义两个接口, <code>ClockConstructor</code> 用于构造器, 而 <code>ClockInterface</code> 用于实例方法.<br>然后, 为了方便, 我们定义工厂函数 <code>createClock</code>, 它实例化作为它参数的类型:</p></div>
+<div class="translation-block" title="
+看起来 new 和 constructor 作为方法名是一回事.
+"><p>笔记</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">interface</span> ClockConstructor &#123;</span><br><span class="line">    <span class="keyword">new</span> (hour: <span class="built_in">number</span>, minute: <span class="built_in">number</span>): ClockInterface;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">interface</span> ClockInterface &#123;</span><br><span class="line">    tick(): <span class="built_in">void</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">createClock</span>(<span class="params">ctor: ClockConstructor, hour: <span class="built_in">number</span>, minute: <span class="built_in">number</span></span>): <span class="title">ClockInterface</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> ctor(hour, minute);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> DigitalClock <span class="keyword">implements</span> ClockInterface &#123;</span><br><span class="line">    <span class="keyword">constructor</span>(<span class="params">h: <span class="built_in">number</span>, m: <span class="built_in">number</span></span>) &#123; &#125;</span><br><span class="line">    tick() &#123;</span><br><span class="line">        <span class="built_in">console</span>.log(<span class="string">"beep beep"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">class</span> AnalogClock <span class="keyword">implements</span> ClockInterface &#123;</span><br><span class="line">    <span class="keyword">constructor</span>(<span class="params">h: <span class="built_in">number</span>, m: <span class="built_in">number</span></span>) &#123; &#125;</span><br><span class="line">    tick() &#123;</span><br><span class="line">        <span class="built_in">console</span>.log(<span class="string">"tick tock"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> digital = createClock(DigitalClock, <span class="number">12</span>, <span class="number">17</span>);</span><br><span class="line"><span class="keyword">let</span> analog = createClock(AnalogClock, <span class="number">7</span>, <span class="number">32</span>);</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+Because `createClock`&amp;#39;s first parameter is of type `ClockConstructor`, in `createClock(AnalogClock, 7, 32)`, it checks that `AnalogClock` has the correct constructor signature.
+
+Another simple way is to use class expressions:
+"><p><code>createClock</code> 的第一个参数类型是 <code>ClockConstructor</code>, 调用 <code>createClock(AnalogClock, 7, 32)</code> 的参数 <code>AnalogClock</code> 具有符合接口要求的构造器方法.</p>
+<p>另一种替代方法是<strong>类表达式</strong>:</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">interface</span> ClockConstructor &#123;</span><br><span class="line">  <span class="keyword">new</span> (hour: <span class="built_in">number</span>, minute: <span class="built_in">number</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">interface</span> ClockInterface &#123;</span><br><span class="line">  tick();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> Clock: ClockConstructor = <span class="keyword">class</span> Clock <span class="keyword">implements</span> ClockInterface &#123;</span><br><span class="line">  <span class="keyword">constructor</span>(<span class="params">h: <span class="built_in">number</span>, m: <span class="built_in">number</span></span>) &#123;&#125;</span><br><span class="line">  tick() &#123;</span><br><span class="line">      <span class="built_in">console</span>.log(<span class="string">"beep beep"</span>);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="从接口继承" class="heading-control"><a href="#从接口继承" class="headerlink" title="从接口继承"></a>从接口继承<a class="heading-anchor" href="#从接口继承" aria-hidden="true"></a></h1><!-- # Extending Interfaces -->
+<div class="translation-block" title="
+Like classes, interfaces can extend each other.
+This allows you to copy the members of one interface into another, which gives you more flexibility in how you separate your interfaces into reusable components.
+"><p>一个接口可以继承(译注: 原文为扩展, 这里选继承, 以免与扩展操作相混淆)另一个接口.<br>继承即从另一个接口拷贝成员, 我们经常将大接口拆分成可重用的多个部分, 继承增强了操作的灵活性.</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">interface</span> Shape &#123;</span><br><span class="line">    color: <span class="built_in">string</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">interface</span> Square <span class="keyword">extends</span> Shape &#123;</span><br><span class="line">    sideLength: <span class="built_in">number</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> square = &#123;&#125; <span class="keyword">as</span> Square;</span><br><span class="line">square.color = <span class="string">"blue"</span>;</span><br><span class="line">square.sideLength = <span class="number">10</span>;</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+An interface can extend multiple interfaces, creating a combination of all of the interfaces.
+"><p>一个接口可以继承多个其他接口, 把所有成员集中到一起.</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">interface</span> Shape &#123;</span><br><span class="line">    color: <span class="built_in">string</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">interface</span> PenStroke &#123;</span><br><span class="line">    penWidth: <span class="built_in">number</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">interface</span> Square <span class="keyword">extends</span> Shape, PenStroke &#123;</span><br><span class="line">    sideLength: <span class="built_in">number</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> square = &#123;&#125; <span class="keyword">as</span> Square;</span><br><span class="line">square.color = <span class="string">"blue"</span>;</span><br><span class="line">square.sideLength = <span class="number">10</span>;</span><br><span class="line">square.penWidth = <span class="number">5.0</span>;</span><br></pre></td></tr></table></figure>
+<h1 id="混合类型" class="heading-control"><a href="#混合类型" class="headerlink" title="混合类型"></a>混合类型<a class="heading-anchor" href="#混合类型" aria-hidden="true"></a></h1><!-- # Hybrid Types -->
+<div class="translation-block" title="
+As we mentioned earlier, interfaces can describe the rich types present in real world JavaScript.
+Because of JavaScript&amp;#39;s dynamic and flexible nature, you may occasionally encounter an object that works as a combination of some of the types described above.
+
+One such example is an object that acts as both a function and an object, with additional properties:
+"><p>我们知道, 接口能描述 JavaScript 丰富的类型表示法.<br>出于 JavaScript 动态, 灵活两大天性, 你偶尔会碰到融合上述多种工作方式的对象.</p>
+<p>一种情况是一个对象既有属性, 又如同函数那样被调用:</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">interface</span> Counter &#123;</span><br><span class="line">    (start: <span class="built_in">number</span>): <span class="built_in">string</span>;</span><br><span class="line">    interval: <span class="built_in">number</span>;</span><br><span class="line">    reset(): <span class="built_in">void</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">getCounter</span>(<span class="params"></span>): <span class="title">Counter</span> </span>&#123;</span><br><span class="line">    <span class="keyword">let</span> counter = (<span class="function"><span class="keyword">function</span> (<span class="params">start: <span class="built_in">number</span></span>) </span>&#123; &#125;) <span class="keyword">as</span> Counter;</span><br><span class="line">    counter.interval = <span class="number">123</span>;</span><br><span class="line">    counter.reset = <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123; &#125;;</span><br><span class="line">    <span class="keyword">return</span> counter;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> c = getCounter();</span><br><span class="line">c(<span class="number">10</span>);</span><br><span class="line">c.reset();</span><br><span class="line">c.interval = <span class="number">5.0</span>;</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+When interacting with 3rd-party JavaScript, you may need to use patterns like the above to fully describe the shape of the type.
+"><p>在和第三方 JavaScript 交互的过程中, 你可能要用到以上模式, 才能全面描述一个类型的形体.</p></div>
+<h1 id="从类继承" class="heading-control"><a href="#从类继承" class="headerlink" title="从类继承"></a>从类继承<a class="heading-anchor" href="#从类继承" aria-hidden="true"></a></h1><!-- # Interfaces Extending Classes -->
+<div class="translation-block" title="
+When an interface type extends a class type it inherits the members of the class but not their implementations.
+It is as if the interface had declared all of the members of the class without providing an implementation.
+Interfaces inherit even the private and protected members of a base class.
+This means that when you create an interface that extends a class with private or protected members, that interface type can only be implemented by that class or a subclass of it.
+
+This is useful when you have a large inheritance hierarchy, but want to specify that your code works with only subclasses that have certain properties.
+The subclasses don&amp;#39;t have to be related besides inheriting from the base class.
+For example:
+"><p>从类继承的接口继承所有类成员, 但不保留它们的实现.<br>如果形象化地把类比作建筑物, 从类继承的接口就是一份施工蓝图的副本.<br>上述”所有类成员”, 包括被继承类所有私有和保护成员.<br>包含私有或保护成员的接口适用范围窄于普通接口 — 只有被继承类的子类才能实现它.</p>
+<p>较大继承层次结构将从该功能获益, 你可以限制某些代码只服务于具有特定属性集的子类.<br>这些子类除了继承自同一个基类, 不需要有别的关联.<br>举例如下:</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> Control &#123;</span><br><span class="line">    <span class="keyword">private</span> state: <span class="built_in">any</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">interface</span> SelectableControl <span class="keyword">extends</span> Control &#123;</span><br><span class="line">    select(): <span class="built_in">void</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> Button <span class="keyword">extends</span> Control <span class="keyword">implements</span> SelectableControl &#123;</span><br><span class="line">    select() &#123; &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> TextBox <span class="keyword">extends</span> Control &#123;</span><br><span class="line">    select() &#123; &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Error: Property 'state' is missing in type 'Image'.</span></span><br><span class="line"><span class="keyword">class</span> Image <span class="keyword">implements</span> SelectableControl &#123;</span><br><span class="line">    <span class="keyword">private</span> state: <span class="built_in">any</span>;</span><br><span class="line">    select() &#123; &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> Location &#123;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+In the above example, `SelectableControl` contains all of the members of `Control`, including the private `state` property.
+Since `state` is a private member it is only possible for descendants of `Control` to implement `SelectableControl`.
+This is because only descendants of `Control` will have a `state` private member that originates in the same declaration, which is a requirement for private members to be compatible.
+
+Within the `Control` class it is possible to access the `state` private member through an instance of `SelectableControl`.
+Effectively, a `SelectableControl` acts like a `Control` that is known to have a `select` method.
+The `Button` and `TextBox` classes are subtypes of `SelectableControl` (because they both inherit from `Control` and have a `select` method), but the `Image` and `Location` classes are not.
+"><p>上例中, <code>SelectableControl</code> 包含 <code>Control</code> 所有成员, 包括 <code>state</code>.<br>而 <code>state</code> 是私有的, 只有 <code>Control</code> 的子类才有可以继承它.<br>这是因为只有 <code>Control</code> 子类才含有与 <code>SelectableControl</code> 接口同源的 <code>state</code> 私有属性, 这是体现私有属性相容的必要条件.</p>
+<p>在 <code>Control</code> 类内部, 你可以访问一个 <code>SelectableControl</code> 实例的私有成员 <code>state</code>.<br>实际上, <code>SelectableControl</code> 实例用起来跟 <code>Control</code> 一样, 我们还知道它有一个 <code>select</code> 方法.<br><code>Button</code>, <code>TextBox</code> 都是 <code>SelectableControl</code> 的子类 (因为它们都继承自 <code>Control</code>, 有 <code>select</code> 方法), 相反, <code>Image</code> 和 <code>Location</code> 类都不是 <code>SelectableControl</code> 的子类.</p></div>
+
+    </div>
+
+    
+    
+    
+        
+      
+        <div id="reward-container">
+  <div>如果这篇文章对您有用，可以考虑打赏:)</div>
+  <button id="reward-button" disable="enable" onclick="var qr = document.getElementById(&quot;qr&quot;); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+        
+      
+      <div style="display: inline-block">
+        <img src="/images/wechatpay.png" alt="Hyan Lee 微信支付">
+        <p>微信支付</p>
+      </div>
+
+  </div>
+</div>
+
+      
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>Hyan Lee</li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://hyan23.org/2019/11/20/ts-interfaces/" title="接口">https://hyan23.org/2019/11/20/ts-interfaces/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！</li>
+</ul>
+</div>
+
+      
+
+      <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+              
+                <a href="/2019/11/06/ts-variable-declarations/" rel="next" title="变量定义">
+                  <i class="fa fa-chevron-left"></i> 变量定义
+                </a>
+              
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+              
+                <a href="/2019/11/20/ts-classes/" rel="prev" title="类">
+                  类 <i class="fa fa-chevron-right"></i>
+                </a>
+              
+            </div>
+          </div>
+        
+      </footer>
+    
+  </div>
+  
+  
+  
+  </article>
+
+  </div>
+
+
+          </div>
+          
+    
+    <div class="comments" id="gitalk-container"></div>
+  
+
+        </div>
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+        
+        
+        
+        
+      
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#介绍"><span class="nav-number">1.</span> <span class="nav-text">介绍</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#接口初探"><span class="nav-number">2.</span> <span class="nav-text">接口初探</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#可选属性"><span class="nav-number">3.</span> <span class="nav-text">可选属性</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#只读属性"><span class="nav-number">4.</span> <span class="nav-text">只读属性</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#readonly-对比-const"><span class="nav-number">4.1.</span> <span class="nav-text">readonly 对比 const</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#超量属性检查"><span class="nav-number">5.</span> <span class="nav-text">超量属性检查</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#函数类型"><span class="nav-number">6.</span> <span class="nav-text">函数类型</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#可索引类型"><span class="nav-number">7.</span> <span class="nav-text">可索引类型</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#类"><span class="nav-number">8.</span> <span class="nav-text">类</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#实现接口"><span class="nav-number">8.1.</span> <span class="nav-text">实现接口</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#静态面-实例面"><span class="nav-number">8.2.</span> <span class="nav-text">静态面, 实例面</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#从接口继承"><span class="nav-number">9.</span> <span class="nav-text">从接口继承</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#混合类型"><span class="nav-number">10.</span> <span class="nav-text">混合类型</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#从类继承"><span class="nav-number">11.</span> <span class="nav-text">从类继承</span></a></li></ol></div>
+        
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image"
+      src="/images/avatar2.png"
+      alt="Hyan Lee">
+  <p class="site-author-name" itemprop="name">Hyan Lee</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">31</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-categories">
+        
+          
+            <a href="/categories/">
+          
+        
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">分类</span>
+        </a>
+      </div>
+    
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+      
+      
+        
+      
+      
+        
+      
+        <a href="https://github.com/hyan23" title="GitHub &rarr; https://github.com/hyan23" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+    
+      <span class="links-of-author-item">
+      
+      
+        
+      
+      
+        
+      
+        <a href="mailto:hyan23lee@hotmail.com" title="E-Mail &rarr; mailto:hyan23lee@hotmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+    
+      <span class="links-of-author-item">
+      
+      
+        
+      
+      
+        
+      
+        <a href="https://t.me/hyan23" title="Telegram &rarr; https://t.me/hyan23" rel="noopener" target="_blank"><i class="fa fa-fw fa-telegram"></i>Telegram</a>
+      </span>
+    
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    
+  
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+      
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2017 – <span itemprop="copyrightYear">2020</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Hyan Lee</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    
+    <span title="站点总字数">118k</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v3.9.0</div>
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js?v=3.1.0"></script>
+  <script src="//cdn.jsdelivr.net/npm/medium-zoom@1/dist/medium-zoom.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+<script src="/js/utils.js?v=7.4.0"></script>
+<script src="/js/schemes/pisces.js?v=7.4.0"></script>
+<script src="/js/next-boot.js?v=7.4.0"></script>
+
+
+
+  
+  <script>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+    mermaid.initialize({
+      theme: 'forest',
+      logLevel: 3,
+      flowchart: { curve: 'linear' },
+      gantt: { axisFormat: '%m/%d/%Y' },
+      sequence: { actorMargin: 50 }
+    });
+  }, window.mermaid);
+}
+</script>
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID: '442da4785490db3ece48',
+      clientSecret: '3bfa2829a34371ca37db636917e791d114bd338c',
+      repo: 'blog-comments',
+      owner: 'hyan23',
+      admin: ['hyan23'],
+      id: '7756f0bb1d79de245f027fec53a7d922',
+        language: window.navigator.language || window.navigator.userLanguage,
+      
+      distractionFreeMode: 'true'
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+</script>
+
+</body>
+</html>

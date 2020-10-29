@@ -1,0 +1,1084 @@
+<!DOCTYPE html>
+
+
+
+
+
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/favicon/apple-touch-icon.png?v=7.4.0">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon/favicon-32x32.png?v=7.4.0">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon/favicon-16x16.png?v=7.4.0">
+  <link rel="mask-icon" href="/images/favicon/safari-pinned-tab.svg?v=7.4.0" color="#222">
+  <link rel="manifest" href="/images/favicon/site.webmanifest">
+  <meta name="msapplication-config" content="/images/favicon/browserconfig.xml">
+  <meta http-equiv="Cache-Control" content="no-transform">
+  <meta http-equiv="Cache-Control" content="no-siteapp">
+
+<link rel="stylesheet" href="/css/main.css?v=7.4.0">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '7.4.0',
+    exturl: false,
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false},
+    copycode: {"enable":false,"show_result":false,"style":null},
+    back2top: {"enable":true,"sidebar":true,"scrollpercent":false},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: true,
+    lazyload: true,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: "",
+      labels: ""
+    },
+    localsearch: {"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: '',
+    motion: {"enable":false},
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="状态: 初稿   译注: 为便于区分, 在本章, 原文 property 译做对象属性, attribute 译做标签属性.  介绍 JSX 是一种类 XML 可嵌入语法.最终它会被转换成有效的 JavaScript 代码, 转换的语义取决于具体实现.JSX 随 React 被广为接受, 从此也出现了很多其他实现.TypeScript 支持嵌入, 类型检查, 直接向 JavaScript 编译 J">
+<meta name="keywords" content="博客,个人博客,日志,在线工具">
+<meta property="og:type" content="article">
+<meta property="og:title" content="JSX">
+<meta property="og:url" content="https://hyan23.org/2019/11/20/ts-jsx/index.html">
+<meta property="og:site_name" content="Hyan Lee">
+<meta property="og:description" content="状态: 初稿   译注: 为便于区分, 在本章, 原文 property 译做对象属性, attribute 译做标签属性.  介绍 JSX 是一种类 XML 可嵌入语法.最终它会被转换成有效的 JavaScript 代码, 转换的语义取决于具体实现.JSX 随 React 被广为接受, 从此也出现了很多其他实现.TypeScript 支持嵌入, 类型检查, 直接向 JavaScript 编译 J">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2020-03-04T03:59:03.448Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="JSX">
+<meta name="twitter:description" content="状态: 初稿   译注: 为便于区分, 在本章, 原文 property 译做对象属性, attribute 译做标签属性.  介绍 JSX 是一种类 XML 可嵌入语法.最终它会被转换成有效的 JavaScript 代码, 转换的语义取决于具体实现.JSX 随 React 被广为接受, 从此也出现了很多其他实现.TypeScript 支持嵌入, 类型检查, 直接向 JavaScript 编译 J">
+  <link rel="canonical" href="https://hyan23.org/2019/11/20/ts-jsx/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>JSX | Hyan Lee</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+  <div class="container">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Hyan Lee</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+      
+      
+      
+        
+        <li class="menu-item menu-item-home">
+      
+    
+      
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-关于-/-留言板">
+      
+    
+      
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于 / 留言板</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-categories">
+      
+    
+      
+      
+        
+      
+        
+          
+        
+      
+        
+      
+    
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类<span class="badge">6</span></a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-archives">
+      
+    
+      
+      
+        
+          
+        
+      
+        
+      
+        
+      
+    
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">31</span></a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-精选-/-系列">
+      
+    
+      
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <a href="/selections/" rel="section"><i class="fa fa-fw fa-book"></i>精选 / 系列</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-摄影">
+      
+    
+      
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <a href="/gallery/" rel="section"><i class="fa fa-fw fa-camera"></i>摄影</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-工具">
+      
+    
+      
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <a href="/tools/" rel="section"><i class="fa fa-fw fa-calculator"></i>工具</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-友情链接">
+      
+    
+      
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <a href="/friends/" rel="section"><i class="fa fa-fw fa-external-link"></i>友情链接</a>
+
+  </li>
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+            
+
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+      <article itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block post">
+    <link itemprop="mainEntityOfPage" href="https://hyan23.org/2019/11/20/ts-jsx/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Hyan Lee">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar2.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hyan Lee">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">JSX
+
+          
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              
+                
+              
+
+              <time title="创建时间：2019-11-20 09:34:01" itemprop="dateCreated datePublished" datetime="2019-11-20T09:34:01+08:00">2019-11-20</time>
+            </span>
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-03-04 11:59:03" itemprop="dateModified" datetime="2020-03-04T11:59:03+08:00">2020-03-04</time>
+              </span>
+            
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/翻译稿/" itemprop="url" rel="index"><span itemprop="name">翻译稿</span></a></span>
+
+                
+                
+                  ，
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/翻译稿/TypeScript/" itemprop="url" rel="index"><span itemprop="name">TypeScript</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+          
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">本文字数：</span>
+              
+              <span>3.8k</span>
+            </span>
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <pre><code>状态: 初稿
+</code></pre><!--
+# Table of contents
+
+[Introduction](#introduction)
+
+[Basic Usage](#basic-usage)
+
+[The as operator](#the-as-operator)
+
+[Type Checking](#type-checking)
+- [Introduction](#introduction)
+- [Basic usage](#basic-usage)
+- [The `as` operator](#the-as-operator)
+- [Type Checking](#type-checking)
+  - [Intrinsic elements](#intrinsic-elements)
+  - [Value-based elements](#value-based-elements)
+    - [Function Component](#function-component)
+    - [Class Component](#class-component)
+  - [Attribute type checking](#attribute-type-checking)
+  - [Children Type Checking](#children-type-checking)
+- [The JSX result type](#the-jsx-result-type)
+- [Embedding Expressions](#embedding-expressions)
+- [React integration](#react-integration)
+- [Factory Functions](#factory-functions)
+
+[The JSX result type](#the-jsx-result-type)
+
+[Embedding Expressions](#embedding-expressions)
+
+[React integration](#react-integration)
+
+[Factory Functions](#factory-functions)
+-->
+<blockquote>
+<p>译注: 为便于区分, 在本章, 原文 property 译做对象属性, attribute 译做标签属性.</p>
+</blockquote>
+<h1 id="介绍" class="heading-control"><a href="#介绍" class="headerlink" title="介绍"></a>介绍<a class="heading-anchor" href="#介绍" aria-hidden="true"></a></h1><!-- # Introduction -->
+<div class="translation-block" title="
+&amp;lt;b&amp;gt;&amp;lt;a href=&amp;quot;#table-of-contents&amp;quot;&amp;gt;↥ back to top&amp;lt;&amp;#x2F;a&amp;gt;&amp;lt;&amp;#x2F;b&amp;gt;
+
+[JSX](https:&amp;#x2F;&amp;#x2F;facebook.github.io&amp;#x2F;jsx&amp;#x2F;) is an embeddable XML-like syntax.
+It is meant to be transformed into valid JavaScript, though the semantics of that transformation are implementation-specific.
+JSX rose to popularity with the [React](https:&amp;#x2F;&amp;#x2F;reactjs.org&amp;#x2F;) framework, but has since seen other implementations as well.
+TypeScript supports embedding, type checking, and compiling JSX directly to JavaScript.
+"><p><a href="https://facebook.github.io/jsx/" target="_blank" rel="noopener">JSX</a> 是一种类 XML 可嵌入语法.<br>最终它会被转换成有效的 JavaScript 代码, 转换的语义取决于具体实现.<br>JSX 随 <a href="https://reactjs.org/" target="_blank" rel="noopener">React</a> 被广为接受, 从此也出现了很多其他实现.<br>TypeScript 支持嵌入, 类型检查, 直接向 JavaScript 编译 JSX.</p></div>
+<a id="more"></a>
+<h1 id="基本用法" class="heading-control"><a href="#基本用法" class="headerlink" title="基本用法"></a>基本用法<a class="heading-anchor" href="#基本用法" aria-hidden="true"></a></h1><!-- # Basic usage -->
+<div class="translation-block" title="
+&amp;lt;b&amp;gt;&amp;lt;a href=&amp;quot;#table-of-contents&amp;quot;&amp;gt;↥ back to top&amp;lt;&amp;#x2F;a&amp;gt;&amp;lt;&amp;#x2F;b&amp;gt;
+
+In order to use JSX you must do two things.
+
+1. Name your files with a `.tsx` extension
+2. Enable the `jsx` option
+
+TypeScript ships with three JSX modes: `preserve`, `react`, and `react-native`.
+These modes only affect the emit stage - type checking is unaffected.
+The `preserve` mode will keep the JSX as part of the output to be further consumed by another transform step (e.g. [Babel](https:&amp;#x2F;&amp;#x2F;babeljs.io&amp;#x2F;)).
+Additionally the output will have a `.jsx` file extension.
+"><p>在使用 JSX 之前, 你必须完成以下两件事:</p>
+<ol>
+<li>用 <code>.tsx</code> 扩展名命名你的文件</li>
+<li>启用 <code>jsx</code> 选项</li>
+</ol>
+<p>TypeScript 与三种 JSX 模式一同推出: <code>preserve</code>, <code>react</code>, 和 <code>react-native</code>.<br>这些模式只影响输出阶段 - 类型检查不受影响.<br><code>preserve</code> 模式保留 JSX 作为输出的一部分, 以由其他转换步骤 (例如: <a href="https://babeljs.io/" target="_blank" rel="noopener">Babel</a>) 进一步处理.<br>此外, 输出的扩展名仍是 <code>.jsx</code>.</p></div>
+<div class="translation-block" title="
+The `react` mode will emit `React.createElement`, does not need to go through a JSX transformation before use, and the output will have a `.js` file extension.
+The `react-native` mode is the equivalent of `preserve` in that it keeps all JSX, but the output will instead have a `.js` file extension.
+
+Mode           | Input     | Output                       | Output File Extension
+---------------|-----------|------------------------------|----------------------
+`preserve`     | `&amp;lt;div &amp;#x2F;&amp;gt;` | `&amp;lt;div &amp;#x2F;&amp;gt;`                    | `.jsx`
+`react`        | `&amp;lt;div &amp;#x2F;&amp;gt;` | `React.createElement(&amp;quot;div&amp;quot;)` | `.js`
+`react-native` | `&amp;lt;div &amp;#x2F;&amp;gt;` | `&amp;lt;div &amp;#x2F;&amp;gt;`                    | `.js`
+"><p><code>react</code> 会输出 <code>React.createElement</code>, 在使用之前不需要再经过一轮 JSX 转换, 输出的扩展名是 <code>.js</code>.<br><code>react-native</code> 模式与 <code>preserve</code> 都保留所有 JSX, 但输出扩展名是 <code>.js</code>.</p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>模式</th>
+<th>输入</th>
+<th>输出</th>
+<th>输出文件扩展名</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>preserve</code></td>
+<td><code>&lt;div /&gt;</code></td>
+<td><code>&lt;div /&gt;</code></td>
+<td><code>.jsx</code></td>
+</tr>
+<tr>
+<td><code>react</code></td>
+<td><code>&lt;div /&gt;</code></td>
+<td><code>React.createElement(&quot;div&quot;)</code></td>
+<td><code>.js</code></td>
+</tr>
+<tr>
+<td><code>react-native</code></td>
+<td><code>&lt;div /&gt;</code></td>
+<td><code>&lt;div /&gt;</code></td>
+<td><code>.js</code></td>
+</tr>
+</tbody>
+</table>
+</div></div>
+<div class="translation-block" title="
+You can specify this mode using either the `--jsx` command line flag or the corresponding option in your [tsconfig.json](.&amp;#x2F;tsconfig.json.md) file.
+
+&amp;gt; *Note: You can specify the JSX factory function to use when targeting react JSX emit with `--jsxFactory` option (defaults to `React.createElement`)
+"><p>你可以用 <code>--jsx</code> 命令行标志或你 <a href="#">tsconfig.json</a> 文件中对应选项指定所需模式.</p>
+<blockquote>
+<p>*注: 你可以在面向 react JSX 输出时使用 <code>--jsxFactory</code> 选项指定要使用的 JSX 工厂函数 (缺省为 <code>React.createElement</code>)</p>
+</blockquote></div>
+<h1 id="as-操作符" class="heading-control"><a href="#as-操作符" class="headerlink" title="as 操作符"></a>as 操作符<a class="heading-anchor" href="#as-操作符" aria-hidden="true"></a></h1><!-- # The `as` operator -->
+<div class="translation-block" title="
+&amp;lt;b&amp;gt;&amp;lt;a href=&amp;quot;#table-of-contents&amp;quot;&amp;gt;↥ back to top&amp;lt;&amp;#x2F;a&amp;gt;&amp;lt;&amp;#x2F;b&amp;gt;
+
+Recall how to write a type assertion:
+"><p>回想一下怎么书写类型担保:</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> foo = &lt;foo&gt;bar;</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+This asserts the variable `bar` to have the type `foo`.
+Since TypeScript also uses angle brackets for type assertions, combining it with JSX&amp;#39;s syntax would introduce certain parsing difficulties. As a result, TypeScript disallows angle bracket type assertions in `.tsx` files.
+
+Since the above syntax cannot be used in `.tsx` files, an alternate type assertion operator should be used: `as`.
+The example can easily be rewritten with the `as` operator.
+"><p>它断定变量 <code>bar</code> 的类型是 <code>foo</code>.<br>TypeScript 类型担保也采用尖括号, 将它与 JSX 的语法组合无疑会引发解析困难. 因此, TypeScript 不允许 <code>.tsx</code> 文件中出现尖括号式类型担保.</p>
+<p>由于以上语法无法在 <code>.tsx</code> 文件中使用, 我们应该选择替代的类型担保运算符: <code>as</code>.<br>上例很容易用 <code>as</code> 运算符重写.</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> foo = bar <span class="keyword">as</span> foo;</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+The `as` operator is available in both `.ts` and `.tsx` files, and is identical in behavior to the angle-bracket type assertion style.
+"><p><code>as</code> 运算符在 <code>.ts</code> 和 <code>.tsx</code> 文件中都可用, 在行为上与尖括号类型担保风格完全相同.</p></div>
+<h1 id="类型检查" class="heading-control"><a href="#类型检查" class="headerlink" title="类型检查"></a>类型检查<a class="heading-anchor" href="#类型检查" aria-hidden="true"></a></h1><!-- # Type Checking -->
+<div class="translation-block" title="
+&amp;lt;b&amp;gt;&amp;lt;a href=&amp;quot;#table-of-contents&amp;quot;&amp;gt;↥ back to top&amp;lt;&amp;#x2F;a&amp;gt;&amp;lt;&amp;#x2F;b&amp;gt;
+
+In order to understand type checking with JSX, you must first understand the difference between intrinsic elements and value-based elements.
+Given a JSX expression `&amp;lt;expr &amp;#x2F;&amp;gt;`, `expr` may either refer to something intrinsic to the environment (e.g. a `div` or `span` in a DOM environment) or to a custom component that you&amp;#39;ve created.
+This is important for two reasons:
+
+1. For React, intrinsic elements are emitted as strings (`React.createElement(&amp;quot;div&amp;quot;)`), whereas a component you&amp;#39;ve created is not (`React.createElement(MyComponent)`).
+2. The types of the attributes being passed in the JSX element should be looked up differently.
+  Intrinsic element attributes should be known *intrinsically* whereas components will likely want to specify their own set of attributes.
+
+TypeScript uses the [same convention that React does](http:&amp;#x2F;&amp;#x2F;facebook.github.io&amp;#x2F;react&amp;#x2F;docs&amp;#x2F;jsx-in-depth.html#html-tags-vs.-react-components) for distinguishing between these.
+An intrinsic element always begins with a lowercase letter, and a value-based element always begins with an uppercase letter.
+"><p>为了理解 JSX 类型检查, 你必须首先理解固有元素和基于值的元素间的区别.<br>给定 JSX 表达式 <code>&lt;expr /&gt;</code>, <code>expr</code> 可以指代一个环境固有的东西 (例如: DOM 环境的一个 <code>div</code> 或 <code>span</code> 元素), 或一个你创建的自定义组件.<br>两个原因让这点很重要:</p>
+<ol>
+<li>对 React, 固有元素会以字符串输出 (<code>React.createElement(&quot;div&quot;)</code>), 而你创建的组件则不会 (<code>React.createElement(MyComponent)</code>).</li>
+<li>传给 JSX 元素的标签属性的类型应该有差别地查找.<br>固有元素的标签属性是固定的, 而组件很有可能会规定它们自己的一套标签属性.</li>
+</ol>
+<p>TypeScript 采用<a href="http://facebook.github.io/react/docs/jsx-in-depth.html#html-tags-vs.-react-components" target="_blank" rel="noopener">与 React 一致的习惯</a>区分两者.<br>一个固有元素总是以小写字母打头, 基于值的元素总是以大写字母打头.</p></div>
+<h2 id="固有元素" class="heading-control"><a href="#固有元素" class="headerlink" title="固有元素"></a>固有元素<a class="heading-anchor" href="#固有元素" aria-hidden="true"></a></h2><!-- ## Intrinsic elements -->
+<div class="translation-block" title="
+&amp;lt;b&amp;gt;&amp;lt;a href=&amp;quot;#table-of-contents&amp;quot;&amp;gt;↥ back to top&amp;lt;&amp;#x2F;a&amp;gt;&amp;lt;&amp;#x2F;b&amp;gt;
+
+Intrinsic elements are looked up on the special interface `JSX.IntrinsicElements`.
+By default, if this interface is not specified, then anything goes and intrinsic elements will not be type checked.
+However, if this interface *is* present, then the name of the intrinsic element is looked up as a property on the `JSX.IntrinsicElements` interface.
+For example:
+"><p>我们在一个特殊接口 <code>JSX.IntrisicElements</code> 查找固有元素.<br>一般, 如果没有指定这个接口, 所有东西, 包括固有元素, 都不会被类型检查.<br>而如果这个接口<em>存在</em>, 固有元素的名字就会作为一个对象属性在 <code>JSX.IntrinsicElements</code> 接口查找.<br>例如:</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">declare</span> <span class="keyword">namespace</span> JSX &#123;</span><br><span class="line">    <span class="keyword">interface</span> IntrinsicElements &#123;</span><br><span class="line">        foo: <span class="built_in">any</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">&lt;foo /&gt;; <span class="comment">// ok</span></span><br><span class="line">&lt;bar /&gt;; <span class="comment">// error</span></span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+In the above example, `&amp;lt;foo &amp;#x2F;&amp;gt;` will work fine but `&amp;lt;bar &amp;#x2F;&amp;gt;` will result in an error since it has not been specified on `JSX.IntrinsicElements`.
+
+&amp;gt; Note: You can also specify a catch-all string indexer on `JSX.IntrinsicElements` as follows:
+"><p>上例, <code>&lt;foo /&gt;</code> 一切正常, 而 <code>&lt;bar /&gt;</code> 没有在 <code>JSX.IntrinsicElements</code> 中声明, 会导致错误.</p>
+<blockquote>
+<p>注: 你也可以如下为 <code>JSX.IntrinsicElements</code> 声明一个”捕获一切”的字符串索引签名:</p>
+</blockquote></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">declare</span> <span class="keyword">namespace</span> JSX &#123;</span><br><span class="line">    <span class="keyword">interface</span> IntrinsicElements &#123;</span><br><span class="line">        [elemName: <span class="built_in">string</span>]: <span class="built_in">any</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="基于值的元素" class="heading-control"><a href="#基于值的元素" class="headerlink" title="基于值的元素"></a>基于值的元素<a class="heading-anchor" href="#基于值的元素" aria-hidden="true"></a></h2><!-- ## Value-based elements -->
+<div class="translation-block" title="
+&amp;lt;b&amp;gt;&amp;lt;a href=&amp;quot;#table-of-contents&amp;quot;&amp;gt;↥ back to top&amp;lt;&amp;#x2F;a&amp;gt;&amp;lt;&amp;#x2F;b&amp;gt;
+
+Value-based elements are simply looked up by identifiers that are in scope.
+"><p>我们直接在当前空间所有标识符中查找基于值的元素.</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> MyComponent <span class="keyword">from</span> <span class="string">"./myComponent"</span>;</span><br><span class="line"></span><br><span class="line">&lt;MyComponent /&gt;; <span class="comment">// ok</span></span><br><span class="line">&lt;SomeOtherComponent /&gt;; <span class="comment">// error</span></span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+There are two ways to define a value-based element:
+
+1. Function Component (FC)
+2. Class Component
+
+Because these two types of value-based elements are indistinguishable from each other in a JSX expression, first TS tries to resolve the expression as a Function Component using overload resolution. If the process succeeds, then TS finishes resolving the expression to its declaration. If the value fails to resolve as a Function Component, TS will then try to resolve it as a class component. If that fails, TS will report an error.
+"><p>有两种定义基于值的元素的方法:</p>
+<ol>
+<li>函数组件 (FC)</li>
+<li>类组件</li>
+</ol>
+<p>因为这两种基于值的元素在一条 JSX 表达式中是无法区分的, TypeScript 首先运用重载解析尝试把这表达式当作函数组件解析. 只要该过程成功, TypeScript 即完成从表达式到对应声明的解析. 如果表达式未能解析为函数组件, TypeScript 会把它当作类组件重试. 而再次失败会让 TypeScript 报错.</p></div>
+<h3 id="函数组件" class="heading-control"><a href="#函数组件" class="headerlink" title="函数组件"></a>函数组件<a class="heading-anchor" href="#函数组件" aria-hidden="true"></a></h3><!-- ### Function Component -->
+<div class="translation-block" title="
+&amp;lt;b&amp;gt;&amp;lt;a href=&amp;quot;#table-of-contents&amp;quot;&amp;gt;↥ back to top&amp;lt;&amp;#x2F;a&amp;gt;&amp;lt;&amp;#x2F;b&amp;gt;
+
+As the name suggests, the component is defined as a JavaScript function where its first argument is a `props` object.
+TS enforces that its return type must be assignable to `JSX.Element`.
+"><p>顾名思义, 函数组件用 JavaScript 函数定义, 它第一个参数是一个 <code>props</code> 对象.<br>TypeScript 规定其返回值必须能赋值给 <code>JSX.Element</code>.</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">interface</span> FooProp &#123;</span><br><span class="line">  name: <span class="built_in">string</span>;</span><br><span class="line">  X: <span class="built_in">number</span>;</span><br><span class="line">  Y: <span class="built_in">number</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">declare</span> <span class="function"><span class="keyword">function</span> <span class="title">AnotherComponent</span>(<span class="params">prop: &#123;name: <span class="built_in">string</span>&#125;</span>)</span>;</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">ComponentFoo</span>(<span class="params">prop: FooProp</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> &lt;AnotherComponent name=&#123;prop.name&#125; /&gt;;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> Button = <span class="function">(<span class="params">prop: &#123;value: <span class="built_in">string</span>&#125;, context: &#123; color: <span class="built_in">string</span> &#125;</span>) =&gt;</span> &lt;button&gt;</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+Because a Function Component is simply a JavaScript function, function overloads may be used here as well:
+"><p>由于函数组件就是 JavaScript 函数, 可以在这里使用函数重载:</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">interface</span> ClickableProps &#123;</span><br><span class="line">  children: JSX.Element[] | JSX.Element</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">interface</span> HomeProps <span class="keyword">extends</span> ClickableProps &#123;</span><br><span class="line">  home: JSX.Element;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">interface</span> SideProps <span class="keyword">extends</span> ClickableProps &#123;</span><br><span class="line">  side: JSX.Element | <span class="built_in">string</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">MainButton</span>(<span class="params">prop: HomeProps</span>): <span class="title">JSX</span>.<span class="title">Element</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">MainButton</span>(<span class="params">prop: SideProps</span>): <span class="title">JSX</span>.<span class="title">Element</span> </span>&#123;</span><br><span class="line">  ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+&amp;gt; Note: Function Components were formerly known as Stateless Function Components (SFC). As Function Components can no longer be considered stateless in recent versions of react, the type `SFC` and its alias `StatelessComponent` were deprecated.
+"><blockquote>
+<p>注: 函数组件以前叫做无状态函数组件 (SFC). 而在最近的 react 版本中, 函数组件再也不能被认为是无状态的了, 类型 <code>SFC</code> 及其别名 <code>StatelessComponent</code> 随即弃用.</p>
+</blockquote></div>
+<h3 id="类组件" class="heading-control"><a href="#类组件" class="headerlink" title="类组件"></a>类组件<a class="heading-anchor" href="#类组件" aria-hidden="true"></a></h3><!-- ### Class Component -->
+<div class="translation-block" title="
+&amp;lt;b&amp;gt;&amp;lt;a href=&amp;quot;#table-of-contents&amp;quot;&amp;gt;↥ back to top&amp;lt;&amp;#x2F;a&amp;gt;&amp;lt;&amp;#x2F;b&amp;gt;
+
+It is possible to define the type of a class component.
+However, to do so it is best to understand two new terms: the *element class type* and the *element instance type*.
+
+Given `&amp;lt;Expr &amp;#x2F;&amp;gt;`, the *element class type* is the type of `Expr`.
+So in the example above, if `MyComponent` was an ES6 class the class type would be that class&amp;#39;s constructor and statics.
+If `MyComponent` was a factory function, the class type would be that function.
+
+Once the class type is established, the instance type is determined by the union of the return types of the class type&amp;#39;s construct or call signatures (whichever is present).
+So again, in the case of an ES6 class, the instance type would be the type of an instance of that class, and in the case of a factory function, it would be the type of the value returned from the function.
+"><p>我们可以定义代表类组件的类型.<br>但在开始之前, 最好能理解两个新术语: <em>元素类类型</em>和<em>元素实例类型</em>.</p>
+<p>给定表达式 <code>&lt;Expr /&gt;</code>, <em>元素类类型</em> 是 <code>Expr</code> 的类型.<br>我们前面的例子, 如果 <code>MyComponent</code> 是个 ES6 类, 那么类类型是那个类的构造器和静态面.<br>如果 <code>MyComponent</code> 是一个工厂函数, 类类型就是这个函数.</p>
+<p>一旦类类型已知, 实例类型就按类类型的构造函数或调用签名 (无论存在与否) 返回值类型的自适应类型确定.<br>于是, ES6 类的情形, 实例类型是那个类实例的类型, 工厂函数的情形, 实例类型是函数返回值的类型.</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> MyComponent &#123;</span><br><span class="line">  render() &#123;&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// use a construct signature</span></span><br><span class="line"><span class="keyword">var</span> myComponent = <span class="keyword">new</span> MyComponent();</span><br><span class="line"></span><br><span class="line"><span class="comment">// element class type =&gt; MyComponent</span></span><br><span class="line"><span class="comment">// element instance type =&gt; &#123; render: () =&gt; void &#125;</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">MyFactoryFunction</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> &#123;</span><br><span class="line">    render: <span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// use a call signature</span></span><br><span class="line"><span class="keyword">var</span> myComponent = MyFactoryFunction();</span><br><span class="line"></span><br><span class="line"><span class="comment">// element class type =&gt; MyFactoryFunction</span></span><br><span class="line"><span class="comment">// element instance type =&gt; &#123; render: () =&gt; void &#125;</span></span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+The element instance type is interesting because it must be assignable to `JSX.ElementClass` or it will result in an error.
+By default `JSX.ElementClass` is `{}`, but it can be augmented to limit the use of JSX to only those types that conform to the proper interface.
+"><p>元素实例类型很有意思, 它必须能赋值给 <code>JSX.ElementClass</code>, 否则会产生错误.<br><code>JSX.ElementClass</code> 缺省为 <code>{}</code>, 但它可以被增强, 以限制只有那些符合特定接口的类型才能使用 JSX. </p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">declare</span> <span class="keyword">namespace</span> JSX &#123;</span><br><span class="line">  <span class="keyword">interface</span> ElementClass &#123;</span><br><span class="line">    render: <span class="built_in">any</span>;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> MyComponent &#123;</span><br><span class="line">  render() &#123;&#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">MyFactoryFunction</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> &#123; render: <span class="function"><span class="params">()</span> =&gt;</span> &#123;&#125; &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">&lt;MyComponent /&gt;; <span class="comment">// ok</span></span><br><span class="line">&lt;MyFactoryFunction /&gt;; <span class="comment">// ok</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> NotAValidComponent &#123;&#125;</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">NotAValidFactoryFunction</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> &#123;&#125;;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">&lt;NotAValidComponent /&gt;; <span class="comment">// error</span></span><br><span class="line">&lt;NotAValidFactoryFunction /&gt;; <span class="comment">// error</span></span><br></pre></td></tr></table></figure>
+<h2 id="标签属性类型检查" class="heading-control"><a href="#标签属性类型检查" class="headerlink" title="标签属性类型检查"></a>标签属性类型检查<a class="heading-anchor" href="#标签属性类型检查" aria-hidden="true"></a></h2><!-- ## Attribute type checking -->
+<div class="translation-block" title="
+&amp;lt;b&amp;gt;&amp;lt;a href=&amp;quot;#table-of-contents&amp;quot;&amp;gt;↥ back to top&amp;lt;&amp;#x2F;a&amp;gt;&amp;lt;&amp;#x2F;b&amp;gt;
+
+The first step to type checking attributes is to determine the *element attributes type*.
+This is slightly different between intrinsic and value-based elements.
+
+For intrinsic elements, it is the type of the property on `JSX.IntrinsicElements`
+"><p>类型检查标签属性的第一步是判断<em>元素标签属性类型</em>.<br>该过程在固有和基于值的元素间稍有不同.</p>
+<p>对固有元素, 它是接口 <code>JSX.IntrinsicElements</code> 上属性的类型.</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">declare</span> <span class="keyword">namespace</span> JSX &#123;</span><br><span class="line">  <span class="keyword">interface</span> IntrinsicElements &#123;</span><br><span class="line">    foo: &#123; bar?: <span class="built_in">boolean</span> &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// element attributes type for 'foo' is '&#123;bar?: boolean&#125;'</span></span><br><span class="line">&lt;foo bar /&gt;;</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+For value-based elements, it is a bit more complex.
+It is determined by the type of a property on the *element instance type* that was previously determined.
+Which property to use is determined by `JSX.ElementAttributesProperty`.
+It should be declared with a single property.
+The name of that property is then used.
+As of TypeScript 2.8, if `JSX.ElementAttributesProperty` is not provided, the type of first parameter of the class element&amp;#39;s constructor or Function Component&amp;#39;s call will be used instead.
+"><p>至于基于值的类型, 则要复杂一点.<br>它由已知的<em>元素实例类型</em>上属性的类型所确定.<br>将使用哪些属性又由 <code>JSX.ElementAttributesProperty</code> 接口所确定.<br>它应该声明为单一属性.<br>以后可以使用这个属性的名字.<br>自 TypeScript 2.8 开始, 如果 <code>JSX.ElementAttributesProperty</code> 不存在, 就用类元素构造函数或函数组件调用的第一个参数替代.</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">declare</span> <span class="keyword">namespace</span> JSX &#123;</span><br><span class="line">  <span class="keyword">interface</span> ElementAttributesProperty &#123;</span><br><span class="line">    props; <span class="comment">// specify the property name to use</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> MyComponent &#123;</span><br><span class="line">  <span class="comment">// specify the property on the element instance type</span></span><br><span class="line">  props: &#123;</span><br><span class="line">    foo?: <span class="built_in">string</span>;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// element attributes type for 'MyComponent' is '&#123;foo?: string&#125;'</span></span><br><span class="line">&lt;MyComponent foo=<span class="string">"bar"</span> /&gt;</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+The element attribute type is used to type check the attributes in the JSX.
+Optional and required properties are supported.
+"><p>元素标签属性类型被用来类型检查 JSX 中的标签属性.<br>可选和必选属性都受支持.</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">declare</span> <span class="keyword">namespace</span> JSX &#123;</span><br><span class="line">  <span class="keyword">interface</span> IntrinsicElements &#123;</span><br><span class="line">    foo: &#123; requiredProp: <span class="built_in">string</span>; optionalProp?: <span class="built_in">number</span> &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">&lt;foo requiredProp=<span class="string">"bar"</span> /&gt;; <span class="comment">// ok</span></span><br><span class="line">&lt;foo requiredProp=<span class="string">"bar"</span> optionalProp=&#123;<span class="number">0</span>&#125; /&gt;; <span class="comment">// ok</span></span><br><span class="line">&lt;foo /&gt;; <span class="comment">// error, requiredProp is missing</span></span><br><span class="line">&lt;foo requiredProp=&#123;<span class="number">0</span>&#125; /&gt;; <span class="comment">// error, requiredProp should be a string</span></span><br><span class="line">&lt;foo requiredProp=<span class="string">"bar"</span> unknownProp /&gt;; <span class="comment">// error, unknownProp does not exist</span></span><br><span class="line">&lt;foo requiredProp=<span class="string">"bar"</span> some-unknown-prop /&gt;; <span class="comment">// ok, because 'some-unknown-prop' is not a valid identifier</span></span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+&amp;gt; Note: If an attribute name is not a valid JS identifier (like a `data-*` attribute), it is not considered to be an error if it is not found in the element attributes type.
+
+Additionally, the `JSX.IntrinsicAttributes` interface can be used to specify extra properties used by the JSX framework which are not generally used by the components&amp;#39; props or arguments - for instance `key` in React. Specializing further, the generic `JSX.IntrinsicClassAttributes&amp;lt;T&amp;gt;` type may also be used to specify the same kind of extra attributes just for class components (and not Function Components). In this type, the generic parameter corresponds to the class instance type. In React, this is used to allow the `ref` attribute of type `Ref&amp;lt;T&amp;gt;`. Generally speaking, all of the properties on these interfaces should be optional, unless you intend that users of your JSX framework need to provide some attribute on every tag.
+
+The spread operator also works:
+"><blockquote>
+<p>注: 我们不把一个是无效 JavaScript 标识符 (如 <code>data-*</code>) 的属性名未在元素标签属性类型中找到当做一个错误.</p>
+</blockquote>
+<p>此外, 可以用 <code>JSX.IntrinsicAttributes</code> 接口声明由 JSX 框架使用的一般不被组件的 props 或参数使用的额外属性 - 例如 React 的 <code>key</code>. 进一步深入, 泛型类型 <code>JSX.IntrinsicClassAttributes&lt;T&gt;</code> 也可以为类组件 (而非函数组件) 声明同类额外标签属性. 这个类型的泛型参数即对应类实例类型. 在 React 中, 它让类型 <code>Ref&lt;T&gt;</code> 得到 <code>ref</code> 标签属性. 总的来说, 这些接口上所有属性都应该是可选的, 除非你有意让你 JSX 框架的用户为每个标签提供几个标签属性.</p>
+<p>扩展操作符也能工作:</p></div>
+<figure class="highlight jsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> props = &#123; <span class="attr">requiredProp</span>: <span class="string">"bar"</span> &#125;;</span><br><span class="line">&lt;foo &#123;...props&#125; /&gt;; <span class="comment">// ok</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> badProps = &#123;&#125;;</span><br><span class="line">&lt;foo &#123;...badProps&#125; /&gt;; <span class="comment">// error</span></span><br></pre></td></tr></table></figure>
+<h2 id="子类型检查" class="heading-control"><a href="#子类型检查" class="headerlink" title="子类型检查"></a>子类型检查<a class="heading-anchor" href="#子类型检查" aria-hidden="true"></a></h2><!-- ## Children Type Checking -->
+<div class="translation-block" title="
+&amp;lt;b&amp;gt;&amp;lt;a href=&amp;quot;#table-of-contents&amp;quot;&amp;gt;↥ back to top&amp;lt;&amp;#x2F;a&amp;gt;&amp;lt;&amp;#x2F;b&amp;gt;
+
+In TypeScript 2.3, TS introduced type checking of *children*. *children* is a special property in an *element attributes type* where child *JSXExpression*s are taken to be inserted into the attributes.
+Similar to how TS uses `JSX.ElementAttributesProperty` to determine the name of *props*, TS uses `JSX.ElementChildrenAttribute` to determine the name of *children* within those props.
+`JSX.ElementChildrenAttribute` should be declared with a single property.
+"><p>TypeScript 2.3 引入了对<em>孩子</em>的类型检查, <em>孩子</em>是<em>元素标签属性类型</em>的代表被插入的子<em>JSX 表达式</em>的一个特殊属性.<br>与 TypeScript 如何用 <code>JSX.ElementAttributesProperty</code> 确定下 <em>props</em> 的名字相仿, 它利用 <code>JSX.ElementChildrenAttribute</code> 确定这些属性中间<em>孩子</em>的名字.<br><code>JSX.ElementChildrenAttribute</code> 应声明为单一属性.</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">declare</span> <span class="keyword">namespace</span> JSX &#123;</span><br><span class="line">  <span class="keyword">interface</span> ElementChildrenAttribute &#123;</span><br><span class="line">    children: &#123;&#125;;  <span class="comment">// specify children name to use</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">&lt;div&gt;</span><br><span class="line">  &lt;h1&gt;Hello&lt;<span class="regexp">/h1&gt;</span></span><br><span class="line"><span class="regexp">&lt;/</span>div&gt;;</span><br><span class="line"></span><br><span class="line">&lt;div&gt;</span><br><span class="line">  &lt;h1&gt;Hello&lt;<span class="regexp">/h1&gt;</span></span><br><span class="line"><span class="regexp">  World</span></span><br><span class="line"><span class="regexp">&lt;/</span>div&gt;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> CustomComp = <span class="function">(<span class="params">props</span>) =&gt;</span> &lt;div&gt;&#123;props.children&#125;&lt;<span class="regexp">/div&gt;</span></span><br><span class="line"><span class="regexp">&lt;CustomComp&gt;</span></span><br><span class="line"><span class="regexp">  &lt;div&gt;Hello World&lt;/</span>div&gt;</span><br><span class="line">  &#123;<span class="string">"This is just a JS expression..."</span> + <span class="number">1000</span>&#125;</span><br><span class="line">&lt;<span class="regexp">/CustomComp&gt;</span></span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+You can specify the type of *children* like any other attribute. This will override the default type from, eg the [React typings](https:&amp;#x2F;&amp;#x2F;github.com&amp;#x2F;DefinitelyTyped&amp;#x2F;DefinitelyTyped&amp;#x2F;tree&amp;#x2F;master&amp;#x2F;types&amp;#x2F;react) if you use them.
+"><p>你可以与其他任何标签属性一样指定<em>孩子</em>的类型. 如果你使用如 <a href="https://github.com/DefinitelyTyped/DefinitelyTyped/tree/master/types/react" target="_blank" rel="noopener">React typings</a> 等声明文件. 它会覆盖来自它们的默认类型, </p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">interface</span> PropsType &#123;</span><br><span class="line">  children: JSX.Element</span><br><span class="line">  name: <span class="built_in">string</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> Component <span class="keyword">extends</span> React.Component&lt;PropsType, &#123;&#125;&gt; &#123;</span><br><span class="line">  render() &#123;</span><br><span class="line">    <span class="keyword">return</span> (</span><br><span class="line">      &lt;h2&gt;</span><br><span class="line">        &#123;<span class="keyword">this</span>.props.children&#125;</span><br><span class="line">      &lt;<span class="regexp">/h2&gt;</span></span><br><span class="line"><span class="regexp">    )</span></span><br><span class="line"><span class="regexp">  &#125;</span></span><br><span class="line"><span class="regexp">&#125;</span></span><br><span class="line"><span class="regexp"></span></span><br><span class="line"><span class="regexp">/</span><span class="regexp">/ OK</span></span><br><span class="line"><span class="regexp">&lt;Component name="foo"&gt;</span></span><br><span class="line"><span class="regexp">  &lt;h1&gt;Hello World&lt;/</span>h1&gt;</span><br><span class="line">&lt;<span class="regexp">/Component&gt;</span></span><br><span class="line"><span class="regexp"></span></span><br><span class="line"><span class="regexp">/</span><span class="regexp">/ Error: children is of type JSX.Element not array of JSX.Element</span></span><br><span class="line"><span class="regexp">&lt;Component name="bar"&gt;</span></span><br><span class="line"><span class="regexp">  &lt;h1&gt;Hello World&lt;/</span>h1&gt;</span><br><span class="line">  &lt;h2&gt;Hello World&lt;<span class="regexp">/h2&gt;</span></span><br><span class="line"><span class="regexp">&lt;/</span>Component&gt;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Error: children is of type JSX.Element not array of JSX.Element or string.</span></span><br><span class="line">&lt;Component name=<span class="string">"baz"</span>&gt;</span><br><span class="line">  &lt;h1&gt;Hello&lt;<span class="regexp">/h1&gt;</span></span><br><span class="line"><span class="regexp">  World</span></span><br><span class="line"><span class="regexp">&lt;/</span>Component&gt;</span><br></pre></td></tr></table></figure>
+<h1 id="JSX-结果类型" class="heading-control"><a href="#JSX-结果类型" class="headerlink" title="JSX 结果类型"></a>JSX 结果类型<a class="heading-anchor" href="#JSX-结果类型" aria-hidden="true"></a></h1><!-- # The JSX result type -->
+<div class="translation-block" title="
+&amp;lt;b&amp;gt;&amp;lt;a href=&amp;quot;#table-of-contents&amp;quot;&amp;gt;↥ back to top&amp;lt;&amp;#x2F;a&amp;gt;&amp;lt;&amp;#x2F;b&amp;gt;
+
+By default the result of a JSX expression is typed as `any`.
+You can customize the type by specifying the `JSX.Element` interface.
+However, it is not possible to retrieve type information about the element, attributes or children of the JSX from this interface.
+It is a black box.
+"><p>默认情况下, JSX 表达式结果的类型是 <code>any</code>.<br>你可以通过规定 <code>JSX.Element</code> 接口自定义它的类型.<br>然而, 我们无法从该接口获取关于 JSX 元素, 标签属性, 或孩子的类型信息.<br>它是一个黑盒子.</p></div>
+<h1 id="内嵌表达式" class="heading-control"><a href="#内嵌表达式" class="headerlink" title="内嵌表达式"></a>内嵌表达式<a class="heading-anchor" href="#内嵌表达式" aria-hidden="true"></a></h1><!-- # Embedding Expressions -->
+<div class="translation-block" title="
+&amp;lt;b&amp;gt;&amp;lt;a href=&amp;quot;#table-of-contents&amp;quot;&amp;gt;↥ back to top&amp;lt;&amp;#x2F;a&amp;gt;&amp;lt;&amp;#x2F;b&amp;gt;
+
+JSX allows you to embed expressions between tags by surrounding the expressions with curly braces (`{ }`).
+"><p>JSX 允许你用花括号 <code>{ }</code> 环绕一个表达式将它嵌入两个标签之间.</p></div>
+<figure class="highlight jsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> a = <span class="xml"><span class="tag">&lt;<span class="name">div</span>&gt;</span></span></span><br><span class="line"><span class="xml">  &#123;["foo", "bar"].map(i =&gt; <span class="tag">&lt;<span class="name">span</span>&gt;</span>&#123;i / 2&#125;<span class="tag">&lt;/<span class="name">span</span>&gt;</span>)&#125;</span></span><br><span class="line"><span class="xml"><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span></span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+The above code will result in an error since you cannot divide a string by a number.
+The output, when using the `preserve` option, looks like:
+"><p>上面的代码将由于你不能用数字除一个字符串而产生错误.<br>而输出, 当使用 <code>preserve</code> 模式, 看起来会像:</p></div>
+<figure class="highlight jsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> a = <span class="xml"><span class="tag">&lt;<span class="name">div</span>&gt;</span></span></span><br><span class="line"><span class="xml">  &#123;["foo", "bar"].map(function (i) &#123; return <span class="tag">&lt;<span class="name">span</span>&gt;</span>&#123;i / 2&#125;<span class="tag">&lt;/<span class="name">span</span>&gt;</span>; &#125;)&#125;</span></span><br><span class="line"><span class="xml"><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span></span><br></pre></td></tr></table></figure>
+<h1 id="React-集成" class="heading-control"><a href="#React-集成" class="headerlink" title="React 集成"></a>React 集成<a class="heading-anchor" href="#React-集成" aria-hidden="true"></a></h1><!-- # React integration -->
+<p>要结合 JSX 和 React, 你需要使用 <a href="https://github.com/DefinitelyTyped/DefinitelyTyped/tree/master/types/react" target="_blank" rel="noopener">React typings</a>.<br>这些声明为了 React 用途适当地定义了 <code>JSX</code> 名字空间.</p>
+<div class="translation-block" title="
+&amp;lt;b&amp;gt;&amp;lt;a href=&amp;quot;#table-of-contents&amp;quot;&amp;gt;↥ back to top&amp;lt;&amp;#x2F;a&amp;gt;&amp;lt;&amp;#x2F;b&amp;gt;
+
+To use JSX with React you should use the [React typings](https:&amp;#x2F;&amp;#x2F;github.com&amp;#x2F;DefinitelyTyped&amp;#x2F;DefinitelyTyped&amp;#x2F;tree&amp;#x2F;master&amp;#x2F;types&amp;#x2F;react).
+These typings define the `JSX` namespace appropriately for use with React.
+"></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/// &lt;reference path="react.d.ts" /&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">interface</span> Props &#123;</span><br><span class="line">  foo: <span class="built_in">string</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> MyComponent <span class="keyword">extends</span> React.Component&lt;Props, &#123;&#125;&gt; &#123;</span><br><span class="line">  render() &#123;</span><br><span class="line">    <span class="keyword">return</span> &lt;span&gt;&#123;<span class="keyword">this</span>.props.foo&#125;&lt;<span class="regexp">/span&gt;</span></span><br><span class="line"><span class="regexp">  &#125;</span></span><br><span class="line"><span class="regexp">&#125;</span></span><br><span class="line"><span class="regexp"></span></span><br><span class="line"><span class="regexp">&lt;MyComponent foo="bar" /</span>&gt;; <span class="comment">// ok</span></span><br><span class="line">&lt;MyComponent foo=&#123;<span class="number">0</span>&#125; /&gt;; <span class="comment">// error</span></span><br></pre></td></tr></table></figure>
+<h1 id="工厂函数" class="heading-control"><a href="#工厂函数" class="headerlink" title="工厂函数"></a>工厂函数<a class="heading-anchor" href="#工厂函数" aria-hidden="true"></a></h1><!-- # Factory Functions -->
+<div class="translation-block" title="
+&amp;lt;b&amp;gt;&amp;lt;a href=&amp;quot;#table-of-contents&amp;quot;&amp;gt;↥ back to top&amp;lt;&amp;#x2F;a&amp;gt;&amp;lt;&amp;#x2F;b&amp;gt;
+
+The exact factory function used by the `jsx: react` compiler option is configurable. It may be set using either the `jsxFactory` command line option, or an inline `@jsx` comment pragma to set it on a per-file basis. For example, if you set `jsxFactory` to `createElement`, `&amp;lt;div &amp;#x2F;&amp;gt;` will emit as `createElement(&amp;quot;div&amp;quot;)` instead of `React.createElement(&amp;quot;div&amp;quot;)`.
+
+The comment pragma version may be used like so (in TypeScript 2.8):
+"><p>由 <code>jsx: react</code> 编译器选项使用的确切工厂函数是可配置的. 它可以用 <code>jsxFactory</code> 命令行参数设置, 或用内联注释命令 <code>@jsx</code> 为每个文件单独设置. 比如, 如果你把 <code>jsxFactory</code> 设为 <code>createElement</code>, <code>&lt;div /&gt;</code> 会输出 <code>createElement(&quot;div&quot;)</code>, 而不是 <code>React.createElement(&quot;div&quot;)</code>.</p>
+<p>注释命令版本可能这么使用 (在 TypeScript 2.8 中):</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> preact = <span class="built_in">require</span>(<span class="string">"preact"</span>);</span><br><span class="line"><span class="comment">/* @jsx preact.h */</span></span><br><span class="line"><span class="keyword">const</span> x = &lt;div /&gt;;</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+emits as:
+"><p>输出:</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> preact = <span class="built_in">require</span>(<span class="string">"preact"</span>);</span><br><span class="line"><span class="keyword">const</span> x = preact.h(<span class="string">"div"</span>, <span class="literal">null</span>);</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+The factory chosen will also affect where the `JSX` namespace is looked up (for type checking information) before falling back to the global one. If the factory is defined as `React.createElement` (the default), the compiler will check for `React.JSX` before checking for a global `JSX`. If the factory is defined as `h`, it will check for `h.JSX` before a global `JSX`.
+"><p>选择的工厂函数同样会影响在回退到全局 <code>JSX</code> 名字空间前会在哪个局部 <code>JSX</code> 名字空间查找类型检查信息. 如果定义工厂函数 <code>React.createElement</code> (默认), 编译器在检查全局 <code>JSX</code> 前检查 <code>React.JSX</code>. 如果定义工厂函数 <code>h</code>, 编译器会在检查全局 <code>JSX</code> 前检查 <code>h.JSX</code>.</p></div>
+    </div>
+
+    
+    
+    
+        
+      
+        <div id="reward-container">
+  <div>如果这篇文章对您有用，可以考虑打赏:)</div>
+  <button id="reward-button" disable="enable" onclick="var qr = document.getElementById(&quot;qr&quot;); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+        
+      
+      <div style="display: inline-block">
+        <img src="/images/wechatpay.png" alt="Hyan Lee 微信支付">
+        <p>微信支付</p>
+      </div>
+
+  </div>
+</div>
+
+      
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>Hyan Lee</li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://hyan23.org/2019/11/20/ts-jsx/" title="JSX">https://hyan23.org/2019/11/20/ts-jsx/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！</li>
+</ul>
+</div>
+
+      
+
+      <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+              
+                <a href="/2019/11/20/ts-declaration-merging/" rel="next" title="定义合并">
+                  <i class="fa fa-chevron-left"></i> 定义合并
+                </a>
+              
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+              
+                <a href="/2019/11/20/ts-decorators/" rel="prev" title="装饰器">
+                  装饰器 <i class="fa fa-chevron-right"></i>
+                </a>
+              
+            </div>
+          </div>
+        
+      </footer>
+    
+  </div>
+  
+  
+  
+  </article>
+
+  </div>
+
+
+          </div>
+          
+    
+    <div class="comments" id="gitalk-container"></div>
+  
+
+        </div>
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+        
+        
+        
+        
+      
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#介绍"><span class="nav-number">1.</span> <span class="nav-text">介绍</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#基本用法"><span class="nav-number">2.</span> <span class="nav-text">基本用法</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#as-操作符"><span class="nav-number">3.</span> <span class="nav-text">as 操作符</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#类型检查"><span class="nav-number">4.</span> <span class="nav-text">类型检查</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#固有元素"><span class="nav-number">4.1.</span> <span class="nav-text">固有元素</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#基于值的元素"><span class="nav-number">4.2.</span> <span class="nav-text">基于值的元素</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#函数组件"><span class="nav-number">4.2.1.</span> <span class="nav-text">函数组件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#类组件"><span class="nav-number">4.2.2.</span> <span class="nav-text">类组件</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#标签属性类型检查"><span class="nav-number">4.3.</span> <span class="nav-text">标签属性类型检查</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#子类型检查"><span class="nav-number">4.4.</span> <span class="nav-text">子类型检查</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#JSX-结果类型"><span class="nav-number">5.</span> <span class="nav-text">JSX 结果类型</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#内嵌表达式"><span class="nav-number">6.</span> <span class="nav-text">内嵌表达式</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#React-集成"><span class="nav-number">7.</span> <span class="nav-text">React 集成</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#工厂函数"><span class="nav-number">8.</span> <span class="nav-text">工厂函数</span></a></li></ol></div>
+        
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image"
+      src="/images/avatar2.png"
+      alt="Hyan Lee">
+  <p class="site-author-name" itemprop="name">Hyan Lee</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">31</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-categories">
+        
+          
+            <a href="/categories/">
+          
+        
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">分类</span>
+        </a>
+      </div>
+    
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+      
+      
+        
+      
+      
+        
+      
+        <a href="https://github.com/hyan23" title="GitHub &rarr; https://github.com/hyan23" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+    
+      <span class="links-of-author-item">
+      
+      
+        
+      
+      
+        
+      
+        <a href="mailto:hyan23lee@hotmail.com" title="E-Mail &rarr; mailto:hyan23lee@hotmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+    
+      <span class="links-of-author-item">
+      
+      
+        
+      
+      
+        
+      
+        <a href="https://t.me/hyan23" title="Telegram &rarr; https://t.me/hyan23" rel="noopener" target="_blank"><i class="fa fa-fw fa-telegram"></i>Telegram</a>
+      </span>
+    
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    
+  
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+      
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2017 – <span itemprop="copyrightYear">2020</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Hyan Lee</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    
+    <span title="站点总字数">118k</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v3.9.0</div>
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js?v=3.1.0"></script>
+  <script src="//cdn.jsdelivr.net/npm/medium-zoom@1/dist/medium-zoom.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+<script src="/js/utils.js?v=7.4.0"></script>
+<script src="/js/schemes/pisces.js?v=7.4.0"></script>
+<script src="/js/next-boot.js?v=7.4.0"></script>
+
+
+
+  
+  <script>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+    mermaid.initialize({
+      theme: 'forest',
+      logLevel: 3,
+      flowchart: { curve: 'linear' },
+      gantt: { axisFormat: '%m/%d/%Y' },
+      sequence: { actorMargin: 50 }
+    });
+  }, window.mermaid);
+}
+</script>
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID: '442da4785490db3ece48',
+      clientSecret: '3bfa2829a34371ca37db636917e791d114bd338c',
+      repo: 'blog-comments',
+      owner: 'hyan23',
+      admin: ['hyan23'],
+      id: '63f7035159e02d01448124d85db6ac33',
+        language: window.navigator.language || window.navigator.userLanguage,
+      
+      distractionFreeMode: 'true'
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+</script>
+
+</body>
+</html>

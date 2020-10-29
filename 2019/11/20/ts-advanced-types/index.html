@@ -1,0 +1,1426 @@
+<!DOCTYPE html>
+
+
+
+
+
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/favicon/apple-touch-icon.png?v=7.4.0">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon/favicon-32x32.png?v=7.4.0">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon/favicon-16x16.png?v=7.4.0">
+  <link rel="mask-icon" href="/images/favicon/safari-pinned-tab.svg?v=7.4.0" color="#222">
+  <link rel="manifest" href="/images/favicon/site.webmanifest">
+  <meta name="msapplication-config" content="/images/favicon/browserconfig.xml">
+  <meta http-equiv="Cache-Control" content="no-transform">
+  <meta http-equiv="Cache-Control" content="no-siteapp">
+
+<link rel="stylesheet" href="/css/main.css?v=7.4.0">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '7.4.0',
+    exturl: false,
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false},
+    copycode: {"enable":false,"show_result":false,"style":null},
+    back2top: {"enable":true,"sidebar":true,"scrollpercent":false},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: true,
+    lazyload: true,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: "",
+      labels: ""
+    },
+    localsearch: {"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: '',
+    motion: {"enable":false},
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="状态: 初稿   聚合类型 聚合将多个类型合并为一体.它的产物叫做聚合类型, 拥有参与聚合的每个单一类型所有功能.例如, Person &amp;amp; Serializable &amp;amp; Loggable 既是 Person, 又是 Serializable, 它还是 Loggable.该类型的实例包含来自三个单一类型的所有成员.">
+<meta name="keywords" content="博客,个人博客,日志,在线工具">
+<meta property="og:type" content="article">
+<meta property="og:title" content="高级数据类型">
+<meta property="og:url" content="https://hyan23.org/2019/11/20/ts-advanced-types/index.html">
+<meta property="og:site_name" content="Hyan Lee">
+<meta property="og:description" content="状态: 初稿   聚合类型 聚合将多个类型合并为一体.它的产物叫做聚合类型, 拥有参与聚合的每个单一类型所有功能.例如, Person &amp;amp; Serializable &amp;amp; Loggable 既是 Person, 又是 Serializable, 它还是 Loggable.该类型的实例包含来自三个单一类型的所有成员.">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2020-02-19T07:46:16.132Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="高级数据类型">
+<meta name="twitter:description" content="状态: 初稿   聚合类型 聚合将多个类型合并为一体.它的产物叫做聚合类型, 拥有参与聚合的每个单一类型所有功能.例如, Person &amp;amp; Serializable &amp;amp; Loggable 既是 Person, 又是 Serializable, 它还是 Loggable.该类型的实例包含来自三个单一类型的所有成员.">
+  <link rel="canonical" href="https://hyan23.org/2019/11/20/ts-advanced-types/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>高级数据类型 | Hyan Lee</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+  <div class="container">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Hyan Lee</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+      
+      
+      
+        
+        <li class="menu-item menu-item-home">
+      
+    
+      
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-关于-/-留言板">
+      
+    
+      
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于 / 留言板</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-categories">
+      
+    
+      
+      
+        
+      
+        
+          
+        
+      
+        
+      
+    
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类<span class="badge">6</span></a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-archives">
+      
+    
+      
+      
+        
+          
+        
+      
+        
+      
+        
+      
+    
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">31</span></a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-精选-/-系列">
+      
+    
+      
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <a href="/selections/" rel="section"><i class="fa fa-fw fa-book"></i>精选 / 系列</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-摄影">
+      
+    
+      
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <a href="/gallery/" rel="section"><i class="fa fa-fw fa-camera"></i>摄影</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-工具">
+      
+    
+      
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <a href="/tools/" rel="section"><i class="fa fa-fw fa-calculator"></i>工具</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-友情链接">
+      
+    
+      
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <a href="/friends/" rel="section"><i class="fa fa-fw fa-external-link"></i>友情链接</a>
+
+  </li>
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+            
+
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+      <article itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block post">
+    <link itemprop="mainEntityOfPage" href="https://hyan23.org/2019/11/20/ts-advanced-types/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Hyan Lee">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar2.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hyan Lee">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">高级数据类型
+
+          
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              
+                
+              
+
+              <time title="创建时间：2019-11-20 09:32:41" itemprop="dateCreated datePublished" datetime="2019-11-20T09:32:41+08:00">2019-11-20</time>
+            </span>
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-02-19 15:46:16" itemprop="dateModified" datetime="2020-02-19T15:46:16+08:00">2020-02-19</time>
+              </span>
+            
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/翻译稿/" itemprop="url" rel="index"><span itemprop="name">翻译稿</span></a></span>
+
+                
+                
+                  ，
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/翻译稿/TypeScript/" itemprop="url" rel="index"><span itemprop="name">TypeScript</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+          
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">本文字数：</span>
+              
+              <span>8.4k</span>
+            </span>
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <pre><code>状态: 初稿
+</code></pre><!-- 
+# Table of contents
+
+[Intersection Types](#intersection-types)
+
+[Union Types](#union-types)
+
+[Type Guards and Differentiating Types](#type-guards-and-differentiating-types)
+* [User-Defined Type Guards](#user-defined-type-guards)
+  * [Using type predicates](#using-type-predicates)
+  * [Using the `in` operator](#using-the-in-operator)
+* [`typeof` type guards](#typeof-type-guards)
+* [`instanceof` type guards](#instanceof-type-guards)
+
+[Nullable types](#nullable-types)
+* [Optional parameters and properties](#optional-parameters-and-properties)
+* [Type guards and type assertions](#type-guards-and-type-assertions)
+
+[Type Aliases](#type-aliases)
+* [Interfaces vs. Type Aliases](#interfaces-vs-type-aliases)
+
+[String Literal Types](#string-literal-types)
+
+[Numeric Literal Types](#numeric-literal-types)
+
+[Enum Member Types](#enum-member-types)
+
+[Discriminated Unions](#discriminated-unions)
+* [Exhaustiveness checking](#exhaustiveness-checking)
+
+[Polymorphic `this` types](#polymorphic-this-types)
+
+[Index types](#index-types)
+* [Index types and index signatures](#index-types-and-index-signatures)
+
+[Mapped types](#mapped-types)
+* [Inference from mapped types](#inference-from-mapped-types)
+
+[Conditional Types](#conditional-types)
+* [Distributive conditional types](#distributive-conditional-types)
+* [Type inference in conditional types](#type-inference-in-conditional-types)
+* [Predefined conditional types](#predefined-conditional-types) -->
+<!-- # Intersection Types -->
+<h1 id="聚合类型" class="heading-control"><a href="#聚合类型" class="headerlink" title="聚合类型"></a>聚合类型<a class="heading-anchor" href="#聚合类型" aria-hidden="true"></a></h1><!-- # Intersection Types -->
+<div class="translation-block" title="
+An intersection type combines multiple types into one.
+This allows you to add together existing types to get a single type that has all the features you need.
+For example, `Person &amp;amp; Serializable &amp;amp; Loggable` is a `Person` *and* `Serializable` *and* `Loggable`.
+That means an object of this type will have all members of all three types.
+"><p>聚合将多个类型合并为一体.<br>它的产物叫做聚合类型, 拥有参与聚合的每个单一类型所有功能.<br>例如, <code>Person &amp; Serializable &amp; Loggable</code> 既是 <code>Person</code>, <em>又是</em> <code>Serializable</code>, <em>它还是</em> <code>Loggable</code>.<br>该类型的实例包含来自三个单一类型的所有成员.</p></div>
+<a id="more"></a>
+<div class="translation-block" title="
+You will mostly see intersection types used for mixins and other concepts that don&amp;#39;t fit in the classic object-oriented mold.
+(There are a lot of these in JavaScript!)
+Here&amp;#39;s a simple example that shows how to create a mixin:
+"><p>你几乎只能看到人们为不符合典型面向对象模型的如 mixins 等概念使用聚合类型.<br>(JavaScript 里面有很多!)<br>以下例子演示如何创建 mixin:</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">extend</span>&lt;<span class="title">First</span>, <span class="title">Second</span>&gt;(<span class="params">first: First, second: Second</span>): <span class="title">First</span> &amp; <span class="title">Second</span> </span>&#123;</span><br><span class="line">    <span class="keyword">const</span> result: Partial&lt;First &amp; Second&gt; = &#123;&#125;;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">const</span> prop <span class="keyword">in</span> first) &#123;</span><br><span class="line">        <span class="keyword">if</span> (first.hasOwnProperty(prop)) &#123;</span><br><span class="line">            (result <span class="keyword">as</span> First)[prop] = first[prop];</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">const</span> prop <span class="keyword">in</span> second) &#123;</span><br><span class="line">        <span class="keyword">if</span> (second.hasOwnProperty(prop)) &#123;</span><br><span class="line">            (result <span class="keyword">as</span> Second)[prop] = second[prop];</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> result <span class="keyword">as</span> First &amp; Second;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> Person &#123;</span><br><span class="line">    <span class="keyword">constructor</span>(<span class="params"><span class="keyword">public</span> name: <span class="built_in">string</span></span>) &#123; &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">interface</span> Loggable &#123;</span><br><span class="line">    log(name: <span class="built_in">string</span>): <span class="built_in">void</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> ConsoleLogger <span class="keyword">implements</span> Loggable &#123;</span><br><span class="line">    log(name) &#123;</span><br><span class="line">        <span class="built_in">console</span>.log(<span class="string">`Hello, I'm <span class="subst">$&#123;name&#125;</span>.`</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> jim = extend(<span class="keyword">new</span> Person(<span class="string">'Jim'</span>), ConsoleLogger.prototype);</span><br><span class="line">jim.log(jim.name);</span><br></pre></td></tr></table></figure>
+<h1 id="自适应类型" class="heading-control"><a href="#自适应类型" class="headerlink" title="自适应类型"></a>自适应类型<a class="heading-anchor" href="#自适应类型" aria-hidden="true"></a></h1><!-- # Union Types -->
+<div class="translation-block" title="
+Union types are closely related to intersection types, but they are used very differently.
+Occasionally, you&amp;#39;ll run into a library that expects a parameter to be either a `number` or a `string`.
+For instance, take the following function:
+"><p>自适应类型和聚合类型有着紧密的联系, 但两者用法却大相径庭.<br>偶尔, 你会遇到这样的库函数, 它期待参数是 <code>number</code>, 或 <code>string</code>.<br>举个例子, 观察以下函数:</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Takes a string and adds "padding" to the left.</span></span><br><span class="line"><span class="comment"> * If 'padding' is a string, then 'padding' is appended to the left side.</span></span><br><span class="line"><span class="comment"> * If 'padding' is a number, then that number of spaces is added to the left side.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">padLeft</span>(<span class="params">value: <span class="built_in">string</span>, padding: <span class="built_in">any</span></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">typeof</span> padding === <span class="string">"number"</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="built_in">Array</span>(padding + <span class="number">1</span>).join(<span class="string">" "</span>) + value;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">typeof</span> padding === <span class="string">"string"</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> padding + value;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">throw</span> <span class="keyword">new</span> <span class="built_in">Error</span>(<span class="string">`Expected string or number, got '<span class="subst">$&#123;padding&#125;</span>'.`</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">padLeft(<span class="string">"Hello world"</span>, <span class="number">4</span>); <span class="comment">// returns "    Hello world"</span></span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+The problem with `padLeft` is that its `padding` parameter is typed as `any`.
+That means that we can call it with an argument that&amp;#39;s neither a `number` nor a `string`, but TypeScript will be okay with it.
+"><p><code>padding</code> 参数类型是 <code>any</code>, 这是有问题的.<br>它说明我们可以向 <code>padding</code> 传一个既不是 <code>number</code> 又不是 <code>string</code> 的实参, 而 TypeScript 不加干预.</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> indentedString = padLeft(<span class="string">"Hello world"</span>, <span class="literal">true</span>); <span class="comment">// passes at compile time, fails at runtime.</span></span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+In traditional object-oriented code, we might abstract over the two types by creating a hierarchy of types.
+While this is much more explicit, it&amp;#39;s also a little bit overkill.
+One of the nice things about the original version of `padLeft` was that we were able to just pass in primitives.
+That meant that usage was simple and concise.
+This new approach also wouldn&amp;#39;t help if we were just trying to use a function that already exists elsewhere.
+
+Instead of `any`, we can use a *union type* for the `padding` parameter:
+"><p>依照传统面向对象思路, 我们可以创建一个类型层次抽象这两个类型.<br>它很直观, 却有点小题大做.<br>原始 <code>padLeft</code> 版本值得称道的一点是我们可以仅传入原始类型.<br>简单而干练.<br>新方法对别处已存在的函数也不起作用.</p>
+<p>综合考虑, 我们应该选择<em>自适应类型</em>代替<code>any</code>:</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Takes a string and adds "padding" to the left.</span></span><br><span class="line"><span class="comment"> * If 'padding' is a string, then 'padding' is appended to the left side.</span></span><br><span class="line"><span class="comment"> * If 'padding' is a number, then that number of spaces is added to the left side.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">padLeft</span>(<span class="params">value: <span class="built_in">string</span>, padding: <span class="built_in">string</span> | <span class="built_in">number</span></span>) </span>&#123;</span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> indentedString = padLeft(<span class="string">"Hello world"</span>, <span class="literal">true</span>); <span class="comment">// errors during compilation</span></span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+A union type describes a value that can be one of several types.
+We use the vertical bar (`|`) to separate each type, so `number | string | boolean` is the type of a value that can be a `number`, a `string`, or a `boolean`.
+
+If we have a value that has a union type, we can only access members that are common to all types in the union.
+"><p>自适应类型可以表示多种类型的值.<br>我们以竖线 (<code>|</code>) 分隔单个类型, <code>number | string | boolean</code> 是一个可能是 <code>number</code>, 可能是 <code>string</code>, 又可能是 <code>boolean</code> 的值的类型.</p>
+<p>我们只能访问一个自适应值所有单个类型共有的成员.</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">interface</span> Bird &#123;</span><br><span class="line">    fly();</span><br><span class="line">    layEggs();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">interface</span> Fish &#123;</span><br><span class="line">    swim();</span><br><span class="line">    layEggs();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">getSmallPet</span>(<span class="params"></span>): <span class="title">Fish</span> | <span class="title">Bird</span> </span>&#123;</span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> pet = getSmallPet();</span><br><span class="line">pet.layEggs(); <span class="comment">// okay</span></span><br><span class="line">pet.swim();    <span class="comment">// errors</span></span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+Union types can be a bit tricky here, but it just takes a bit of intuition to get used to.
+If a value has the type `A | B`, we only know for *certain* that it has members that both `A` *and* `B` have.
+In this example, `Bird` has a member named `fly`.
+We can&amp;#39;t be sure whether a variable typed as `Bird | Fish` has a `fly` method.
+If the variable is really a `Fish` at runtime, then calling `pet.fly()` will fail.
+"><p>自适应类型有点复杂, 但我们靠直觉就能掌握.<br>如果一个值的类型是 <code>A | B</code>, 我们只能<em>确定</em>它包含 <code>A</code> 和 <code>B</code> 共有的成员.<br>上例中, <code>Bird</code> 有一个叫做 <code>fly</code> 的成员.<br>但是, 我们不能确定一个 <code>Bird | Fish</code> 变量也有 <code>fly</code> 方法.<br>在运行期间, 如果变量存储的确是 <code>Fish</code>, 调用 <code>fly</code> 必定出错.</p></div>
+<h1 id="类型护卫以及类型区分" class="heading-control"><a href="#类型护卫以及类型区分" class="headerlink" title="类型护卫以及类型区分"></a>类型护卫以及类型区分<a class="heading-anchor" href="#类型护卫以及类型区分" aria-hidden="true"></a></h1><!-- # Type Guards and Differentiating Types -->
+<div class="translation-block" title="
+Union types are useful for modeling situations when values can overlap in the types they can take on.
+What happens when we need to know specifically whether we have a `Fish`?
+A common idiom in JavaScript to differentiate between two possible values is to check for the presence of a member.
+As we mentioned, you can only access members that are guaranteed to be in all the constituents of a union type.
+"><p>自适应类型可以对值所代表的类型有机会重叠的情形建模.<br>当我们正好需要确定一个变量是不是 <code>Fish</code> 时应该怎么做?<br>JavaScript 区分两个值的一种惯用表达方式是检查特定成员是否存在.<br>我们说过, 你只能访问每个自适应类型成分都有的成员.</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> pet = getSmallPet();</span><br><span class="line"></span><br><span class="line"><span class="comment">// Each of these property accesses will cause an error</span></span><br><span class="line"><span class="keyword">if</span> (pet.swim) &#123;</span><br><span class="line">    pet.swim();</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">else</span> <span class="keyword">if</span> (pet.fly) &#123;</span><br><span class="line">    pet.fly();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+To get the same code working, we&amp;#39;ll need to use a type assertion:
+"><p>要让以上实例工作, 我们用类型担保:</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> pet = getSmallPet();</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> ((pet <span class="keyword">as</span> Fish).swim) &#123;</span><br><span class="line">    (pet <span class="keyword">as</span> Fish).swim();</span><br><span class="line">&#125; <span class="keyword">else</span> <span class="keyword">if</span> ((pet <span class="keyword">as</span> Bird).fly) &#123;</span><br><span class="line">    (pet <span class="keyword">as</span> Bird).fly();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="自定义类型护卫" class="heading-control"><a href="#自定义类型护卫" class="headerlink" title="自定义类型护卫"></a>自定义类型护卫<a class="heading-anchor" href="#自定义类型护卫" aria-hidden="true"></a></h2><!-- ## User-Defined Type Guards -->
+<div class="translation-block" title="
+Notice that we had to use type assertions several times.
+It would be much better if once we performed the check, we could know the type of `pet` within each branch.
+
+It just so happens that TypeScript has something called a *type guard*.
+A type guard is some expression that performs a runtime check that guarantees the type in some scope.
+"><p>可以看到我们多次使用类型担保.<br>如果我们做完检查, 就知道 <code>pet</code> 在每个分支内部的类型, 无疑会更好.</p>
+<p>TypeScript 所谓<em>类型护卫</em>使其得以实现.<br>类型护卫是在运行期执行检查的某种表达式, 确保特定范围内的变量类型.</p></div>
+<h2 id="使用类型断言" class="heading-control"><a href="#使用类型断言" class="headerlink" title="使用类型断言"></a>使用类型断言<a class="heading-anchor" href="#使用类型断言" aria-hidden="true"></a></h2><!-- ### Using type predicates -->
+<div class="translation-block" title="
+To define a type guard, we simply need to define a function whose return type is a *type predicate*:
+"><p>要定义类型护卫, 创建一个返回值类型是<em>类型断言</em>的函数:</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">isFish</span>(<span class="params">pet: Fish | Bird</span>): <span class="title">pet</span> <span class="title">is</span> <span class="title">Fish</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> (pet <span class="keyword">as</span> Fish).swim !== <span class="literal">undefined</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+`pet is Fish` is our type predicate in this example.
+A predicate takes the form `parameterName is Type`, where `parameterName` must be the name of a parameter from the current function signature.
+
+Any time `isFish` is called with some variable, TypeScript will *narrow* that variable to that specific type if the original type is compatible.
+"><p>在这个例子中, <code>pet is Fish</code> 便是类型断言.<br>类型断言采用 <code>参数名 is 类型</code> 的形式, 其中, 参数名必须是当前函数一个参数的名字.</p>
+<p>当你用某个变量调用 <code>isFish</code>, 如果变量类型满足断言, TypeScript <em>收缩</em>这变量至断言类型.</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Both calls to 'swim' and 'fly' are now okay.</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> (isFish(pet)) &#123;</span><br><span class="line">    pet.swim();</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">else</span> &#123;</span><br><span class="line">    pet.fly();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+Notice that TypeScript not only knows that `pet` is a `Fish` in the `if` branch;
+it also knows that in the `else` branch, you *don&amp;#39;t* have a `Fish`, so you must have a `Bird`.
+"><p>上例, TypeScript 不仅知道在 <code>if</code> 分支内部, <code>pet</code> 是一个 <code>Fish</code>;<br>它还知道在 <code>else</code> 分支, <code>pet</code> 不可能也是 <code>Fish</code>, 所以它只能是 <code>Bird</code>.</p></div>
+<h3 id="使用-in-运算符" class="heading-control"><a href="#使用-in-运算符" class="headerlink" title="使用 in 运算符"></a>使用 in 运算符<a class="heading-anchor" href="#使用-in-运算符" aria-hidden="true"></a></h3><!-- ### Using the `in` operator -->
+<div class="translation-block" title="
+The `in` operator now acts as a narrowing expression for types.
+
+For a `n in x` expression, where `n` is a string literal or string literal type and `x` is a union type, the &amp;quot;true&amp;quot; branch narrows to types which have an optional or required property `n`, and the &amp;quot;false&amp;quot; branch narrows to types which have an optional or missing property `n`.
+"><p><code>in</code> 操作符现在起着收缩类型的作用.</p>
+<p>对表达式 <code>n in x</code>, <code>n</code> 是 string 字面量, 或 string 字面量类型, 而 <code>x</code> 是一个自适应类型, “真” 分支把类型收缩为有一个可选或必要的属性 <code>n</code>, “假” 分支把类型收缩为有一个可选属性 <code>n</code>, 或没有属性 <code>n</code>.</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">move</span>(<span class="params">pet: Fish | Bird</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="string">"swim"</span> <span class="keyword">in</span> pet) &#123;</span><br><span class="line">        <span class="keyword">return</span> pet.swim();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> pet.fly();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="typeof-型" class="heading-control"><a href="#typeof-型" class="headerlink" title="typeof 型"></a>typeof 型<a class="heading-anchor" href="#typeof-型" aria-hidden="true"></a></h2><!-- ## `typeof` type guards -->
+<div class="translation-block" title="
+Let&amp;#39;s go back and write the code for the version of `padLeft` that uses union types.
+We could write it with type predicates as follows:
+"><p>我们回过头重写一版 <code>padLeft</code>, 这次采用自适应类型.<br>结合类型断言:</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">isNumber</span>(<span class="params">x: <span class="built_in">any</span></span>): <span class="title">x</span> <span class="title">is</span> <span class="title">number</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">typeof</span> x === <span class="string">"number"</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">isString</span>(<span class="params">x: <span class="built_in">any</span></span>): <span class="title">x</span> <span class="title">is</span> <span class="title">string</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">typeof</span> x === <span class="string">"string"</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">padLeft</span>(<span class="params">value: <span class="built_in">string</span>, padding: <span class="built_in">string</span> | <span class="built_in">number</span></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (isNumber(padding)) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="built_in">Array</span>(padding + <span class="number">1</span>).join(<span class="string">" "</span>) + value;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (isString(padding)) &#123;</span><br><span class="line">        <span class="keyword">return</span> padding + value;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">throw</span> <span class="keyword">new</span> <span class="built_in">Error</span>(<span class="string">`Expected string or number, got '<span class="subst">$&#123;padding&#125;</span>'.`</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+However, having to define a function to figure out if a type is a primitive is kind of a pain.
+Luckily, you don&amp;#39;t need to abstract `typeof x === &amp;quot;number&amp;quot;` into its own function because TypeScript will recognize it as a type guard on its own.
+That means we could just write these checks inline.
+"><p>可以说, 定义一个函数去弄明白一个类型是不是原始类型稍显痛苦.<br>幸而, 即使你不把 <code>typeof x === &quot;number&quot;</code> 放进它独有的函数, TypeScript 也能直接识别它是一个类型护卫.<br>由此, 我们可以把它们精简至一行.</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">padLeft</span>(<span class="params">value: <span class="built_in">string</span>, padding: <span class="built_in">string</span> | <span class="built_in">number</span></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">typeof</span> padding === <span class="string">"number"</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="built_in">Array</span>(padding + <span class="number">1</span>).join(<span class="string">" "</span>) + value;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">typeof</span> padding === <span class="string">"string"</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> padding + value;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">throw</span> <span class="keyword">new</span> <span class="built_in">Error</span>(<span class="string">`Expected string or number, got '<span class="subst">$&#123;padding&#125;</span>'.`</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+These *`typeof` type guards* are recognized in two different forms: `typeof v === &amp;quot;typename&amp;quot;` and `typeof v !== &amp;quot;typename&amp;quot;`, where `&amp;quot;typename&amp;quot;` must be `&amp;quot;number&amp;quot;`, `&amp;quot;string&amp;quot;`, `&amp;quot;boolean&amp;quot;`, or `&amp;quot;symbol&amp;quot;`.
+While TypeScript won&amp;#39;t stop you from comparing to other strings, the language won&amp;#39;t recognize those expressions as type guards.
+"><p><em><code>typeof</code> 型类型护卫</em>有两种形式: <code>typeof v === &quot;typename&quot;</code> 和 <code>typeof v !== &quot;typename&quot;</code>, <code>&quot;typename&quot;</code> 只能从 <code>&quot;number&quot;</code>, <code>&quot;string&quot;</code>, <code>&quot;boolean&quot;</code>, 或 <code>&quot;symbol&quot;</code> 中选择.<br>TypeScript 不阻止你与其他字符串比较, 但语言不会将它们识别为类型护卫.</p></div>
+<h2 id="instanceof-型" class="heading-control"><a href="#instanceof-型" class="headerlink" title="instanceof 型"></a>instanceof 型<a class="heading-anchor" href="#instanceof-型" aria-hidden="true"></a></h2><!-- ## `instanceof` type guards -->
+<div class="translation-block" title="
+If you&amp;#39;ve read about `typeof` type guards and are familiar with the `instanceof` operator in JavaScript, you probably have some idea of what this section is about.
+
+*`instanceof` type guards* are a way of narrowing types using their constructor function.
+For instance, let&amp;#39;s borrow our industrial string-padder example from earlier:
+"><p>如果, 你已经读完 <code>typeof</code> 型类型护卫, 再加上你熟悉 JavaScript <code>instanceof</code> 运算符, 不难猜出这节所要讲的内容.</p>
+<p><em><code>instanceof</code> 型类型护卫</em>是一种运用构造器函数来收缩类型的方法.<br>我们借用先前工业化标准的 string-padder 例子:</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">interface</span> Padder &#123;</span><br><span class="line">    getPaddingString(): <span class="built_in">string</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> SpaceRepeatingPadder <span class="keyword">implements</span> Padder &#123;</span><br><span class="line">    <span class="keyword">constructor</span>(<span class="params"><span class="keyword">private</span> numSpaces: <span class="built_in">number</span></span>) &#123; &#125;</span><br><span class="line">    getPaddingString() &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="built_in">Array</span>(<span class="keyword">this</span>.numSpaces + <span class="number">1</span>).join(<span class="string">" "</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> StringPadder <span class="keyword">implements</span> Padder &#123;</span><br><span class="line">    <span class="keyword">constructor</span>(<span class="params"><span class="keyword">private</span> value: <span class="built_in">string</span></span>) &#123; &#125;</span><br><span class="line">    getPaddingString() &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">this</span>.value;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">getRandomPadder</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">Math</span>.random() &lt; <span class="number">0.5</span> ?</span><br><span class="line">        <span class="keyword">new</span> SpaceRepeatingPadder(<span class="number">4</span>) :</span><br><span class="line">        <span class="keyword">new</span> StringPadder(<span class="string">"  "</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Type is 'SpaceRepeatingPadder | StringPadder'</span></span><br><span class="line"><span class="keyword">let</span> padder: Padder = getRandomPadder();</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> (padder <span class="keyword">instanceof</span> SpaceRepeatingPadder) &#123;</span><br><span class="line">    padder; <span class="comment">// type narrowed to 'SpaceRepeatingPadder'</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">if</span> (padder <span class="keyword">instanceof</span> StringPadder) &#123;</span><br><span class="line">    padder; <span class="comment">// type narrowed to 'StringPadder'</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+The right side of the `instanceof` needs to be a constructor function, and TypeScript will narrow down to:
+
+1. the type of the function&amp;#39;s `prototype` property if its type is not `any`
+2. the union of types returned by that type&amp;#39;s construct signatures
+
+in that order.
+"><!-- TODO: 理解 -->
+<p><code>instanceof</code> 右端应是一个构造器函数, TypeScript 按下列顺序收缩类型至:</p>
+<ol>
+<li>如果类型不是 <code>any</code>, 函数 <code>prototype</code> 属性的类型</li>
+<li>类型构造签名返回的自适应类型</li>
+</ol></div>
+<h1 id="可为空类型" class="heading-control"><a href="#可为空类型" class="headerlink" title="可为空类型"></a>可为空类型<a class="heading-anchor" href="#可为空类型" aria-hidden="true"></a></h1><!-- # Nullable types -->
+<div class="translation-block" title="
+TypeScript has two special types, `null` and `undefined`, that have the values null and undefined respectively.
+We mentioned these briefly in [the Basic Types section](.&amp;#x2F;Basic%20Types.md).
+By default, the type checker considers `null` and `undefined` assignable to anything.
+Effectively, `null` and `undefined` are valid values of every type.
+That means it&amp;#39;s not possible to *stop* them from being assigned to any type, even when you would like to prevent it.
+The inventor of `null`, Tony Hoare, calls this his [&amp;quot;billion dollar mistake&amp;quot;](https:&amp;#x2F;&amp;#x2F;en.wikipedia.org&amp;#x2F;wiki&amp;#x2F;Null_pointer#History).
+
+The `--strictNullChecks` flag fixes this: when you declare a variable, it doesn&amp;#39;t automatically include `null` or `undefined`.
+You can include them explicitly using a union type:
+"><p>TypeScript 有两种特殊数据类型, <code>null</code> 和 <code>undefined</code>, 它们分别表示 null 和 undefined 两种特殊值.<br>在<a href="#">基本数据类型</a>一章有它们的简要介绍.<br>默认情况, 类型检查器认为值 <code>null</code> 和 <code>undefined</code> 可以赋给任何类型.<br>而实际上, <code>null</code> 和 <code>undefined</code> 就是所有类型的有效值.<br>这说明即使你有意避免, 也无法<em>阻止</em>它们能赋值给任何类型的能力.<br><code>null</code> 的发明者, Tony Hoare, 称之为<a href="https://en.wikipedia.org/wiki/Null_pointer#History" target="_blank" rel="noopener">“billion dollar mistake”</a>(一百万美元的失误).</p>
+<p><code>--strictNullChecks</code> 选项在编译器层面改善: 你定义变量的时候, <code>null</code> 或 <code>undefined</code> 不自动添加进值域中.<br>你可以运用自适应类型显式添加它们:</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> s = <span class="string">"foo"</span>;</span><br><span class="line">s = <span class="literal">null</span>; <span class="comment">// error, 'null' is not assignable to 'string'</span></span><br><span class="line"><span class="keyword">let</span> sn: <span class="built_in">string</span> | <span class="literal">null</span> = <span class="string">"bar"</span>;</span><br><span class="line">sn = <span class="literal">null</span>; <span class="comment">// ok</span></span><br><span class="line"></span><br><span class="line">sn = <span class="literal">undefined</span>; <span class="comment">// error, 'undefined' is not assignable to 'string | null'</span></span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+Note that TypeScript treats `null` and `undefined` differently in order to match JavaScript semantics.
+`string | null` is a different type than `string | undefined` and `string | undefined | null`.
+
+From TypeScript 3.7 and onwards, you can use [optional chaining](&amp;#x2F;docs&amp;#x2F;handbook&amp;#x2F;release-notes&amp;#x2F;typescript-3-7.html#optional-chaining) to simplify working with nullable types.
+"><p>注意, 为符合 JavaScript 语义, TypeScript 区分对待 <code>null</code> 和 <code>undefined</code>.<br><code>stirng | null</code> 与 <code>stirng | undefined</code> 和 <code>string | undefined | null</code> 是不同的类型.</p>
+<p>在 TypeScript 3.7 以及更新的版本中, 你可以借助<a href="/docs/handbook/release-notes/typescript-3-7.html#optional-chaining">optional chaining</a>(可选链)简化对可为空类型的使用.</p></div>
+<h2 id="可选参数和属性" class="heading-control"><a href="#可选参数和属性" class="headerlink" title="可选参数和属性"></a>可选参数和属性<a class="heading-anchor" href="#可选参数和属性" aria-hidden="true"></a></h2><!-- ## Optional parameters and properties -->
+<div class="translation-block" title="
+With `--strictNullChecks`, an optional parameter automatically adds `| undefined`:
+"><p>有了 <code>--strictNullChecks</code>, 可选参数的类型自动附加 <code>| undefined</code>:</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">f</span>(<span class="params">x: <span class="built_in">number</span>, y?: <span class="built_in">number</span></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> x + (y || <span class="number">0</span>);</span><br><span class="line">&#125;</span><br><span class="line">f(<span class="number">1</span>, <span class="number">2</span>);</span><br><span class="line">f(<span class="number">1</span>);</span><br><span class="line">f(<span class="number">1</span>, <span class="literal">undefined</span>);</span><br><span class="line">f(<span class="number">1</span>, <span class="literal">null</span>); <span class="comment">// error, 'null' is not assignable to 'number | undefined'</span></span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+The same is true for optional properties:
+"><p>可选属性也一样:</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> C &#123;</span><br><span class="line">    a: <span class="built_in">number</span>;</span><br><span class="line">    b?: <span class="built_in">number</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">let</span> c = <span class="keyword">new</span> C();</span><br><span class="line">c.a = <span class="number">12</span>;</span><br><span class="line">c.a = <span class="literal">undefined</span>; <span class="comment">// error, 'undefined' is not assignable to 'number'</span></span><br><span class="line">c.b = <span class="number">13</span>;</span><br><span class="line">c.b = <span class="literal">undefined</span>; <span class="comment">// ok</span></span><br><span class="line">c.b = <span class="literal">null</span>; <span class="comment">// error, 'null' is not assignable to 'number | undefined'</span></span><br></pre></td></tr></table></figure>
+<h2 id="类型护卫与类型担保" class="heading-control"><a href="#类型护卫与类型担保" class="headerlink" title="类型护卫与类型担保"></a>类型护卫与类型担保<a class="heading-anchor" href="#类型护卫与类型担保" aria-hidden="true"></a></h2><!-- ## Type guards and type assertions -->
+<div class="translation-block" title="
+Since nullable types are implemented with a union, you need to use a type guard to get rid of the `null`.
+Fortunately, this is the same code you&amp;#39;d write in JavaScript:
+"><p>由于可为空类型是依靠自适应类型得以实现的, 你需要用类型护卫消除 <code>null</code> 值.<br>它看起来和 JavaScript 一样:</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">f</span>(<span class="params">sn: <span class="built_in">string</span> | <span class="literal">null</span></span>): <span class="title">string</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (sn == <span class="literal">null</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">"default"</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> sn;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+The `null` elimination is pretty obvious here, but you can use terser operators too:
+"><p>这里对 <code>null</code> 的消除意图是很明显的, 但是你也可以用更简练的运算符:</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">f</span>(<span class="params">sn: <span class="built_in">string</span> | <span class="literal">null</span></span>): <span class="title">string</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> sn || <span class="string">"default"</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+In cases where the compiler can&amp;#39;t eliminate `null` or `undefined`, you can use the type assertion operator to manually remove them.
+The syntax is postfix `!`: `identifier!` removes `null` and `undefined` from the type of `identifier`:
+"><p>我们有类型担保运算符, 在编译器不能消除 <code>null</code> 或 <code>undefined</code> 时发挥作用.<br>语法是感叹号后缀 <code>!</code>: <code>identifier!</code> 为 <code>identifier</code> 的类型消除 <code>null</code> 和 <code>undefined</code>:</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">broken</span>(<span class="params">name: <span class="built_in">string</span> | <span class="literal">null</span></span>): <span class="title">string</span> </span>&#123;</span><br><span class="line">  <span class="function"><span class="keyword">function</span> <span class="title">postfix</span>(<span class="params">epithet: <span class="built_in">string</span></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> name.charAt(<span class="number">0</span>) + <span class="string">'.  the '</span> + epithet; <span class="comment">// error, 'name' is possibly null</span></span><br><span class="line">  &#125;</span><br><span class="line">  name = name || <span class="string">"Bob"</span>;</span><br><span class="line">  <span class="keyword">return</span> postfix(<span class="string">"great"</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">fixed</span>(<span class="params">name: <span class="built_in">string</span> | <span class="literal">null</span></span>): <span class="title">string</span> </span>&#123;</span><br><span class="line">  <span class="function"><span class="keyword">function</span> <span class="title">postfix</span>(<span class="params">epithet: <span class="built_in">string</span></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> name!.charAt(<span class="number">0</span>) + <span class="string">'.  the '</span> + epithet; <span class="comment">// ok</span></span><br><span class="line">  &#125;</span><br><span class="line">  name = name || <span class="string">"Bob"</span>;</span><br><span class="line">  <span class="keyword">return</span> postfix(<span class="string">"great"</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+The example uses a nested function here because the compiler can&amp;#39;t eliminate nulls inside a nested function (except immediately-invoked function expressions).
+That&amp;#39;s because it can&amp;#39;t track all calls to the nested function, especially if you return it from the outer function.
+Without knowing where the function is called, it can&amp;#39;t know what the type of `name` will be at the time the body executes.
+"><p>这里有用到嵌套函数, 因为编译器不能消除嵌套函数里面的 null (立时调用函数表达式除外).<br>这是由于编译器无法追踪所有对嵌套函数的调用, 特别是你在外层函数返回它时.<br>无从得知函数在哪里调用, 它也无法确定函数体执行期间 <code>name</code> 的类型.</p></div>
+<h1 id="类型别名" class="heading-control"><a href="#类型别名" class="headerlink" title="类型别名"></a>类型别名<a class="heading-anchor" href="#类型别名" aria-hidden="true"></a></h1><!-- # Type Aliases -->
+<div class="translation-block" title="
+Type aliases create a new name for a type.
+Type aliases are sometimes similar to interfaces, but can name primitives, unions, tuples, and any other types that you&amp;#39;d otherwise have to write by hand.
+"><p>类型别名为类型创建一个新名字.<br>有时类型别名如同接口, 不过, 它可以为原始类型, 自适应类型, 元组, 以及其他你需要手动书写的类型命名.</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Name = <span class="built_in">string</span>;</span><br><span class="line"><span class="keyword">type</span> NameResolver = <span class="function"><span class="params">()</span> =&gt;</span> <span class="built_in">string</span>;</span><br><span class="line"><span class="keyword">type</span> NameOrResolver = Name | NameResolver;</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">getName</span>(<span class="params">n: NameOrResolver</span>): <span class="title">Name</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">typeof</span> n === <span class="string">"string"</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> n;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> n();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+Aliasing doesn&amp;#39;t actually create a new type - it creates a new *name* to refer to that type.
+Aliasing a primitive is not terribly useful, though it can be used as a form of documentation.
+
+Just like interfaces, type aliases can also be generic - we can just add type parameters and use them on the right side of the alias declaration:
+"><p>创建类型别名实际上没创建新类型 - 它只不过创建了一个新<em>名字</em>引用现有类型.<br>若非你有文档意图, 为原始类型创建别名都不十分有用.</p>
+<p>如同接口, 别名也可以是泛型的 - 我们可以附加类型参数进而在别名定义右侧使用.</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Container&lt;T&gt; = &#123; value: T &#125;;</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+We can also have a type alias refer to itself in a property:
+"><p>我们可以在属性定义中让别名引用自身:</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Tree&lt;T&gt; = &#123;</span><br><span class="line">    value: T;</span><br><span class="line">    left: Tree&lt;T&gt;;</span><br><span class="line">    right: Tree&lt;T&gt;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+Together with intersection types, we can make some pretty mind-bending types:
+"><p>结合聚合类型, 我们可以创造出相当烧脑的类型:</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> LinkedList&lt;T&gt; = T &amp; &#123; next: LinkedList&lt;T&gt; &#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">interface</span> Person &#123;</span><br><span class="line">    name: <span class="built_in">string</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> people: LinkedList&lt;Person&gt;;</span><br><span class="line"><span class="keyword">var</span> s = people.name;</span><br><span class="line"><span class="keyword">var</span> s = people.next.name;</span><br><span class="line"><span class="keyword">var</span> s = people.next.next.name;</span><br><span class="line"><span class="keyword">var</span> s = people.next.next.next.name;</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+However, it&amp;#39;s not possible for a type alias to appear anywhere else on the right side of the declaration:
+"><p>并不是说, 别名本身可以出现在定义右侧其他任何地方:</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Yikes = <span class="built_in">Array</span>&lt;Yikes&gt;; <span class="comment">// error</span></span><br></pre></td></tr></table></figure>
+<h2 id="接口对比类型别名" class="heading-control"><a href="#接口对比类型别名" class="headerlink" title="接口对比类型别名"></a>接口对比类型别名<a class="heading-anchor" href="#接口对比类型别名" aria-hidden="true"></a></h2><!-- ## Interfaces vs. Type Aliases -->
+<div class="translation-block" title="
+As we mentioned, type aliases can act sort of like interfaces; however, there are some subtle differences.
+
+One difference is that interfaces create a new name that is used everywhere.
+Type aliases don&amp;#39;t create a new name &amp;amp;mdash; for instance, error messages won&amp;#39;t use the alias name.
+In the code below, hovering over `interfaced` in an editor will show that it returns an `Interface`, but will show that `aliased` returns object literal type.
+"><p>我们提到过, 类型别名在某些方面与接口有相似之处, 然而, 两者还是存在一些细微差别.</p>
+<p>第一个差别是, 接口创建在所有场合使用的新名字.<br>类型别名则不这样 &mdash; 举例来说, 错误信息不使用别名.<br>考察以下代码, 在编辑器中, 把鼠标悬浮在 <code>interfaced</code> 上方, 编辑器显示函数返回 <code>Interface</code>, 把鼠标悬浮在 <code>aliased</code> 上方, 则显示函数返回对象字面量类型.</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Alias = &#123; num: <span class="built_in">number</span> &#125;</span><br><span class="line"><span class="keyword">interface</span> Interface &#123;</span><br><span class="line">    num: <span class="built_in">number</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">declare</span> <span class="function"><span class="keyword">function</span> <span class="title">aliased</span>(<span class="params">arg: Alias</span>): <span class="title">Alias</span></span>;</span><br><span class="line"><span class="keyword">declare</span> <span class="function"><span class="keyword">function</span> <span class="title">interfaced</span>(<span class="params">arg: Interface</span>): <span class="title">Interface</span></span>;</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+In older versions of TypeScript, type aliases couldn&amp;#39;t be extended or implemented from (nor could they extend&amp;#x2F;implement other types). As of version 2.7, type aliases can be extended by creating a new intersection type e.g. `type Cat = Animal &amp;amp; { purrs: true }`.
+
+Because [an ideal property of software is being open to extension](https:&amp;#x2F;&amp;#x2F;en.wikipedia.org&amp;#x2F;wiki&amp;#x2F;Open&amp;#x2F;closed_principle), you should always use an interface over a type alias if possible.
+
+On the other hand, if you can&amp;#39;t express some shape with an interface and you need to use a union or tuple type, type aliases are usually the way to go.
+"><p>在较老的 TypeScript 版本中, 类型别名既不能被继承/实现, 也不能继承/实现其他类型. 自 2.7 版开始, 你可以创建聚合类型来继承类型别名, 例如: <code>type Cat = Animal &amp; { purrs: true }</code>.</p>
+<p>因为<a href="https://en.wikipedia.org/wiki/Open/closed_principle" target="_blank" rel="noopener">an ideal property of software is being open to extension</a>(软件的理想属性是向扩展开放), 如果可行, 总是优先选用接口.</p>
+<p>另一方面, 面对你无法用接口表达的形体, 而需要借助自适应类型和元组的时候, 类型别名便成为一种选择.</p></div>
+<h1 id="字符串字面量类型" class="heading-control"><a href="#字符串字面量类型" class="headerlink" title="字符串字面量类型"></a>字符串字面量类型<a class="heading-anchor" href="#字符串字面量类型" aria-hidden="true"></a></h1><!-- # String Literal Types -->
+<div class="translation-block" title="
+String literal types allow you to specify the exact value a string must have.
+In practice string literal types combine nicely with union types, type guards, and type aliases.
+You can use these features together to get enum-like behavior with strings.
+"><p>字符串字面量类型允许你规定它的变量只能表示的定值.<br>实践中, 字符串字面量类型总与自适应类型, 类型护卫, 类型别名结合使用.<br>可以用它们模拟字符串枚举.</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Easing = <span class="string">"ease-in"</span> | <span class="string">"ease-out"</span> | <span class="string">"ease-in-out"</span>;</span><br><span class="line"><span class="keyword">class</span> UIElement &#123;</span><br><span class="line">    animate(dx: <span class="built_in">number</span>, dy: <span class="built_in">number</span>, easing: Easing) &#123;</span><br><span class="line">        <span class="keyword">if</span> (easing === <span class="string">"ease-in"</span>) &#123;</span><br><span class="line">            <span class="comment">// ...</span></span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span> <span class="keyword">if</span> (easing === <span class="string">"ease-out"</span>) &#123;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span> <span class="keyword">if</span> (easing === <span class="string">"ease-in-out"</span>) &#123;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="comment">// error! should not pass null or undefined.</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> button = <span class="keyword">new</span> UIElement();</span><br><span class="line">button.animate(<span class="number">0</span>, <span class="number">0</span>, <span class="string">"ease-in"</span>);</span><br><span class="line">button.animate(<span class="number">0</span>, <span class="number">0</span>, <span class="string">"uneasy"</span>); <span class="comment">// error: "uneasy" is not allowed here</span></span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+You can pass any of the three allowed strings, but any other string will give the error
+"><p>你可以传递三个给定字符串中任意一个调用 animate, 传递其他字符串将会报错</p></div>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Argument of type &apos;&quot;uneasy&quot;&apos; is not assignable to parameter of type &apos;&quot;ease-in&quot; | &quot;ease-out&quot; | &quot;ease-in-out&quot;&apos;</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+String literal types can be used in the same way to distinguish overloads:
+"><p>字符串字面量类型还可以用以区分函数重载:</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">createElement</span>(<span class="params">tagName: "img"</span>): <span class="title">HTMLImageElement</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">createElement</span>(<span class="params">tagName: "input"</span>): <span class="title">HTMLInputElement</span></span>;</span><br><span class="line"><span class="comment">// ... more overloads ...</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">createElement</span>(<span class="params">tagName: <span class="built_in">string</span></span>): <span class="title">Element</span> </span>&#123;</span><br><span class="line">    <span class="comment">// ... code goes here ...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="数值字面量类型" class="heading-control"><a href="#数值字面量类型" class="headerlink" title="数值字面量类型"></a>数值字面量类型<a class="heading-anchor" href="#数值字面量类型" aria-hidden="true"></a></h1><!-- # Numeric Literal Types -->
+<div class="translation-block" title="
+TypeScript also has numeric literal types.
+"><p>TypeScript 也有数值字面量类型.</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">rollDice</span>(<span class="params"></span>): 1 | 2 | 3 | 4 | 5 | 6 </span>&#123;</span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+These are seldom written explicitly, but they can be useful when narrowing issues and can catch bugs:
+"><p>它们应用范围不广, 多用于在缩小问题范围, 定位 bug 的场景:</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">foo</span>(<span class="params">x: <span class="built_in">number</span></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (x !== <span class="number">1</span> || x !== <span class="number">2</span>) &#123;</span><br><span class="line">        <span class="comment">//         ~~~~~~~</span></span><br><span class="line">        <span class="comment">// Operator '!==' cannot be applied to types '1' and '2'.</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+In other words, `x` must be `1` when it gets compared to `2`, meaning that the above check is making an invalid comparison.
+"><p>换句话说, 在 <code>x</code> 与 <code>2</code> 比较时它必须是 <code>1</code>, 以上检查造成了一个无效比较.<br>译注: 要么 <code>x !== 1</code> 为真, 整个表达式为真, 要么 <code>x !== 1</code> 为假, 继续求 <code>x !== 2</code> 的值, 而 <code>x !== 1</code> 为假说明 <code>x === 1</code>, 第二个表达式必为真.</p></div>
+<h1 id="枚举成员类型" class="heading-control"><a href="#枚举成员类型" class="headerlink" title="枚举成员类型"></a>枚举成员类型<a class="heading-anchor" href="#枚举成员类型" aria-hidden="true"></a></h1><!-- # Enum Member Types -->
+<div class="translation-block" title="
+As mentioned in [our section on enums](.&amp;#x2F;Enums.md#union-enums-and-enum-member-types), enum members have types when every member is literal-initialized.
+
+Much of the time when we talk about &amp;quot;singleton types&amp;quot;, we&amp;#39;re referring to both enum member types as well as numeric&amp;#x2F;string literal types, though many users will use &amp;quot;singleton types&amp;quot; and &amp;quot;literal types&amp;quot; interchangeably.
+"><p>在<a href="#">枚举</a>一章提过, 如果每个枚举成员都是用字面量初始化的, 枚举成员也有它们的类型.</p>
+<p>在我们谈论单例类型(singleton types)的多数时候, 我们指的是枚举成员类型或字符串/数值字面量类型, 有很多用户会混用单例类型和字面量类型.</p></div>
+<h1 id="区辨联合" class="heading-control"><a href="#区辨联合" class="headerlink" title="区辨联合"></a>区辨联合<a class="heading-anchor" href="#区辨联合" aria-hidden="true"></a></h1><!-- # Discriminated Unions -->
+<div class="translation-block" title="
+You can combine singleton types, union types, type guards, and type aliases to build an advanced pattern called *discriminated unions*, also known as *tagged unions* or *algebraic data types*.
+Discriminated unions are useful in functional programming.
+Some languages automatically discriminate unions for you; TypeScript instead builds on JavaScript patterns as they exist today.
+There are three ingredients:
+
+1. Types that have a common, singleton type property &amp;amp;mdash; the *discriminant*.
+2. A type alias that takes the union of those types &amp;amp;mdash; the *union*.
+3. Type guards on the common property.
+"><p>你可以组合单例类型, 自适应类型, 类型护卫, 和类型别名构造出一种所谓<em>区辨联合</em>的高级模式, 也可以叫<em>标签联合</em>, 或<em>代数数据类型</em>.<br>区辨联合广泛用于函数式编程.<br>有些语言自动为你区辨联合, 而 TypeScript 的区辨联合建立在现有 JavaScript 模式之上.<br>区辨联合有三种成分:</p>
+<ol>
+<li>有一个共同单例类型属性的多个类型 &mdash; 区辨.</li>
+<li>一个联合了 <code>1</code> 中所有类型的类型别名 &mdash; 联合.</li>
+<li>针对 <code>1</code> 中共同属性的类型护卫.</li>
+</ol></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">interface</span> Square &#123;</span><br><span class="line">    kind: <span class="string">"square"</span>;</span><br><span class="line">    size: <span class="built_in">number</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">interface</span> Rectangle &#123;</span><br><span class="line">    kind: <span class="string">"rectangle"</span>;</span><br><span class="line">    width: <span class="built_in">number</span>;</span><br><span class="line">    height: <span class="built_in">number</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">interface</span> Circle &#123;</span><br><span class="line">    kind: <span class="string">"circle"</span>;</span><br><span class="line">    radius: <span class="built_in">number</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+First we declare the interfaces we will union.
+Each interface has a `kind` property with a different string literal type.
+The `kind` property is called the *discriminant* or *tag*.
+The other properties are specific to each interface.
+Notice that the interfaces are currently unrelated.
+Let&amp;#39;s put them into a union:
+"><p>首先, 定义要参与联合的接口.<br>每个接口都有一个属于不同字符串字面量类型的 <code>kind</code> 属性.<br>这里的 <code>kind</code> 就叫做区辨或标签.<br>其他属性都是各个接口特有的.<br>注意, 到目前为止, 各个接口毫无关联.<br>下面, 将它们组成联合:</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Shape = Square | Rectangle | Circle;</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+Now let&amp;#39;s use the discriminated union:
+"><p>使用区辨联合:</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">area</span>(<span class="params">s: Shape</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">switch</span> (s.kind) &#123;</span><br><span class="line">        <span class="keyword">case</span> <span class="string">"square"</span>: <span class="keyword">return</span> s.size * s.size;</span><br><span class="line">        <span class="keyword">case</span> <span class="string">"rectangle"</span>: <span class="keyword">return</span> s.height * s.width;</span><br><span class="line">        <span class="keyword">case</span> <span class="string">"circle"</span>: <span class="keyword">return</span> <span class="built_in">Math</span>.PI * s.radius ** <span class="number">2</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="完全覆盖检查" class="heading-control"><a href="#完全覆盖检查" class="headerlink" title="完全覆盖检查"></a>完全覆盖检查<a class="heading-anchor" href="#完全覆盖检查" aria-hidden="true"></a></h2><!-- ## Exhaustiveness checking -->
+<div class="translation-block" title="
+We would like the compiler to tell us when we don&amp;#39;t cover all variants of the discriminated union.
+For example, if we add `Triangle` to `Shape`, we need to update `area` as well:
+"><p>我们想让编译器告知我们没有覆盖区辨联合所有成员.<br>比如说, 当添加新类型 <code>Triangle</code> 到 <code>Shape</code> 中, 提醒我们同时更新 <code>area</code> 函数:</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Shape = Square | Rectangle | Circle | Triangle;</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">area</span>(<span class="params">s: Shape</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">switch</span> (s.kind) &#123;</span><br><span class="line">        <span class="keyword">case</span> <span class="string">"square"</span>: <span class="keyword">return</span> s.size * s.size;</span><br><span class="line">        <span class="keyword">case</span> <span class="string">"rectangle"</span>: <span class="keyword">return</span> s.height * s.width;</span><br><span class="line">        <span class="keyword">case</span> <span class="string">"circle"</span>: <span class="keyword">return</span> <span class="built_in">Math</span>.PI * s.radius ** <span class="number">2</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// should error here - we didn't handle case "triangle"</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+There are two ways to do this.
+The first is to turn on `--strictNullChecks` and specify a return type:
+"><p>有两种方法可达成目的.<br>第一, 打开 <code>--strictNullChecks</code> 选项, 并指明函数返回值类型:</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">area</span>(<span class="params">s: Shape</span>): <span class="title">number</span> </span>&#123; <span class="comment">// error: returns number | undefined</span></span><br><span class="line">    <span class="keyword">switch</span> (s.kind) &#123;</span><br><span class="line">        <span class="keyword">case</span> <span class="string">"square"</span>: <span class="keyword">return</span> s.size * s.size;</span><br><span class="line">        <span class="keyword">case</span> <span class="string">"rectangle"</span>: <span class="keyword">return</span> s.height * s.width;</span><br><span class="line">        <span class="keyword">case</span> <span class="string">"circle"</span>: <span class="keyword">return</span> <span class="built_in">Math</span>.PI * s.radius ** <span class="number">2</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+Because the `switch` is no longer exhaustive, TypeScript is aware that the function could sometimes return `undefined`.
+If you have an explicit return type `number`, then you will get an error that the return type is actually `number | undefined`.
+However, this method is quite subtle and, besides, `--strictNullChecks` does not always work with old code.
+
+The second method uses the `never` type that the compiler uses to check for exhaustiveness:
+"><p>鉴于 <code>switch</code> 不再全面覆盖 <code>Shape</code>, TypeScript 担心函数有机会返回 <code>undefined</code>.<br>如果函数有显式返回值类型 <code>number</code>, 它就会报错, 因为实际返回值类型是 <code>number | undefined</code>.<br>不过, 这个方法过于隐晦, 除此之外, <code>--strictNullChecks</code> 不总是兼容旧代码.</p>
+<p>第二种, 编译器利用 <code>never</code> 类型检查覆盖情况:</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">assertNever</span>(<span class="params">x: never</span>): <span class="title">never</span> </span>&#123;</span><br><span class="line">    <span class="keyword">throw</span> <span class="keyword">new</span> <span class="built_in">Error</span>(<span class="string">"Unexpected object: "</span> + x);</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">area</span>(<span class="params">s: Shape</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">switch</span> (s.kind) &#123;</span><br><span class="line">        <span class="keyword">case</span> <span class="string">"square"</span>: <span class="keyword">return</span> s.size * s.size;</span><br><span class="line">        <span class="keyword">case</span> <span class="string">"rectangle"</span>: <span class="keyword">return</span> s.height * s.width;</span><br><span class="line">        <span class="keyword">case</span> <span class="string">"circle"</span>: <span class="keyword">return</span> <span class="built_in">Math</span>.PI * s.radius ** <span class="number">2</span>;</span><br><span class="line">        <span class="keyword">default</span>: <span class="keyword">return</span> assertNever(s); <span class="comment">// error here if there are missing cases</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+Here, `assertNever` checks that `s` is of type `never` &amp;amp;mdash; the type that&amp;#39;s left after all other cases have been removed.
+If you forget a case, then `s` will have a real type and you will get a type error.
+This method requires you to define an extra function, but it&amp;#39;s much more obvious when you forget it.
+"><p>这里, <code>assertNever</code> 检查 <code>s</code> 的类型是 <code>never</code> &mdash; 所有其他事件都移除后剩下的类型.<br>如果你遗漏某个事件, <code>s</code> 获得实际类型, 你也得到一个类型错误.<br>这方法需要你定义一个新函数, 忘记定义就会很明显.</p></div>
+<h1 id="多态-this-类型" class="heading-control"><a href="#多态-this-类型" class="headerlink" title="多态 this 类型"></a>多态 this 类型<a class="heading-anchor" href="#多态-this-类型" aria-hidden="true"></a></h1><!-- # Polymorphic `this` types -->
+<div class="translation-block" title="
+A polymorphic `this` type represents a type that is the *subtype* of the containing class or interface.
+This is called *F*-bounded polymorphism.
+This makes hierarchical fluent interfaces much easier to express, for example.
+Take a simple calculator that returns `this` after each operation:
+"><p>多态 <code>this</code> 类型代表所属类或接口的<em>子类型</em>.<br>我们称之为 <em>F</em>-有界多态性.<br>它让我们更容易表达分层流式接口.<br>以每个操作都返回 <code>this</code> 的简单计算器作为示例:</p>
+<p>译注: 观察下例的返回值类型, 而不是函数体内的 <code>this</code>.</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> BasicCalculator &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">constructor</span>(<span class="params"><span class="keyword">protected</span> value: <span class="built_in">number</span> = 0</span>) &#123; &#125;</span><br><span class="line">    <span class="keyword">public</span> currentValue(): <span class="built_in">number</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">this</span>.value;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">public</span> add(operand: <span class="built_in">number</span>): <span class="keyword">this</span> &#123;</span><br><span class="line">        <span class="keyword">this</span>.value += operand;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">this</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">public</span> multiply(operand: <span class="built_in">number</span>): <span class="keyword">this</span> &#123;</span><br><span class="line">        <span class="keyword">this</span>.value *= operand;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">this</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// ... other operations go here ...</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> v = <span class="keyword">new</span> BasicCalculator(<span class="number">2</span>)</span><br><span class="line">            .multiply(<span class="number">5</span>)</span><br><span class="line">            .add(<span class="number">1</span>)</span><br><span class="line">            .currentValue();</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+Since the class uses `this` types, you can extend it and the new class can use the old methods with no changes.
+"><p>因为类运用了 <code>this</code> 类型, 你可以继承该类, 新类不经修改就能沿用旧类的方法.</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> ScientificCalculator <span class="keyword">extends</span> BasicCalculator &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">constructor</span>(<span class="params">value = 0</span>) &#123;</span><br><span class="line">        <span class="keyword">super</span>(value);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">public</span> sin() &#123;</span><br><span class="line">        <span class="keyword">this</span>.value = <span class="built_in">Math</span>.sin(<span class="keyword">this</span>.value);</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">this</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// ... other operations go here ...</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> v = <span class="keyword">new</span> ScientificCalculator(<span class="number">2</span>)</span><br><span class="line">        .multiply(<span class="number">5</span>)</span><br><span class="line">        .sin()</span><br><span class="line">        .add(<span class="number">1</span>)</span><br><span class="line">        .currentValue();</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+Without `this` types, `ScientificCalculator` would not have been able to extend `BasicCalculator` and keep the fluent interface.
+`multiply` would have returned `BasicCalculator`, which doesn&amp;#39;t have the `sin` method.
+However, with `this` types, `multiply` returns `this`, which is `ScientificCalculator` here.
+"><p>没有 <code>this</code> 类型, <code>ScientificCalculator</code> 便不能在继承 <code>BasicCalculator</code> 的同时保持流式接口.<br><code>multiply</code> 只能返回没有 <code>sin</code> 方法的 <code>BasicCalculator</code>.<br>有了 <code>this</code> 类型, <code>multiply</code> 返回的 <code>this</code> 代表的是 <code>ScientificCalculator</code>.</p></div>
+<h1 id="索引类型" class="heading-control"><a href="#索引类型" class="headerlink" title="索引类型"></a>索引类型<a class="heading-anchor" href="#索引类型" aria-hidden="true"></a></h1><!-- # Index types -->
+<div class="translation-block" title="
+With index types, you can get the compiler to check code that uses dynamic property names.
+For example, a common JavaScript pattern is to pick a subset of properties from an object:
+"><p>结合索引类型, 你能使编译器检查运用动态属性名的代码.<br>举个例子, 大家熟知的一种 JavaScript 设计模式是从一个对象挑选属性集:</p>
+<p>译注: 下面 <code>propertyNames</code> 类型是 <code>string[]</code>.</p></div>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">pluck</span>(<span class="params">o, propertyNames</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> propertyNames.map(<span class="function"><span class="params">n</span> =&gt;</span> o[n]);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+Here&amp;#39;s how you would write and use this function in TypeScript, using the **index type query** and **indexed access** operators:
+"><p>下面给出在 TypeScript 中实现这个和调用该函数的方法, 我们会用到<strong>索引类型查询</strong>, <strong>索引访问</strong>运算符:</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">pluck</span>&lt;<span class="title">T</span>, <span class="title">K</span> <span class="title">extends</span> <span class="title">keyof</span> <span class="title">T</span>&gt;(<span class="params">o: T, propertyNames: K[]</span>): <span class="title">T</span>[<span class="title">K</span>][] </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> propertyNames.map(<span class="function"><span class="params">n</span> =&gt;</span> o[n]);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">interface</span> Car &#123;</span><br><span class="line">    manufacturer: <span class="built_in">string</span>;</span><br><span class="line">    model: <span class="built_in">string</span>;</span><br><span class="line">    year: <span class="built_in">number</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">let</span> taxi: Car = &#123;</span><br><span class="line">    manufacturer: <span class="string">'Toyota'</span>,</span><br><span class="line">    model: <span class="string">'Camry'</span>,</span><br><span class="line">    year: <span class="number">2014</span></span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Manufacturer and model are both of type string,</span></span><br><span class="line"><span class="comment">// so we can pluck them both into a typed string array</span></span><br><span class="line"><span class="keyword">let</span> makeAndModel: <span class="built_in">string</span>[] = pluck(taxi, [<span class="string">'manufacturer'</span>, <span class="string">'model'</span>]);</span><br><span class="line"></span><br><span class="line"><span class="comment">// If we try to pluck model and year, we get an</span></span><br><span class="line"><span class="comment">// array of a union type: (string | number)[]</span></span><br><span class="line"><span class="keyword">let</span> modelYear = pluck(taxi, [<span class="string">'model'</span>, <span class="string">'year'</span>])</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+The compiler checks that `manufacturer` and `model` are actually properties on `Car`.
+The example introduces a couple of new type operators.
+First is `keyof T`, the **index type query operator**.
+For any type `T`, `keyof T` is the union of known, public property names of `T`.
+For example:
+"><p>编译器检查 <code>manufacturer</code> 和 <code>model</code> 的确是 <code>Car</code> 的属性.<br>这个例子引入了几个新类型操作符.<br>首先, <code>keyof T</code>, 即<strong>索引类型查询运算符</strong>.<br>对任意类型 <code>T</code>, <code>keyof T</code> 是 <code>T</code> 可知的, 公共属性名称的自适应类型.<br>举例如下: </p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> carProps: keyof Car; <span class="comment">// the union of ('manufacturer' | 'model' | 'year')</span></span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+`keyof Car` is completely interchangeable with `&amp;#39;manufacturer&amp;#39; | &amp;#39;model&amp;#39; | &amp;#39;year&amp;#39;`.
+The difference is that if you add another property to `Car`, say `ownersAddress: string`, then `keyof Car` will automatically update to be `&amp;#39;manufacturer&amp;#39; | &amp;#39;model&amp;#39; | &amp;#39;year&amp;#39; | &amp;#39;ownersAddress&amp;#39;`.
+And you can use `keyof` in generic contexts like `pluck`, where you can&amp;#39;t possibly know the property names ahead of time.
+That means the compiler will check that you pass the right set of property names to `pluck`:
+"><p><code>keyof Car</code> 与 <code>&#39;manufacturer&#39; | &#39;model&#39; | &#39;year&#39;</code> 是完全可互换的.<br>区别是如果你为 <code>Car</code> 添加新属性, 比如 <code>ownersAddress: string</code>, <code>keyof Car</code> 自动得到更新 <code>&#39;manufacturer&#39; | &#39;model&#39; | &#39;year&#39; | &#39;ownersAddress&#39;</code>.<br>在 <code>plunk</code> 等泛型语境中, 你不可能事先知道 <code>T</code> 的属性名集合, 就只能借助 <code>keyof</code> 关键字.<br>编译器可以据此检查你向 <code>pluck</code> 传递了一组正确的属性名.</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// error, 'unknown' is not in 'manufacturer' | 'model' | 'year'</span></span><br><span class="line">pluck(taxi, [<span class="string">'year'</span>, <span class="string">'unknown'</span>]); <span class="regexp">/</span></span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+The second operator is `T[K]`, the **indexed access operator**.
+Here, the type syntax reflects the expression syntax.
+That means that `person[&amp;#39;name&amp;#39;]` has the type `Person[&amp;#39;name&amp;#39;]` &amp;amp;mdash; which in our example is just `string`.
+However, just like index type queries, you can use `T[K]` in a generic context, which is where its real power comes to life.
+You just have to make sure that the type variable `K extends keyof T`.
+Here&amp;#39;s another example with a function named `getProperty`.
+"><p>第二个运算符是 <code>T[K]</code>, <strong>索引访问运算符</strong>.<br>这里, 类型语法体现出表达式语法.<br>意思是 <code>person[&#39;name&#39;]</code> 的类型是 <code>Person[&#39;name&#39;]</code> &mdash; 我们的例子: <code>string</code>.<br>就如索引类型查询, 你可以在泛型语境使用 <code>T[K]</code>, 这是它发挥真正实力的地方.<br>你要做的只是确保类型参数 <code>K extends keyof T</code>.<br>再看另一个例子, <code>getProperty</code> 函数:</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">getProperty</span>&lt;<span class="title">T</span>, <span class="title">K</span> <span class="title">extends</span> <span class="title">keyof</span> <span class="title">T</span>&gt;(<span class="params">o: T, propertyName: K</span>): <span class="title">T</span>[<span class="title">K</span>] </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> o[propertyName]; <span class="comment">// o[propertyName] is of type T[K]</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+In `getProperty`, `o: T` and `propertyName: K`, so that means `o[propertyName]: T[K]`.
+Once you return the `T[K]` result, the compiler will instantiate the actual type of the key, so the return type of `getProperty` will vary according to which property you request.
+"><p>在 <code>getProperty</code> 中, <code>o: T</code> 和 <code>propertyName: K</code> 的含义是 <code>o[propertyName]: T[K]</code>.<br>每当你返回结果 <code>T[K]</code>, 编译器实例化该键的实际类型, 所以 <code>getProperty</code> 的返回值类型会随着请求的属性不同而变化.</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> name: <span class="built_in">string</span> = getProperty(taxi, <span class="string">'manufacturer'</span>);</span><br><span class="line"><span class="keyword">let</span> year: <span class="built_in">number</span> = getProperty(taxi, <span class="string">'year'</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// error, 'unknown' is not in 'manufacturer' | 'model' | 'year'</span></span><br><span class="line"><span class="keyword">let</span> unknown = getProperty(taxi, <span class="string">'unknown'</span>);</span><br></pre></td></tr></table></figure>
+<h2 id="索引类型和索引签名" class="heading-control"><a href="#索引类型和索引签名" class="headerlink" title="索引类型和索引签名"></a>索引类型和索引签名<a class="heading-anchor" href="#索引类型和索引签名" aria-hidden="true"></a></h2><!-- ## Index types and index signatures -->
+<div class="translation-block" title="
+`keyof` and `T[K]` interact with index signatures. An index signature parameter type must be &amp;#39;string&amp;#39; or &amp;#39;number&amp;#39;.
+If you have a type with a string index signature, `keyof T` will be `string | number`
+(and not just `string`, since in JavaScript you can access an object property either
+by using strings (`object[&amp;#39;42&amp;#39;`]) or numbers (`object[42]`)).
+And `T[string]` is just the type of the index signature:
+"><p>如 <code>keyof</code> 和 <code>T[K]</code> 与索引签名相互作用. 索引签名的参数类型必须是 ‘string’ 或 ‘number’.<br>如果你的类型包含字符串型索引签名, <code>keyof T</code> 总返回 <code>string | number</code>.<br>(不只是 <code>string</code>, 因为在 JavaScript 中你可以通过字符串 (<code>ojbect[&quot;42&quot;]</code>) 或数字 (<code>object[42]</code>) 来访问对象属性).<br>还有, <code>T[string]</code> 即索引签名的类型:</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">interface</span> Dictionary&lt;T&gt; &#123;</span><br><span class="line">    [key: <span class="built_in">string</span>]: T;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">let</span> keys: keyof Dictionary&lt;<span class="built_in">number</span>&gt;; <span class="comment">// string | number</span></span><br><span class="line"><span class="keyword">let</span> value: Dictionary&lt;<span class="built_in">number</span>&gt;[<span class="string">'foo'</span>]; <span class="comment">// number</span></span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+If you have a type with a number index signature, `keyof T` will just be `number`.
+"><p>如果你的类型只有数值型索引签名, <code>keyof T</code> 只返回 <code>number</code>.</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">interface</span> Dictionary&lt;T&gt; &#123;</span><br><span class="line">    [key: <span class="built_in">number</span>]: T;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">let</span> keys: keyof Dictionary&lt;<span class="built_in">number</span>&gt;; <span class="comment">// number</span></span><br><span class="line"><span class="keyword">let</span> value: Dictionary&lt;<span class="built_in">number</span>&gt;[<span class="string">'foo'</span>]; <span class="comment">// Error, Property 'foo' does not exist on type 'Dictionary&lt;number&gt;'.</span></span><br><span class="line"><span class="keyword">let</span> value: Dictionary&lt;<span class="built_in">number</span>&gt;[<span class="number">42</span>]; <span class="comment">// number</span></span><br></pre></td></tr></table></figure>
+<h1 id="映射类型" class="heading-control"><a href="#映射类型" class="headerlink" title="映射类型"></a>映射类型<a class="heading-anchor" href="#映射类型" aria-hidden="true"></a></h1><!-- # Mapped types -->
+<div class="translation-block" title="
+A common task is to take an existing type and make each of its properties optional:
+"><p>一个常见任务是把一个现有类型的每个属性改成”可选”的:</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">interface</span> PersonPartial &#123;</span><br><span class="line">    name?: <span class="built_in">string</span>;</span><br><span class="line">    age?: <span class="built_in">number</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+Or we might want a readonly version:
+"><p>或是”只读”的:</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">interface</span> PersonReadonly &#123;</span><br><span class="line">    readonly name: <span class="built_in">string</span>;</span><br><span class="line">    readonly age: <span class="built_in">number</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+This happens often enough in JavaScript that TypeScript provides a way to create new types based on old types &amp;amp;mdash; **mapped types**.
+In a mapped type, the new type transforms each property in the old type in the same way.
+For example, you can make all properties of a type `readonly` or optional.
+Here are a couple of examples:
+"><p>JavaScript 如此依赖此操作, 以至于 TypeScript 专门提供这种基于旧类型创建新类型的方法 &mdash; <strong>映射类型</strong>.<br>类型映射按相同方式转换旧类型的每个属性以创建新类型.<br>比如, 你可以把所有属性转为 “只读” 的, 或 “可选” 的.<br>这里有几个例子:</p></div>
+<div class="translation-block" title="
+有点像宏展开
+"><blockquote>
+<p>笔记</p>
+</blockquote></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Readonly&lt;T&gt; = &#123;</span><br><span class="line">    readonly [P <span class="keyword">in</span> keyof T]: T[P];</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">type</span> Partial&lt;T&gt; = &#123;</span><br><span class="line">    [P <span class="keyword">in</span> keyof T]?: T[P];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+And to use it:
+"><p>使用它们:</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> PersonPartial = Partial&lt;Person&gt;;</span><br><span class="line"><span class="keyword">type</span> ReadonlyPerson = Readonly&lt;Person&gt;;</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+Note that this syntax describes a type rather than a member.
+If you want to add members, you can use an intersection type:
+"><p>注意, 该方法按整体(而不是逐成员)描述新类型.<br>如果你想增加成员, 可结合聚合类型:</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Use this:</span></span><br><span class="line"><span class="keyword">type</span> PartialWithNewMember&lt;T&gt; = &#123;</span><br><span class="line">  [P <span class="keyword">in</span> keyof T]?: T[P];</span><br><span class="line">&#125; &amp; &#123; newMember: <span class="built_in">boolean</span> &#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// **Do not** use the following!</span></span><br><span class="line"><span class="comment">// This is an error!</span></span><br><span class="line"><span class="keyword">type</span> PartialWithNewMember&lt;T&gt; = &#123;</span><br><span class="line">  [P <span class="keyword">in</span> keyof T]?: T[P];</span><br><span class="line">  newMember: <span class="built_in">boolean</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+Let&amp;#39;s take a look at the simplest mapped type and its parts:
+"><p>下面, 我们来分析一个映射类型的各个部分:</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Keys = <span class="string">'option1'</span> | <span class="string">'option2'</span>;</span><br><span class="line"><span class="keyword">type</span> Flags = &#123; [K <span class="keyword">in</span> Keys]: <span class="built_in">boolean</span> &#125;;</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+The syntax resembles the syntax for index signatures with a `for .. in` inside.
+There are three parts:
+
+1. The type variable `K`, which gets bound to each property in turn.
+2. The string literal union `Keys`, which contains the names of properties to iterate over.
+3. The resulting type of the property.
+
+In this simple example, `Keys` is a hard-coded list of property names and the property type is always `boolean`, so this mapped type is equivalent to writing:
+"><p>单看语法, 有点像 <code>for..in</code> 用在索引签名中.<br>我们分三个部分理解:</p>
+<ol>
+<li>类型参数 <code>K</code>, 它依次绑定每个属性.</li>
+<li>字符串字面量自适应类型 <code>Keys</code>, 包含要迭代的属性名.</li>
+<li>结果属性的类型.</li>
+</ol>
+<p>在这个例子中, <code>Keys</code> 是一个硬编码的属性名列表, 属性的类型都是 <code>boolean</code>, 这个映射类型等同于:</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Flags = &#123;</span><br><span class="line">    option1: <span class="built_in">boolean</span>;</span><br><span class="line">    option2: <span class="built_in">boolean</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+Real applications, however, look like `Readonly` or `Partial` above.
+They&amp;#39;re based on some existing type, and they transform the properties in some way.
+That&amp;#39;s where `keyof` and indexed access types come in:
+"><p>对于实际应用, 就像上面的 <code>Readonly</code> 或 <code>Partial</code>.<br>它们依靠某些现有类型, 以某种方式转换所有属性.<br>于是, 到了 <code>keyof</code> 与索引属性操作符(原文: indexed access types, 疑误)登场的时候:</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> NullablePerson = &#123; [P <span class="keyword">in</span> keyof Person]: Person[P] | <span class="literal">null</span> &#125;</span><br><span class="line"><span class="keyword">type</span> PartialPerson = &#123; [P <span class="keyword">in</span> keyof Person]?: Person[P] &#125;</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+But it&amp;#39;s more useful to have a general version.
+"><p>把它们改写成泛型版本, 用途更广.</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Nullable&lt;T&gt; = &#123; [P <span class="keyword">in</span> keyof T]: T[P] | <span class="literal">null</span> &#125;</span><br><span class="line"><span class="keyword">type</span> Partial&lt;T&gt; = &#123; [P <span class="keyword">in</span> keyof T]?: T[P] &#125;</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+In these examples, the properties list is `keyof T` and the resulting type is some variant of `T[P]`.
+This is a good template for any general use of mapped types.
+That&amp;#39;s because this kind of transformation is [homomorphic](https:&amp;#x2F;&amp;#x2F;en.wikipedia.org&amp;#x2F;wiki&amp;#x2F;Homomorphism), which means that the mapping applies only to properties of `T` and no others.
+The compiler knows that it can copy all the existing property modifiers before adding any new ones.
+For example, if `Person.name` was readonly, `Partial&amp;lt;Person&amp;gt;.name` would be readonly and optional.
+
+Here&amp;#39;s one more example, in which `T[P]` is wrapped in a `Proxy&amp;lt;T&amp;gt;` class:
+"><p>概括一下, 它们的属性列表都是 <code>keyof T</code>, 返回值类型是 <code>T[P]</code> 加上一些变化.<br>这是一个不错的用于表达任何泛型映射类型的模板.<br>由于这种形式的转换是<a href="https://en.wikipedia.org/wiki/Homomorphism" target="_blank" rel="noopener">homomorphic</a>(同态)的, 意思是映射只应用在 <code>T</code> 的属性而不应用在别的什么东西上.<br>编译器知道它可以在添加新修饰符之前拷贝所有现有属性修饰符.<br>例如, 如果 <code>Person.name</code> 是 “只读” 的, <code>Partial&lt;Person&gt;.name</code> 就会是 “只读” 和 “可选” 的.</p>
+<p>下个例子, <code>T[P]</code> 包裹在 <code>Proxy&lt;T&gt;</code> 类中:</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Proxy&lt;T&gt; = &#123;</span><br><span class="line">    <span class="keyword">get</span>(): T;</span><br><span class="line">    <span class="keyword">set</span>(value: T): <span class="built_in">void</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">type</span> Proxify&lt;T&gt; = &#123;</span><br><span class="line">    [P <span class="keyword">in</span> keyof T]: Proxy&lt;T[P]&gt;;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">proxify</span>&lt;<span class="title">T</span>&gt;(<span class="params">o: T</span>): <span class="title">Proxify</span>&lt;<span class="title">T</span>&gt; </span>&#123;</span><br><span class="line">   <span class="comment">// ... wrap proxies ...</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">let</span> proxyProps = proxify(props);</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+Note that `Readonly&amp;lt;T&amp;gt;` and `Partial&amp;lt;T&amp;gt;` are so useful, they are included in TypeScript&amp;#39;s standard library along with `Pick` and `Record`:
+"><p><code>Readonly&lt;T&gt;</code> 和 <code>Partial&lt;T&gt;</code> 是如此有用, 顺理成章地, 它们已经随 <code>Pick</code> 和 <code>Record</code> 一并包含于 TypeScript 标准库.</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Pick&lt;T, K <span class="keyword">extends</span> keyof T&gt; = &#123;</span><br><span class="line">    [P <span class="keyword">in</span> K]: T[P];</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">type</span> Record&lt;K <span class="keyword">extends</span> keyof <span class="built_in">any</span>, T&gt; = &#123;</span><br><span class="line">    [P <span class="keyword">in</span> K]: T;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+`Readonly`, `Partial` and `Pick` are homomorphic whereas `Record` is not.
+One clue that `Record` is not homomorphic is that it doesn&amp;#39;t take an input type to copy properties from:
+"><p><code>Readonly</code>, <code>Partial</code>, <code>Pick</code> 都是同态的, 而 <code>Record</code> 却不然.<br>一个 <code>Record</code> 非同态的迹象是它不从一个输入类型拷贝属性:</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> ThreeStringProps = Record&lt;<span class="string">'prop1'</span> | <span class="string">'prop2'</span> | <span class="string">'prop3'</span>, <span class="built_in">string</span>&gt;</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+Non-homomorphic types are essentially creating new properties, so they can&amp;#39;t copy property modifiers from anywhere.
+"><p>从根本上, 非同态类型创建新的属性, 也没有属性修饰符可拷贝.</p></div>
+<h2 id="从映射类型推断" class="heading-control"><a href="#从映射类型推断" class="headerlink" title="从映射类型推断"></a>从映射类型推断<a class="heading-anchor" href="#从映射类型推断" aria-hidden="true"></a></h2><!-- ## Inference from mapped types -->
+<div class="translation-block" title="
+Now that you know how to wrap the properties of a type, the next thing you&amp;#39;ll want to do is unwrap them.
+Fortunately, that&amp;#39;s pretty easy:
+"><p>你已经学会了如何包裹类型的属性, 但是还不知道怎么解开它们.<br>好在, 它并不难:</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">unproxify</span>&lt;<span class="title">T</span>&gt;(<span class="params">t: Proxify&lt;T&gt;</span>): <span class="title">T</span> </span>&#123;</span><br><span class="line">    <span class="keyword">let</span> result = &#123;&#125; <span class="keyword">as</span> T;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">const</span> k <span class="keyword">in</span> t) &#123;</span><br><span class="line">        result[k] = t[k].get();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> result;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> originalProps = unproxify(proxyProps);</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+Note that this unwrapping inference only works on homomorphic mapped types.
+If the mapped type is not homomorphic you&amp;#39;ll have to give an explicit type parameter to your unwrapping function.
+"><p>注意解包推断只接受同态映射类型.<br>如果一个映射类型不是同态的, 你必须为解包函数指定显式类型参数.</p></div>
+<h1 id="条件类型" class="heading-control"><a href="#条件类型" class="headerlink" title="条件类型"></a>条件类型<a class="heading-anchor" href="#条件类型" aria-hidden="true"></a></h1><!-- # Conditional Types -->
+<div class="translation-block" title="
+TypeScript 2.8 introduces *conditional types* which add the ability to express non-uniform type mappings.
+A conditional type selects one of two possible types based on a condition expressed as a type relationship test:
+"><p>TypeScript 2.8 引入<em>条件类型</em>, 为语言增加了表达非统一类型映射的能力.<br>条件类型根据以类型关系测试表达的条件从两个候选类型中选择一个.</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">T <span class="keyword">extends</span> U ? X : Y</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+The type above means when `T` is assignable to `U` the type is `X`, otherwise the type is `Y`.
+
+A conditional type `T extends U ? X : Y` is either *resolved* to `X` or `Y`, or *deferred* because the condition depends on one or more type variables.
+When `T` or `U` contains type variables, whether to resolve to `X` or `Y`, or to defer, is determined by whether or not the type system has enough information to conclude that `T` is always assignable to `U`.
+
+As an example of some types that are immediately resolved, we can take a look at the following example:
+"><p>上例表示如果 <code>T</code> 能赋值给 <code>U</code>, 类型就是 <code>X</code>, 否则类型是 <code>Y</code>.</p>
+<p>条件类型 <code>T extends U ? X : Y</code> 可以<em>解析</em>成 <code>X</code> 和 <code>Y</code> 二者之一, 如果条件依赖一个或多个类型参数, 解析或被<em>推迟</em>.<br>当 <code>T</code> 或 <code>U</code> 包含类型参数时, 解析结果(<code>X</code>, <code>Y</code>, 或推迟)取决于类型系统是否掌握足够信息推断 <code>T</code> 总是能赋值给 <code>U</code>.</p>
+<p>以下是一个类型可以被立即解析的例子:</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">declare</span> <span class="function"><span class="keyword">function</span> <span class="title">f</span>&lt;<span class="title">T</span> <span class="title">extends</span> <span class="title">boolean</span>&gt;(<span class="params">x: T</span>): <span class="title">T</span> <span class="title">extends</span> <span class="title">true</span> ? <span class="title">string</span> : <span class="title">number</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Type is 'string | number</span></span><br><span class="line"><span class="keyword">let</span> x = f(<span class="built_in">Math</span>.random() &lt; <span class="number">0.5</span>)</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+Another example would be the `TypeName` type alias, which uses nested conditional types:
+"><p>另一个例子, <code>TypeName</code> 是一个类型别名, 其采用了条件类型的嵌套: </p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> TypeName&lt;T&gt; =</span><br><span class="line">    T <span class="keyword">extends</span> <span class="built_in">string</span> ? <span class="string">"string"</span> :</span><br><span class="line">    T <span class="keyword">extends</span> <span class="built_in">number</span> ? <span class="string">"number"</span> :</span><br><span class="line">    T <span class="keyword">extends</span> <span class="built_in">boolean</span> ? <span class="string">"boolean"</span> :</span><br><span class="line">    T <span class="keyword">extends</span> <span class="literal">undefined</span> ? <span class="string">"undefined"</span> :</span><br><span class="line">    T <span class="keyword">extends</span> <span class="built_in">Function</span> ? <span class="string">"function"</span> :</span><br><span class="line">    <span class="string">"object"</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> T0 = TypeName&lt;<span class="built_in">string</span>&gt;;  <span class="comment">// "string"</span></span><br><span class="line"><span class="keyword">type</span> T1 = TypeName&lt;<span class="string">"a"</span>&gt;;  <span class="comment">// "string"</span></span><br><span class="line"><span class="keyword">type</span> T2 = TypeName&lt;True&gt;;  <span class="comment">// "boolean"</span></span><br><span class="line"><span class="keyword">type</span> T3 = TypeName&lt;<span class="function"><span class="params">()</span> =&gt;</span> <span class="built_in">void</span>&gt;;  <span class="comment">// "function"</span></span><br><span class="line"><span class="keyword">type</span> T4 = TypeName&lt;<span class="built_in">string</span>[]&gt;;  <span class="comment">// "object"</span></span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+But as an example of a place where conditional types are deferred - where they stick around instead of picking a branch - would be in the following:
+"><p>以下是一个条件类型被推迟的例子 - 条件类型不选择分支, 维持原状:</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">interface</span> Foo &#123;</span><br><span class="line">    propA: <span class="built_in">boolean</span>;</span><br><span class="line">    propB: <span class="built_in">boolean</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">declare</span> <span class="function"><span class="keyword">function</span> <span class="title">f</span>&lt;<span class="title">T</span>&gt;(<span class="params">x: T</span>): <span class="title">T</span> <span class="title">extends</span> <span class="title">Foo</span> ? <span class="title">string</span> : <span class="title">number</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">foo</span>&lt;<span class="title">U</span>&gt;(<span class="params">x: U</span>) </span>&#123;</span><br><span class="line">    <span class="comment">// Has type 'U extends Foo ? string : number'</span></span><br><span class="line">    <span class="keyword">let</span> a = f(x);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// This assignment is allowed though!</span></span><br><span class="line">    <span class="keyword">let</span> b: <span class="built_in">string</span> | <span class="built_in">number</span> = a;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+In the above, the variable `a` has a conditional type that hasn&amp;#39;t yet chosen a branch.
+When another piece of code ends up calling `foo`, it will substitute in `U` with some other type, and TypeScript will re-evaluate the conditional type, deciding whether it can actually pick a branch.
+
+In the meantime, we can assign a conditional type to any other target type as long as each branch of the conditional is assignable to that target.
+So in our example above we were able to assign `U extends Foo ? string : number` to `string | number` since no matter what the conditional evaluates to, it&amp;#39;s known to be either `string` or `number`.
+"><p>上例, 条件类型变量 <code>a</code> 尚未选择一个分支.<br>当其他代码片段调用 <code>foo</code>, 某个不同的类型会替代 <code>U</code>, 于是, TypeScript 对条件类型重新解析, 以决定能否选择一个具体分支.</p>
+<p>同时, 条件类型能赋值给它以外的类型, 只要条件类型的每个分支对目标类型都是可赋值的.<br>我们能把 <code>U extends Foo ? string : number</code> 赋值给 <code>string | number</code> 的原因即是如此, 无论条件类型 <code>U extends Foo ? string : number</code> 在何时解析, 结果类型只有 <code>string</code> 和 <code>number</code> 两种选择.</p></div>
+<h2 id="分配式条件类型" class="heading-control"><a href="#分配式条件类型" class="headerlink" title="分配式条件类型"></a>分配式条件类型<a class="heading-anchor" href="#分配式条件类型" aria-hidden="true"></a></h2><!-- ## Distributive conditional types -->
+<div class="translation-block" title="
+Conditional types in which the checked type is a naked type parameter are called *distributive conditional types*.
+Distributive conditional types are automatically distributed over union types during instantiation.
+For example, an instantiation of `T extends U ? X : Y` with the type argument `A | B | C` for `T` is resolved as `(A extends U ? X : Y) | (B extends U ? X : Y) | (C extends U ? X : Y)`.
+"><p>测试类型是 “裸” 类型参数的条件类型叫做<em>分配式条件类型</em>.<br>分配式条件类型在具化时自动依照自适应类型展开.<br>举例说明, 用类型参数 <code>A | B | C</code> 替代 <code>T</code> 具化 <code>T extends U ? X : Y</code> 的结果是 <code>(A extends U ? X : Y) | (B extends U ? X : Y) | (C extends U ? X : Y)</code>.</p></div>
+<h3 id="实例" class="heading-control"><a href="#实例" class="headerlink" title="实例"></a>实例<a class="heading-anchor" href="#实例" aria-hidden="true"></a></h3><!-- ### Example -->
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> T10 = TypeName&lt;<span class="built_in">string</span> | <span class="function">(<span class="params">(<span class="params"></span>) =&gt; <span class="built_in">void</span></span>)&gt;;  // "<span class="params">string</span>" | "<span class="params">function</span>"</span></span><br><span class="line"><span class="function"><span class="params">type</span> <span class="params">T12</span> = <span class="params">TypeName</span>&lt;<span class="params">string</span> | <span class="params">string</span>[] | <span class="params">undefined</span>&gt;;  // "<span class="params">string</span>" | "<span class="params">object</span>" | "<span class="params">undefined</span>"</span></span><br><span class="line"><span class="function"><span class="params">type</span> <span class="params">T11</span> = <span class="params">TypeName</span>&lt;<span class="params">string</span>[] | <span class="params">number</span>[]&gt;;  // "<span class="params">object</span>"</span></span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+In instantiations of a distributive conditional type `T extends U ? X : Y`, references to `T` within the conditional type are resolved to individual constituents of the union type (i.e. `T` refers to the individual constituents *after* the conditional type is distributed over the union type).
+Furthermore, references to `T` within `X` have an additional type parameter constraint `U` (i.e. `T` is considered assignable to `U` within `X`).
+"><p>具化分配式条件类型 <code>T extends U ? X : Y</code>, 条件类型中每个 <code>T</code> 都分配到一个自适应类型成分 (条件类型依照自适应类型<em>展开后</em>, 每个 <code>T</code> 对应自适应类型的一个成分).<br>另外, <code>X</code> 中对 <code>T</code> 的引用都有附加参数限制 <code>U</code> (即: 在 <code>X</code> 中认为 <code>T</code> 对 <code>U</code> 是可赋值的).</p></div>
+<h3 id="实例-1" class="heading-control"><a href="#实例-1" class="headerlink" title="实例"></a>实例<a class="heading-anchor" href="#实例-1" aria-hidden="true"></a></h3><!-- ### Example -->
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> BoxedValue&lt;T&gt; = &#123; value: T &#125;;</span><br><span class="line"><span class="keyword">type</span> BoxedArray&lt;T&gt; = &#123; array: T[] &#125;;</span><br><span class="line"><span class="keyword">type</span> Boxed&lt;T&gt; = T <span class="keyword">extends</span> <span class="built_in">any</span>[] ? BoxedArray&lt;T[<span class="built_in">number</span>]&gt; : BoxedValue&lt;T&gt;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> T20 = Boxed&lt;<span class="built_in">string</span>&gt;;  <span class="comment">// BoxedValue&lt;string&gt;;</span></span><br><span class="line"><span class="keyword">type</span> T21 = Boxed&lt;<span class="built_in">number</span>[]&gt;;  <span class="comment">// BoxedArray&lt;number&gt;;</span></span><br><span class="line"><span class="keyword">type</span> T22 = Boxed&lt;<span class="built_in">string</span> | <span class="built_in">number</span>[]&gt;;  <span class="comment">// BoxedValue&lt;string&gt; | BoxedArray&lt;number&gt;;</span></span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+Notice that `T` has the additional constraint `any[]` within the true branch of `Boxed&amp;lt;T&amp;gt;` and it is therefore possible to refer to the element type of the array as `T[number]`. Also, notice how the conditional type is distributed over the union type in the last example.
+
+The distributive property of conditional types can conveniently be used to *filter* union types:
+"><p>注意到在 <code>Boxed&lt;T&gt;</code> “真” 分支中, <code>T</code> 有附加限制 <code>any[]</code>, 从而可推出数组元素类型是 <code>T[number]</code>. 最后一个条件类型的展开情况也很有代表性.</p>
+<p>条件类型的分配式特征能<em>过滤</em>自适应类型:</p></div>
+<div class="translation-block" title="
+`T[number]`是索引访问操作符.
+"><blockquote>
+<p>笔记</p>
+</blockquote></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Diff&lt;T, U&gt; = T <span class="keyword">extends</span> U ? never : T;  <span class="comment">// Remove types from T that are assignable to U</span></span><br><span class="line"><span class="keyword">type</span> Filter&lt;T, U&gt; = T <span class="keyword">extends</span> U ? T : never;  <span class="comment">// Remove types from T that are not assignable to U</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> T30 = Diff&lt;<span class="string">"a"</span> | <span class="string">"b"</span> | <span class="string">"c"</span> | <span class="string">"d"</span>, <span class="string">"a"</span> | <span class="string">"c"</span> | <span class="string">"f"</span>&gt;;  <span class="comment">// "b" | "d"</span></span><br><span class="line"><span class="keyword">type</span> T31 = Filter&lt;<span class="string">"a"</span> | <span class="string">"b"</span> | <span class="string">"c"</span> | <span class="string">"d"</span>, <span class="string">"a"</span> | <span class="string">"c"</span> | <span class="string">"f"</span>&gt;;  <span class="comment">// "a" | "c"</span></span><br><span class="line"><span class="keyword">type</span> T32 = Diff&lt;<span class="built_in">string</span> | <span class="built_in">number</span> | <span class="function">(<span class="params">(<span class="params"></span>) =&gt; <span class="built_in">void</span></span>), <span class="params">Function</span>&gt;;  // <span class="params">string</span> | <span class="params">number</span></span></span><br><span class="line"><span class="function"><span class="params">type</span> <span class="params">T33</span> = <span class="params">Filter</span>&lt;<span class="params">string</span> | <span class="params">number</span> | (<span class="params">(<span class="params"></span>) =&gt; <span class="built_in">void</span></span>), <span class="params">Function</span>&gt;;  // <span class="params">()</span> =&gt;</span> <span class="built_in">void</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> NonNullable&lt;T&gt; = Diff&lt;T, <span class="literal">null</span> | <span class="literal">undefined</span>&gt;;  <span class="comment">// Remove null and undefined from T</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> T34 = NonNullable&lt;<span class="built_in">string</span> | <span class="built_in">number</span> | <span class="literal">undefined</span>&gt;;  <span class="comment">// string | number</span></span><br><span class="line"><span class="keyword">type</span> T35 = NonNullable&lt;<span class="built_in">string</span> | <span class="built_in">string</span>[] | <span class="literal">null</span> | <span class="literal">undefined</span>&gt;;  <span class="comment">// string | string[]</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">f1</span>&lt;<span class="title">T</span>&gt;(<span class="params">x: T, y: NonNullable&lt;T&gt;</span>) </span>&#123;</span><br><span class="line">    x = y;  <span class="comment">// Ok</span></span><br><span class="line">    y = x;  <span class="comment">// Error</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">f2</span>&lt;<span class="title">T</span> <span class="title">extends</span> <span class="title">string</span> | <span class="title">undefined</span>&gt;(<span class="params">x: T, y: NonNullable&lt;T&gt;</span>) </span>&#123;</span><br><span class="line">    x = y;  <span class="comment">// Ok</span></span><br><span class="line">    y = x;  <span class="comment">// Error</span></span><br><span class="line">    <span class="keyword">let</span> s1: <span class="built_in">string</span> = x;  <span class="comment">// Error</span></span><br><span class="line">    <span class="keyword">let</span> s2: <span class="built_in">string</span> = y;  <span class="comment">// Ok</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+Conditional types are particularly useful when combined with mapped types:
+"><p>条件类型和映射类型结合后更是有用:</p></div>
+<div class="translation-block" title="
+下例 `FunctionPropertyNames&amp;lt;T&amp;gt;` 最后的 `[keyof T]` 也是索引访问操作符.
+"><p>笔记</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> FunctionPropertyNames&lt;T&gt; = &#123; [K <span class="keyword">in</span> keyof T]: T[K] <span class="keyword">extends</span> <span class="built_in">Function</span> ? K : never &#125;[keyof T];</span><br><span class="line"><span class="keyword">type</span> FunctionProperties&lt;T&gt; = Pick&lt;T, FunctionPropertyNames&lt;T&gt;&gt;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> NonFunctionPropertyNames&lt;T&gt; = &#123; [K <span class="keyword">in</span> keyof T]: T[K] <span class="keyword">extends</span> <span class="built_in">Function</span> ? never : K &#125;[keyof T];</span><br><span class="line"><span class="keyword">type</span> NonFunctionProperties&lt;T&gt; = Pick&lt;T, NonFunctionPropertyNames&lt;T&gt;&gt;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">interface</span> Part &#123;</span><br><span class="line">    id: <span class="built_in">number</span>;</span><br><span class="line">    name: <span class="built_in">string</span>;</span><br><span class="line">    subparts: Part[];</span><br><span class="line">    updatePart(newName: <span class="built_in">string</span>): <span class="built_in">void</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> T40 = FunctionPropertyNames&lt;Part&gt;;  <span class="comment">// "updatePart"</span></span><br><span class="line"><span class="keyword">type</span> T41 = NonFunctionPropertyNames&lt;Part&gt;;  <span class="comment">// "id" | "name" | "subparts"</span></span><br><span class="line"><span class="keyword">type</span> T42 = FunctionProperties&lt;Part&gt;;  <span class="comment">// &#123; updatePart(newName: string): void &#125;</span></span><br><span class="line"><span class="keyword">type</span> T43 = NonFunctionProperties&lt;Part&gt;;  <span class="comment">// &#123; id: number, name: string, subparts: Part[] &#125;</span></span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+Similar to union and intersection types, conditional types are not permitted to reference themselves recursively.
+For example the following is an error.
+"><p>如同自适应类型, 聚合类型, TypeScript 不允许条件类型递归引用自身.<br>下例是错误的:</p></div>
+<h3 id="实例-2" class="heading-control"><a href="#实例-2" class="headerlink" title="实例"></a>实例<a class="heading-anchor" href="#实例-2" aria-hidden="true"></a></h3><!-- ### Example -->
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> ElementType&lt;T&gt; = T <span class="keyword">extends</span> <span class="built_in">any</span>[] ? ElementType&lt;T[<span class="built_in">number</span>]&gt; : T;  <span class="comment">// Error</span></span><br></pre></td></tr></table></figure>
+<h2 id="条件类型的推导" class="heading-control"><a href="#条件类型的推导" class="headerlink" title="条件类型的推导"></a>条件类型的推导<a class="heading-anchor" href="#条件类型的推导" aria-hidden="true"></a></h2><!-- ## Type inference in conditional types -->
+<div class="translation-block" title="
+Within the `extends` clause of a conditional type, it is now possible to have `infer` declarations that introduce a type variable to be inferred.
+Such inferred type variables may be referenced in the true branch of the conditional type.
+It is possible to have multiple `infer` locations for the same type variable.
+
+For example, the following extracts the return type of a function type:
+"><p>在条件类型的 <code>extends</code> 子句中, 现在可由 <code>infer</code> 声明引入一个需推导的类型参数.<br>条件类型的 “真” 分支能够引用经推导的类型参数.<br>可为同一个类型参数确立若干 <code>推导</code> 点.</p>
+<p>例如, 以下定义提取函数的返回值类型:</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> ReturnType&lt;T&gt; = T <span class="keyword">extends</span> (...args: <span class="built_in">any</span>[]) =&gt; infer R ? R : <span class="built_in">any</span>;</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+`(...args: any[]) =&amp;gt; infer R` 是一个函数类型.
+
+`R` 是推导出来的类型, 随后用在条件类型 &amp;quot;真&amp;quot; 分支中.
+"><blockquote>
+<p>笔记</p>
+</blockquote></div>
+<div class="translation-block" title="
+Conditional types can be nested to form a sequence of pattern matches that are evaluated in order:
+"><p>你可以嵌套条件类型, 构建一组按顺序求值的模式匹配:</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Unpacked&lt;T&gt; =</span><br><span class="line">    T <span class="keyword">extends</span> (infer U)[] ? U :</span><br><span class="line">    T <span class="keyword">extends</span> (...args: <span class="built_in">any</span>[]) =&gt; infer U ? U :</span><br><span class="line">    T <span class="keyword">extends</span> <span class="built_in">Promise</span>&lt;infer U&gt; ? U :</span><br><span class="line">    T;</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> T0 = Unpacked&lt;<span class="built_in">string</span>&gt;;  <span class="comment">// string</span></span><br><span class="line"><span class="keyword">type</span> T1 = Unpacked&lt;<span class="built_in">string</span>[]&gt;;  <span class="comment">// string</span></span><br><span class="line"><span class="keyword">type</span> T2 = Unpacked&lt;<span class="function"><span class="params">()</span> =&gt;</span> <span class="built_in">string</span>&gt;;  <span class="comment">// string</span></span><br><span class="line"><span class="keyword">type</span> T3 = Unpacked&lt;<span class="built_in">Promise</span>&lt;<span class="built_in">string</span>&gt;&gt;;  <span class="comment">// string</span></span><br><span class="line"><span class="keyword">type</span> T4 = Unpacked&lt;<span class="built_in">Promise</span>&lt;<span class="built_in">string</span>&gt;[]&gt;;  <span class="comment">// Promise&lt;string&gt;</span></span><br><span class="line"><span class="keyword">type</span> T5 = Unpacked&lt;Unpacked&lt;<span class="built_in">Promise</span>&lt;<span class="built_in">string</span>&gt;[]&gt;&gt;;  <span class="comment">// string</span></span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+`(infer U)[]` 中的括号调整优先级, 无特殊含义.
+"><blockquote>
+<p>笔记</p>
+</blockquote></div>
+<div class="translation-block" title="
+The following example demonstrates how multiple candidates for the same type variable in co-variant positions causes a union type to be inferred:
+"><p>下例表明同一个类型参数处于协变位的多个引用能推导出自适应类型:</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Foo&lt;T&gt; = T <span class="keyword">extends</span> &#123; a: infer U, b: infer U &#125; ? U : never;</span><br><span class="line"><span class="keyword">type</span> T10 = Foo&lt;&#123; a: <span class="built_in">string</span>, b: <span class="built_in">string</span> &#125;&gt;;  <span class="comment">// string</span></span><br><span class="line"><span class="keyword">type</span> T11 = Foo&lt;&#123; a: <span class="built_in">string</span>, b: <span class="built_in">number</span> &#125;&gt;;  <span class="comment">// string | number</span></span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+Likewise, multiple candidates for the same type variable in contra-variant positions causes an intersection type to be inferred:
+"><p>类似地, 同一个类型参数处于逆变位的多个引用能推导出聚合类型:</p></div>
+<!-- TODO: 理解 -->
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Bar&lt;T&gt; = T <span class="keyword">extends</span> &#123; a: <span class="function">(<span class="params">x: infer U</span>) =&gt;</span> <span class="built_in">void</span>, b: <span class="function">(<span class="params">x: infer U</span>) =&gt;</span> <span class="built_in">void</span> &#125; ? U : never;</span><br><span class="line"><span class="keyword">type</span> T20 = Bar&lt;&#123; a: <span class="function">(<span class="params">x: <span class="built_in">string</span></span>) =&gt;</span> <span class="built_in">void</span>, b: <span class="function">(<span class="params">x: <span class="built_in">string</span></span>) =&gt;</span> <span class="built_in">void</span> &#125;&gt;;  <span class="comment">// string</span></span><br><span class="line"><span class="keyword">type</span> T21 = Bar&lt;&#123; a: <span class="function">(<span class="params">x: <span class="built_in">string</span></span>) =&gt;</span> <span class="built_in">void</span>, b: <span class="function">(<span class="params">x: <span class="built_in">number</span></span>) =&gt;</span> <span class="built_in">void</span> &#125;&gt;;  <span class="comment">// string &amp; number</span></span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+When inferring from a type with multiple call signatures (such as the type of an overloaded function), inferences are made from the *last* signature (which, presumably, is the most permissive catch-all case).
+It is not possible to perform overload resolution based on a list of argument types.
+"><p>推导有多个调用签名的类型 (如重载函数), 推导从<em>最后</em>一个签名开始 (大体上说: 最宽松的那一个).<br>基于参数类型的列表来解析重载不可能的.</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">declare</span> <span class="function"><span class="keyword">function</span> <span class="title">foo</span>(<span class="params">x: <span class="built_in">string</span></span>): <span class="title">number</span></span>;</span><br><span class="line"><span class="keyword">declare</span> <span class="function"><span class="keyword">function</span> <span class="title">foo</span>(<span class="params">x: <span class="built_in">number</span></span>): <span class="title">string</span></span>;</span><br><span class="line"><span class="keyword">declare</span> <span class="function"><span class="keyword">function</span> <span class="title">foo</span>(<span class="params">x: <span class="built_in">string</span> | <span class="built_in">number</span></span>): <span class="title">string</span> | <span class="title">number</span></span>;</span><br><span class="line"><span class="keyword">type</span> T30 = ReturnType&lt;Typeof foo&gt;;  <span class="comment">// string | number</span></span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+It is not possible to use `infer` declarations in constraint clauses for regular type parameters:
+"><p>不能在类型参数限制子句中使用 <code>infer</code> 声明:</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> ReturnType&lt;T <span class="keyword">extends</span> (...args: <span class="built_in">any</span>[]) =&gt; infer R&gt; = R;  <span class="comment">// Error, not supported</span></span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+However, much the same effect can be obtained by erasing the type variables in the constraint and instead specifying a conditional type:
+"><p>要达成相同效果, 从限制子句移除类型参数, 采用条件类型:</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> AnyFunction = <span class="function">(<span class="params">...args: <span class="built_in">any</span>[]</span>) =&gt;</span> <span class="built_in">any</span>;</span><br><span class="line"><span class="keyword">type</span> ReturnType&lt;T <span class="keyword">extends</span> AnyFunction&gt; = T <span class="keyword">extends</span> (...args: <span class="built_in">any</span>[]) =&gt; infer R ? R : <span class="built_in">any</span>;</span><br></pre></td></tr></table></figure>
+<h2 id="内建条件类型" class="heading-control"><a href="#内建条件类型" class="headerlink" title="内建条件类型"></a>内建条件类型<a class="heading-anchor" href="#内建条件类型" aria-hidden="true"></a></h2><!-- ## Predefined conditional types -->
+<div class="translation-block" title="
+TypeScript 2.8 adds several predefined conditional types to `lib.d.ts`:
+
+* `Exclude&amp;lt;T, U&amp;gt;` -- Exclude from `T` those types that are assignable to `U`.
+* `Extract&amp;lt;T, U&amp;gt;` -- Extract from `T` those types that are assignable to `U`.
+* `NonNullable&amp;lt;T&amp;gt;` -- Exclude `null` and `undefined` from `T`.
+* `ReturnType&amp;lt;T&amp;gt;` -- Obtain the return type of a function type.
+* `InstanceType&amp;lt;T&amp;gt;` -- Obtain the instance type of a constructor function type.
+"><p>TypeScript 2.8 在 <code>lib.d.ts</code> 中添加了一批内建条件类型:</p>
+<ul>
+<li><code>Exclude&lt;T, U&gt;</code> — 从 <code>T</code> 中排除能赋值给 <code>U</code> 的类型.</li>
+<li><code>Extract&lt;T, U&gt;</code> — 从 <code>T</code> 中提取能赋值给 <code>U</code> 的类型.</li>
+<li><code>NonNullable&lt;T&gt;</code> — 从 <code>T</code> 中所有 <code>null</code> 和 <code>undefined</code>.</li>
+<li><code>ReturnType&lt;T&gt;</code> — 取得函数 <code>T</code> 的返回值类型.</li>
+<li><code>InstanceType&lt;T&gt;</code> — 取得构造器函数 <code>T</code> 的实例类型.</li>
+</ul></div>
+<h3 id="实例-3" class="heading-control"><a href="#实例-3" class="headerlink" title="实例"></a>实例<a class="heading-anchor" href="#实例-3" aria-hidden="true"></a></h3><!-- ### Example -->
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> T00 = Exclude&lt;<span class="string">"a"</span> | <span class="string">"b"</span> | <span class="string">"c"</span> | <span class="string">"d"</span>, <span class="string">"a"</span> | <span class="string">"c"</span> | <span class="string">"f"</span>&gt;;  <span class="comment">// "b" | "d"</span></span><br><span class="line"><span class="keyword">type</span> T01 = Extract&lt;<span class="string">"a"</span> | <span class="string">"b"</span> | <span class="string">"c"</span> | <span class="string">"d"</span>, <span class="string">"a"</span> | <span class="string">"c"</span> | <span class="string">"f"</span>&gt;;  <span class="comment">// "a" | "c"</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> T02 = Exclude&lt;<span class="built_in">string</span> | <span class="built_in">number</span> | <span class="function">(<span class="params">(<span class="params"></span>) =&gt; <span class="built_in">void</span></span>), <span class="params">Function</span>&gt;;  // <span class="params">string</span> | <span class="params">number</span></span></span><br><span class="line"><span class="function"><span class="params">type</span> <span class="params">T03</span> = <span class="params">Extract</span>&lt;<span class="params">string</span> | <span class="params">number</span> | (<span class="params">(<span class="params"></span>) =&gt; <span class="built_in">void</span></span>), <span class="params">Function</span>&gt;;  // <span class="params">()</span> =&gt;</span> <span class="built_in">void</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> T04 = NonNullable&lt;<span class="built_in">string</span> | <span class="built_in">number</span> | <span class="literal">undefined</span>&gt;;  <span class="comment">// string | number</span></span><br><span class="line"><span class="keyword">type</span> T05 = NonNullable&lt;<span class="function">(<span class="params">(<span class="params"></span>) =&gt; <span class="built_in">string</span></span>) | <span class="params">string</span>[] | <span class="params">null</span> | <span class="params">undefined</span>&gt;;  // (<span class="params">(<span class="params"></span>) =&gt; <span class="built_in">string</span></span>) | <span class="params">string</span>[]</span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"><span class="params">function</span> <span class="params">f1</span>(<span class="params">s: <span class="built_in">string</span></span>) &#123;</span></span><br><span class="line"><span class="function">    <span class="params">return</span> &#123; <span class="params">a</span>: 1, <span class="params">b</span>: <span class="params">s</span> &#125;;</span></span><br><span class="line"><span class="function">&#125;</span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"><span class="params">class</span> <span class="params">C</span> &#123;</span></span><br><span class="line"><span class="function">    <span class="params">x</span> = 0;</span></span><br><span class="line"><span class="function">    <span class="params">y</span> = 0;</span></span><br><span class="line"><span class="function">&#125;</span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"><span class="params">type</span> <span class="params">T10</span> = <span class="params">ReturnType</span>&lt;<span class="params">()</span> =&gt;</span> <span class="built_in">string</span>&gt;;  <span class="comment">// string</span></span><br><span class="line"><span class="keyword">type</span> T11 = ReturnType&lt;<span class="function">(<span class="params">s: <span class="built_in">string</span></span>) =&gt;</span> <span class="built_in">void</span>&gt;;  <span class="comment">// void</span></span><br><span class="line"><span class="keyword">type</span> T12 = ReturnType&lt;<span class="function">(<span class="params">&lt;T&gt;(<span class="params"></span>) =&gt; T</span>)&gt;;  // &#123;&#125;</span></span><br><span class="line"><span class="function"><span class="params">type</span> <span class="params">T13</span> = <span class="params">ReturnType</span>&lt;(<span class="params">&lt;T <span class="keyword">extends</span> U, U <span class="keyword">extends</span> <span class="built_in">number</span>[]&gt;(<span class="params"></span>) =&gt; T</span>)&gt;;  // <span class="params">number</span>[]</span></span><br><span class="line"><span class="function"><span class="params">type</span> <span class="params">T14</span> = <span class="params">ReturnType</span>&lt;<span class="params">Typeof</span> <span class="params">f1</span>&gt;;  // &#123; <span class="params">a</span>: <span class="params">number</span>, <span class="params">b</span>: <span class="params">string</span> &#125;</span></span><br><span class="line"><span class="function"><span class="params">type</span> <span class="params">T15</span> = <span class="params">ReturnType</span>&lt;<span class="params">any</span>&gt;;  // <span class="params">any</span></span></span><br><span class="line"><span class="function"><span class="params">type</span> <span class="params">T16</span> = <span class="params">ReturnType</span>&lt;<span class="params">never</span>&gt;;  // <span class="params">never</span></span></span><br><span class="line"><span class="function"><span class="params">type</span> <span class="params">T17</span> = <span class="params">ReturnType</span>&lt;<span class="params">string</span>&gt;;  // <span class="params">Error</span></span></span><br><span class="line"><span class="function"><span class="params">type</span> <span class="params">T18</span> = <span class="params">ReturnType</span>&lt;<span class="params">Function</span>&gt;;  // <span class="params">Error</span></span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"><span class="params">type</span> <span class="params">T20</span> = <span class="params">InstanceType</span>&lt;<span class="params">Typeof</span> <span class="params">C</span>&gt;;  // <span class="params">C</span></span></span><br><span class="line"><span class="function"><span class="params">type</span> <span class="params">T21</span> = <span class="params">InstanceType</span>&lt;<span class="params">any</span>&gt;;  // <span class="params">any</span></span></span><br><span class="line"><span class="function"><span class="params">type</span> <span class="params">T22</span> = <span class="params">InstanceType</span>&lt;<span class="params">never</span>&gt;;  // <span class="params">never</span></span></span><br><span class="line"><span class="function"><span class="params">type</span> <span class="params">T23</span> = <span class="params">InstanceType</span>&lt;<span class="params">string</span>&gt;;  // <span class="params">Error</span></span></span><br><span class="line"><span class="function"><span class="params">type</span> <span class="params">T24</span> = <span class="params">InstanceType</span>&lt;<span class="params">Function</span>&gt;;  // <span class="params">Error</span></span></span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+&amp;gt; Note: The `Exclude` type is a proper implementation of the `Diff` type suggested [here](https:&amp;#x2F;&amp;#x2F;github.com&amp;#x2F;Microsoft&amp;#x2F;TypeScript&amp;#x2F;issues&amp;#x2F;12215#issuecomment-307871458). We&amp;#39;ve used the name `Exclude` to avoid breaking existing code that defines a `Diff`, plus we feel that name better conveys the semantics of the type.
+"><blockquote>
+<p>注: <code>Exclude</code> 是在<a href="https://github.com/Microsoft/TypeScript/issues/12215#issuecomment-307871458" target="_blank" rel="noopener">这里</a>建议的 <code>Diff</code> 类型的一个实现. 我们采用命名 <code>Exclude</code> 是为了不破坏已经定义了 <code>Diff</code> 的现有代码, 而且我们觉得那个名字能更好地传达该类型语义. </p>
+</blockquote></div>
+    </div>
+
+    
+    
+    
+        
+      
+        <div id="reward-container">
+  <div>如果这篇文章对您有用，可以考虑打赏:)</div>
+  <button id="reward-button" disable="enable" onclick="var qr = document.getElementById(&quot;qr&quot;); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+        
+      
+      <div style="display: inline-block">
+        <img src="/images/wechatpay.png" alt="Hyan Lee 微信支付">
+        <p>微信支付</p>
+      </div>
+
+  </div>
+</div>
+
+      
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>Hyan Lee</li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://hyan23.org/2019/11/20/ts-advanced-types/" title="高级数据类型">https://hyan23.org/2019/11/20/ts-advanced-types/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！</li>
+</ul>
+</div>
+
+      
+
+      <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+              
+                <a href="/2019/11/20/ts-type-compatibility/" rel="next" title="类型兼容性">
+                  <i class="fa fa-chevron-left"></i> 类型兼容性
+                </a>
+              
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+              
+                <a href="/2019/11/20/ts-symbols/" rel="prev" title="符号">
+                  符号 <i class="fa fa-chevron-right"></i>
+                </a>
+              
+            </div>
+          </div>
+        
+      </footer>
+    
+  </div>
+  
+  
+  
+  </article>
+
+  </div>
+
+
+          </div>
+          
+    
+    <div class="comments" id="gitalk-container"></div>
+  
+
+        </div>
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+        
+        
+        
+        
+      
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#聚合类型"><span class="nav-number">1.</span> <span class="nav-text">聚合类型</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#自适应类型"><span class="nav-number">2.</span> <span class="nav-text">自适应类型</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#类型护卫以及类型区分"><span class="nav-number">3.</span> <span class="nav-text">类型护卫以及类型区分</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#自定义类型护卫"><span class="nav-number">3.1.</span> <span class="nav-text">自定义类型护卫</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#使用类型断言"><span class="nav-number">3.2.</span> <span class="nav-text">使用类型断言</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#使用-in-运算符"><span class="nav-number">3.2.1.</span> <span class="nav-text">使用 in 运算符</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#typeof-型"><span class="nav-number">3.3.</span> <span class="nav-text">typeof 型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#instanceof-型"><span class="nav-number">3.4.</span> <span class="nav-text">instanceof 型</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#可为空类型"><span class="nav-number">4.</span> <span class="nav-text">可为空类型</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#可选参数和属性"><span class="nav-number">4.1.</span> <span class="nav-text">可选参数和属性</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#类型护卫与类型担保"><span class="nav-number">4.2.</span> <span class="nav-text">类型护卫与类型担保</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#类型别名"><span class="nav-number">5.</span> <span class="nav-text">类型别名</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#接口对比类型别名"><span class="nav-number">5.1.</span> <span class="nav-text">接口对比类型别名</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#字符串字面量类型"><span class="nav-number">6.</span> <span class="nav-text">字符串字面量类型</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#数值字面量类型"><span class="nav-number">7.</span> <span class="nav-text">数值字面量类型</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#枚举成员类型"><span class="nav-number">8.</span> <span class="nav-text">枚举成员类型</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#区辨联合"><span class="nav-number">9.</span> <span class="nav-text">区辨联合</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#完全覆盖检查"><span class="nav-number">9.1.</span> <span class="nav-text">完全覆盖检查</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#多态-this-类型"><span class="nav-number">10.</span> <span class="nav-text">多态 this 类型</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#索引类型"><span class="nav-number">11.</span> <span class="nav-text">索引类型</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#索引类型和索引签名"><span class="nav-number">11.1.</span> <span class="nav-text">索引类型和索引签名</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#映射类型"><span class="nav-number">12.</span> <span class="nav-text">映射类型</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#从映射类型推断"><span class="nav-number">12.1.</span> <span class="nav-text">从映射类型推断</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#条件类型"><span class="nav-number">13.</span> <span class="nav-text">条件类型</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#分配式条件类型"><span class="nav-number">13.1.</span> <span class="nav-text">分配式条件类型</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#实例"><span class="nav-number">13.1.1.</span> <span class="nav-text">实例</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#实例-1"><span class="nav-number">13.1.2.</span> <span class="nav-text">实例</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#实例-2"><span class="nav-number">13.1.3.</span> <span class="nav-text">实例</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#条件类型的推导"><span class="nav-number">13.2.</span> <span class="nav-text">条件类型的推导</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#内建条件类型"><span class="nav-number">13.3.</span> <span class="nav-text">内建条件类型</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#实例-3"><span class="nav-number">13.3.1.</span> <span class="nav-text">实例</span></a></li></ol></li></ol></li></ol></div>
+        
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image"
+      src="/images/avatar2.png"
+      alt="Hyan Lee">
+  <p class="site-author-name" itemprop="name">Hyan Lee</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">31</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-categories">
+        
+          
+            <a href="/categories/">
+          
+        
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">分类</span>
+        </a>
+      </div>
+    
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+      
+      
+        
+      
+      
+        
+      
+        <a href="https://github.com/hyan23" title="GitHub &rarr; https://github.com/hyan23" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+    
+      <span class="links-of-author-item">
+      
+      
+        
+      
+      
+        
+      
+        <a href="mailto:hyan23lee@hotmail.com" title="E-Mail &rarr; mailto:hyan23lee@hotmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+    
+      <span class="links-of-author-item">
+      
+      
+        
+      
+      
+        
+      
+        <a href="https://t.me/hyan23" title="Telegram &rarr; https://t.me/hyan23" rel="noopener" target="_blank"><i class="fa fa-fw fa-telegram"></i>Telegram</a>
+      </span>
+    
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    
+  
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+      
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2017 – <span itemprop="copyrightYear">2020</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Hyan Lee</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    
+    <span title="站点总字数">118k</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v3.9.0</div>
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js?v=3.1.0"></script>
+  <script src="//cdn.jsdelivr.net/npm/medium-zoom@1/dist/medium-zoom.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+<script src="/js/utils.js?v=7.4.0"></script>
+<script src="/js/schemes/pisces.js?v=7.4.0"></script>
+<script src="/js/next-boot.js?v=7.4.0"></script>
+
+
+
+  
+  <script>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+    mermaid.initialize({
+      theme: 'forest',
+      logLevel: 3,
+      flowchart: { curve: 'linear' },
+      gantt: { axisFormat: '%m/%d/%Y' },
+      sequence: { actorMargin: 50 }
+    });
+  }, window.mermaid);
+}
+</script>
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID: '442da4785490db3ece48',
+      clientSecret: '3bfa2829a34371ca37db636917e791d114bd338c',
+      repo: 'blog-comments',
+      owner: 'hyan23',
+      admin: ['hyan23'],
+      id: 'a4133d335740d8250b99962caf9a0a1e',
+        language: window.navigator.language || window.navigator.userLanguage,
+      
+      distractionFreeMode: 'true'
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+</script>
+
+</body>
+</html>

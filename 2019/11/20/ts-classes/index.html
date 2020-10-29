@@ -1,0 +1,990 @@
+<!DOCTYPE html>
+
+
+
+
+
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/favicon/apple-touch-icon.png?v=7.4.0">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon/favicon-32x32.png?v=7.4.0">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon/favicon-16x16.png?v=7.4.0">
+  <link rel="mask-icon" href="/images/favicon/safari-pinned-tab.svg?v=7.4.0" color="#222">
+  <link rel="manifest" href="/images/favicon/site.webmanifest">
+  <meta name="msapplication-config" content="/images/favicon/browserconfig.xml">
+  <meta http-equiv="Cache-Control" content="no-transform">
+  <meta http-equiv="Cache-Control" content="no-siteapp">
+
+<link rel="stylesheet" href="/css/main.css?v=7.4.0">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '7.4.0',
+    exturl: false,
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false},
+    copycode: {"enable":false,"show_result":false,"style":null},
+    back2top: {"enable":true,"sidebar":true,"scrollpercent":false},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: true,
+    lazyload: true,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: "",
+      labels: ""
+    },
+    localsearch: {"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: '',
+    motion: {"enable":false},
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="状态: 初稿 介绍 传统 JavaScript 开发者用函数和基于原型的继承构建可重用组件, 但有些程序员更喜欢面向对象方法 — 类多数功能由继承而来, 对象又参照类实例化.ECMAScript 2015 (也称 ECMAScript 6), 开始允许开发者按照面向对象的, 基于类的编程方法构建应用程序.TypeScript 用户无需等待新版本 JavaScript, 现在就可以使用这些技术, 编">
+<meta name="keywords" content="博客,个人博客,日志,在线工具">
+<meta property="og:type" content="article">
+<meta property="og:title" content="类">
+<meta property="og:url" content="https://hyan23.org/2019/11/20/ts-classes/index.html">
+<meta property="og:site_name" content="Hyan Lee">
+<meta property="og:description" content="状态: 初稿 介绍 传统 JavaScript 开发者用函数和基于原型的继承构建可重用组件, 但有些程序员更喜欢面向对象方法 — 类多数功能由继承而来, 对象又参照类实例化.ECMAScript 2015 (也称 ECMAScript 6), 开始允许开发者按照面向对象的, 基于类的编程方法构建应用程序.TypeScript 用户无需等待新版本 JavaScript, 现在就可以使用这些技术, 编">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2019-12-23T15:46:06.383Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="类">
+<meta name="twitter:description" content="状态: 初稿 介绍 传统 JavaScript 开发者用函数和基于原型的继承构建可重用组件, 但有些程序员更喜欢面向对象方法 — 类多数功能由继承而来, 对象又参照类实例化.ECMAScript 2015 (也称 ECMAScript 6), 开始允许开发者按照面向对象的, 基于类的编程方法构建应用程序.TypeScript 用户无需等待新版本 JavaScript, 现在就可以使用这些技术, 编">
+  <link rel="canonical" href="https://hyan23.org/2019/11/20/ts-classes/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>类 | Hyan Lee</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+  <div class="container">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Hyan Lee</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+      
+      
+      
+        
+        <li class="menu-item menu-item-home">
+      
+    
+      
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-关于-/-留言板">
+      
+    
+      
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于 / 留言板</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-categories">
+      
+    
+      
+      
+        
+      
+        
+          
+        
+      
+        
+      
+    
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类<span class="badge">6</span></a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-archives">
+      
+    
+      
+      
+        
+          
+        
+      
+        
+      
+        
+      
+    
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">31</span></a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-精选-/-系列">
+      
+    
+      
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <a href="/selections/" rel="section"><i class="fa fa-fw fa-book"></i>精选 / 系列</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-摄影">
+      
+    
+      
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <a href="/gallery/" rel="section"><i class="fa fa-fw fa-camera"></i>摄影</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-工具">
+      
+    
+      
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <a href="/tools/" rel="section"><i class="fa fa-fw fa-calculator"></i>工具</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-友情链接">
+      
+    
+      
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <a href="/friends/" rel="section"><i class="fa fa-fw fa-external-link"></i>友情链接</a>
+
+  </li>
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+            
+
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+      <article itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block post">
+    <link itemprop="mainEntityOfPage" href="https://hyan23.org/2019/11/20/ts-classes/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Hyan Lee">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar2.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hyan Lee">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">类
+
+          
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              
+                
+              
+
+              <time title="创建时间：2019-11-20 09:27:09" itemprop="dateCreated datePublished" datetime="2019-11-20T09:27:09+08:00">2019-11-20</time>
+            </span>
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2019-12-23 23:46:06" itemprop="dateModified" datetime="2019-12-23T23:46:06+08:00">2019-12-23</time>
+              </span>
+            
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/翻译稿/" itemprop="url" rel="index"><span itemprop="name">翻译稿</span></a></span>
+
+                
+                
+                  ，
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/翻译稿/TypeScript/" itemprop="url" rel="index"><span itemprop="name">TypeScript</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+          
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">本文字数：</span>
+              
+              <span>3.6k</span>
+            </span>
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <pre><code>状态: 初稿
+</code></pre><h1 id="介绍" class="heading-control"><a href="#介绍" class="headerlink" title="介绍"></a>介绍<a class="heading-anchor" href="#介绍" aria-hidden="true"></a></h1><!-- # Introduction -->
+<div class="translation-block" title="
+Traditional JavaScript uses functions and prototype-based inheritance to build up reusable components, but this may feel a bit awkward to programmers more comfortable with an object-oriented approach, where classes inherit functionality and objects are built from these classes.
+Starting with ECMAScript 2015, also known as ECMAScript 6, JavaScript programmers will be able to build their applications using this object-oriented class-based approach.
+In TypeScript, we allow developers to use these techniques now, and compile them down to JavaScript that works across all major browsers and platforms, without having to wait for the next version of JavaScript.
+"><p>传统 JavaScript 开发者用函数和基于原型的继承构建可重用组件, 但有些程序员更喜欢面向对象方法 — 类多数功能由继承而来, 对象又参照类实例化.<br>ECMAScript 2015 (也称 ECMAScript 6), 开始允许开发者按照面向对象的, 基于类的编程方法构建应用程序.<br>TypeScript 用户无需等待新版本 JavaScript, 现在就可以使用这些技术, 编译器生成的 JavaScript 可在各主流浏览器和平台运行.</p></div>
+<a id="more"></a>
+<h1 id="类" class="heading-control"><a href="#类" class="headerlink" title="类"></a>类<a class="heading-anchor" href="#类" aria-hidden="true"></a></h1><!-- # Classes -->
+<div class="translation-block" title="
+Let&amp;#39;s take a look at a simple class-based example:
+"><p>我们以一个基于类的例子开始:</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> Greeter &#123;</span><br><span class="line">    greeting: <span class="built_in">string</span>;</span><br><span class="line">    <span class="keyword">constructor</span>(<span class="params">message: <span class="built_in">string</span></span>) &#123;</span><br><span class="line">        <span class="keyword">this</span>.greeting = message;</span><br><span class="line">    &#125;</span><br><span class="line">    greet() &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">"Hello, "</span> + <span class="keyword">this</span>.greeting;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> greeter = <span class="keyword">new</span> Greeter(<span class="string">"world"</span>);</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+The syntax should look familiar if you&amp;#39;ve used C# or Java before.
+We declare a new class `Greeter`. This class has three members: a property called `greeting`, a constructor, and a method `greet`.
+
+You&amp;#39;ll notice that in the class when we refer to one of the members of the class we prepend `this.`.
+This denotes that it&amp;#39;s a member access.
+
+In the last line we construct an instance of the `Greeter` class using `new`.
+This calls into the constructor we defined earlier, creating a new object with the `Greeter` shape, and running the constructor to initialize it.
+"><p>假如你有 Java 或 C# 经验, 这语法对你并不陌生.<br>我们创建了一个新类 <code>Greeter</code>. 这个新类有三个成员, 分别是: 一个叫 <code>greeting</code> 的属性, 一个构造器, 一个成员函数(方法) <code>greet</code>.</p>
+<p>你也注意到在类定义中, 我们引用一些标识符要加 <code>this.</code> 前缀.<br>这表示一个对类成员的访问.</p>
+<p>在最后一行, <code>new</code> 关键字创建了一个类的对象(实例).<br><code>new</code> 语句首先创建一个形体跟 <code>Greeter</code> 一致的对象, 然后调用类构造器方法初始化该对象.</p></div>
+<h1 id="继承" class="heading-control"><a href="#继承" class="headerlink" title="继承"></a>继承<a class="heading-anchor" href="#继承" aria-hidden="true"></a></h1><!-- # Inheritance -->
+<div class="translation-block" title="
+In TypeScript, we can use common object-oriented patterns.
+One of the most fundamental patterns in class-based programming is being able to extend existing classes to create new ones using inheritance.
+
+Let&amp;#39;s take a look at an example:
+"><p>在 TypeScript 中, 我们可以运用许多常见面向对象模式.<br>继承是基于类编程最重要的模式之一, 其基本思想是: 创建新类, 继承旧类, 完善功能.</p>
+<p>我们看个例子:</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> Animal &#123;</span><br><span class="line">    move(distanceInMeters: <span class="built_in">number</span> = <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="built_in">console</span>.log(<span class="string">`Animal moved <span class="subst">$&#123;distanceInMeters&#125;</span>m.`</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> Dog <span class="keyword">extends</span> Animal &#123;</span><br><span class="line">    bark() &#123;</span><br><span class="line">        <span class="built_in">console</span>.log(<span class="string">'Woof! Woof!'</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> dog = <span class="keyword">new</span> Dog();</span><br><span class="line">dog.bark();</span><br><span class="line">dog.move(<span class="number">10</span>);</span><br><span class="line">dog.bark();</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+This example shows the most basic inheritance feature: classes inherit properties and methods from base classes.
+Here, `Dog` is a *derived* class that derives from the `Animal` *base* class using the `extends` keyword.
+Derived classes are often called *subclasses*, and base classes are often called *superclasses*.
+
+Because `Dog` extends the functionality from `Animal`, we were able to create an instance of `Dog` that could both `bark()` and `move()`.
+
+Let&amp;#39;s now look at a more complex example.
+"><p>这例子展现了继承最基本的能力: 子类继承父类的属性和方法.<br>这里, <code>Dog</code> 是一个用 <code>extends</code> 关键字继承<em>基类</em> <code>Animal</code> 的<em>派生类</em>.<br>派生类也叫<em>子类</em>, 基类也叫<em>父类</em></p>
+<p>因为 <code>Dog</code> 完善了 <code>Animal</code> 的功能, 我们现在可以创建一个既能 <code>move</code>, 又能 <code>bark</code>(吠叫)的 <code>Dog</code> 实例.</p>
+<p>再看个稍复杂点的例子:</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> Animal &#123;</span><br><span class="line">    name: <span class="built_in">string</span>;</span><br><span class="line">    <span class="keyword">constructor</span>(<span class="params">theName: <span class="built_in">string</span></span>) &#123; <span class="keyword">this</span>.name = theName; &#125;</span><br><span class="line">    move(distanceInMeters: <span class="built_in">number</span> = <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="built_in">console</span>.log(<span class="string">`<span class="subst">$&#123;<span class="keyword">this</span>.name&#125;</span> moved <span class="subst">$&#123;distanceInMeters&#125;</span>m.`</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> Snake <span class="keyword">extends</span> Animal &#123;</span><br><span class="line">    <span class="keyword">constructor</span>(<span class="params">name: <span class="built_in">string</span></span>) &#123; <span class="keyword">super</span>(name); &#125;</span><br><span class="line">    move(distanceInMeters = <span class="number">5</span>) &#123;</span><br><span class="line">        <span class="built_in">console</span>.log(<span class="string">"Slithering..."</span>);</span><br><span class="line">        <span class="keyword">super</span>.move(distanceInMeters);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> Horse <span class="keyword">extends</span> Animal &#123;</span><br><span class="line">    <span class="keyword">constructor</span>(<span class="params">name: <span class="built_in">string</span></span>) &#123; <span class="keyword">super</span>(name); &#125;</span><br><span class="line">    move(distanceInMeters = <span class="number">45</span>) &#123;</span><br><span class="line">        <span class="built_in">console</span>.log(<span class="string">"Galloping..."</span>);</span><br><span class="line">        <span class="keyword">super</span>.move(distanceInMeters);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> sam = <span class="keyword">new</span> Snake(<span class="string">"Sammy the Python"</span>);</span><br><span class="line"><span class="keyword">let</span> tom: Animal = <span class="keyword">new</span> Horse(<span class="string">"Tommy the Palomino"</span>);</span><br><span class="line"></span><br><span class="line">sam.move();</span><br><span class="line">tom.move(<span class="number">34</span>);</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+This example covers a few other features we didn&amp;#39;t previously mention.
+Again, we see the `extends` keywords used to create two new subclasses of `Animal`: `Horse` and `Snake`.
+
+One difference from the prior example is that each derived class that contains a constructor function *must* call `super()` which will execute the constructor of the base class.
+What&amp;#39;s more, before we *ever* access a property on `this` in a constructor body, we *have* to call `super()`.
+This is an important rule that TypeScript will enforce.
+
+The example also shows how to override methods in the base class with methods that are specialized for the subclass.
+Here both `Snake` and `Horse` create a `move` method that overrides the `move` from `Animal`, giving it functionality specific to each class.
+Note that even though `tom` is declared as an `Animal`, since its value is a `Horse`, calling `tom.move(34)` will call the overriding method in `Horse`:
+"><p>这个例子体现更多我们暂未涉及的继承特性.<br><!-- 我们再次用 `extend` 关键字创建两个 `Animal` 子类, `Horse` 和 `Snake`. --></p>
+<p>第一, 每个拥有构造函数的子类必须<em>显式调用</em>父类构造函数<code>super()</code>.<br>第二, 在构造函数中, 要先调用 <code>super()</code>, 再访问其他类成员.<br>以上规则很重要, 是 TypeScript 语法检查的一部分.</p>
+<p>最后, 这个例子还展示了如何<strong>覆写</strong>父类方法, 以创建子类特有版本.<br>这里不论是 <code>Snake</code>, 还是 <code>Horse</code>, 都根据自身特点覆写了父类 <code>Animal</code> 的 <code>move</code> 方法.<br>注意虽然 <code>tom</code> 的类型是 <code>Animal</code>, 由于它的值是一个 <code>Horse</code>, 调用 <code>tom.move(34)</code> 调用的是 <code>Hosre</code> 的覆写方法.</p>
+<p>例子输出如下:</p></div>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Slithering...</span><br><span class="line">Sammy the Python moved 5m.</span><br><span class="line">Galloping...</span><br><span class="line">Tommy the Palomino moved 34m.</span><br></pre></td></tr></table></figure>
+<h1 id="访问修饰符" class="heading-control"><a href="#访问修饰符" class="headerlink" title="访问修饰符"></a>访问修饰符<a class="heading-anchor" href="#访问修饰符" aria-hidden="true"></a></h1><!-- # Public, private, and protected modifiers -->
+<h2 id="公有是默认状态" class="heading-control"><a href="#公有是默认状态" class="headerlink" title="公有是默认状态"></a>公有是默认状态<a class="heading-anchor" href="#公有是默认状态" aria-hidden="true"></a></h2><!-- ## Public by default -->
+<div class="translation-block" title="
+In our examples, we&amp;#39;ve been able to freely access the members that we declared throughout our programs.
+If you&amp;#39;re familiar with classes in other languages, you may have noticed in the above examples we haven&amp;#39;t had to use the word `public` to accomplish this; for instance, C# requires that each member be explicitly labeled `public` to be visible.
+In TypeScript, each member is `public` by default.
+
+You may still mark a member `public` explicitly.
+We could have written the `Animal` class from the previous section in the following way:
+"><p>纵观所有例子, 我们在程序生命期间都不受限制地访问一个对象的任何成员.<br>如果熟悉其他语言中的类, 就知道我们需要 <code>public</code> 关键字; 比如说 C#, C# 要求你用 <code>public</code> 修饰想对外部可见的每个成员.<br>而在 TypeScript 中, 公有(public)是成员默认状态.</p>
+<p>你还是可以用 <code>public</code> 显式修饰一个成员.<br><code>Animal</code> 类就像这样:</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> Animal &#123;</span><br><span class="line">    <span class="keyword">public</span> name: <span class="built_in">string</span>;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">constructor</span>(<span class="params">theName: <span class="built_in">string</span></span>) &#123; <span class="keyword">this</span>.name = theName; &#125;</span><br><span class="line">    <span class="keyword">public</span> move(distanceInMeters: <span class="built_in">number</span>) &#123;</span><br><span class="line">        <span class="built_in">console</span>.log(<span class="string">`<span class="subst">$&#123;<span class="keyword">this</span>.name&#125;</span> moved <span class="subst">$&#123;distanceInMeters&#125;</span>m.`</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="理解-private" class="heading-control"><a href="#理解-private" class="headerlink" title="理解 private"></a>理解 private<a class="heading-anchor" href="#理解-private" aria-hidden="true"></a></h2><!-- ## Understanding `private` -->
+<div class="translation-block" title="
+When a member is marked `private`, it cannot be accessed from outside of its containing class. For example:
+"><p>如果一个成员是 <code>private</code> 的, 你将不能在所属类外部访问它. 例如:</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> Animal &#123;</span><br><span class="line">    <span class="keyword">private</span> name: <span class="built_in">string</span>;</span><br><span class="line">    <span class="keyword">constructor</span>(<span class="params">theName: <span class="built_in">string</span></span>) &#123; <span class="keyword">this</span>.name = theName; &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">new</span> Animal(<span class="string">"Cat"</span>).name; <span class="comment">// Error: 'name' is private;</span></span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+TypeScript is a structural type system.
+When we compare two different types, regardless of where they came from, if the types of all members are compatible, then we say the types themselves are compatible.
+
+However, when comparing types that have `private` and `protected` members, we treat these types differently.
+For two types to be considered compatible, if one of them has a `private` member, then the other must have a `private` member that originated in the same declaration.
+The same applies to `protected` members.
+
+Let&amp;#39;s look at an example to better see how this plays out in practice:
+"><p>TypeScript 是一个结构化类型系统.<br>它在比较两个不同类型的时候, 不管两者出身, 只要它们所有成员是相容的, 它们自身就是相容的.</p>
+<p>然而, 当参与比较的类型有 <code>protected</code> 或 <code>private</code> 成员时, 标准稍有不同.<br>要兼容一个含有 <code>protected</code>, 或 <code>private</code> 成员的类, 要求另一个类也有对应 <code>protected</code> 或 <code>private</code> 成员, 而且两个 <code>private</code> 成员同源(即来自同一个父类).</p>
+<p>来看实例:</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> Animal &#123;</span><br><span class="line">    <span class="keyword">private</span> name: <span class="built_in">string</span>;</span><br><span class="line">    <span class="keyword">constructor</span>(<span class="params">theName: <span class="built_in">string</span></span>) &#123; <span class="keyword">this</span>.name = theName; &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> Rhino <span class="keyword">extends</span> Animal &#123;</span><br><span class="line">    <span class="keyword">constructor</span>(<span class="params"></span>) &#123; <span class="keyword">super</span>(<span class="string">"Rhino"</span>); &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> Employee &#123;</span><br><span class="line">    <span class="keyword">private</span> name: <span class="built_in">string</span>;</span><br><span class="line">    <span class="keyword">constructor</span>(<span class="params">theName: <span class="built_in">string</span></span>) &#123; <span class="keyword">this</span>.name = theName; &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> animal = <span class="keyword">new</span> Animal(<span class="string">"Goat"</span>);</span><br><span class="line"><span class="keyword">let</span> rhino = <span class="keyword">new</span> Rhino();</span><br><span class="line"><span class="keyword">let</span> employee = <span class="keyword">new</span> Employee(<span class="string">"Bob"</span>);</span><br><span class="line"></span><br><span class="line">animal = rhino;</span><br><span class="line">animal = employee; <span class="comment">// Error: 'Animal' and 'Employee' are not compatible</span></span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+In this example, we have an `Animal` and a `Rhino`, with `Rhino` being a subclass of `Animal`.
+We also have a new class `Employee` that looks identical to `Animal` in terms of shape.
+We create some instances of these classes and then try to assign them to each other to see what will happen.
+Because `Animal` and `Rhino` share the `private` side of their shape from the same declaration of `private name: string` in `Animal`, they are compatible. However, this is not the case for `Employee`.
+When we try to assign from an `Employee` to `Animal` we get an error that these types are not compatible.
+Even though `Employee` also has a `private` member called `name`, it&amp;#39;s not the one we declared in `Animal`.
+"><p>上例, 我们有一个 <code>Animal</code> 和一个 <code>Rhino</code>(犀牛), <code>Rhino</code> 是 <code>Animal</code> 的子类.<br>我们还有一个新类 <code>Employee</code>, 单论形体, <code>Employee</code> 与 <code>Animal</code> 是相容的.<br>现在, 创建这些类的一些变量, 然后试试互相赋值会发生什么.<br>由于 <code>Animal</code> 和 <code>Rhino</code> 共享在 <code>Animal</code> 中定义的 <code>private name: string</code>, 所以它们的 <code>private</code> 成员是同源的. 而对 <code>Employee</code>, 则并非如此.<br>试图把 <code>Employee</code> 赋值给 <code>Animal</code> 时出错, 说两个类型不相容.<br>虽然 <code>Employee</code> 也有名为 <code>name</code> 的 <code>private</code> 成员, 但它不来自 <code>Animal</code>.</p></div>
+<h2 id="理解-protected" class="heading-control"><a href="#理解-protected" class="headerlink" title="理解 protected"></a>理解 protected<a class="heading-anchor" href="#理解-protected" aria-hidden="true"></a></h2><!-- ## Understanding `protected` -->
+<div class="translation-block" title="
+The `protected` modifier acts much like the `private` modifier with the exception that members declared `protected` can also be accessed within deriving classes. For example,
+"><p><code>protected</code> 比 <code>private</code> 宽松, 你可以在所属类和派生类访问 <code>protected</code> 成员. 例如:</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> Person &#123;</span><br><span class="line">    <span class="keyword">protected</span> name: <span class="built_in">string</span>;</span><br><span class="line">    <span class="keyword">constructor</span>(<span class="params">name: <span class="built_in">string</span></span>) &#123; <span class="keyword">this</span>.name = name; &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> Employee <span class="keyword">extends</span> Person &#123;</span><br><span class="line">    <span class="keyword">private</span> department: <span class="built_in">string</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">constructor</span>(<span class="params">name: <span class="built_in">string</span>, department: <span class="built_in">string</span></span>) &#123;</span><br><span class="line">        <span class="keyword">super</span>(name);</span><br><span class="line">        <span class="keyword">this</span>.department = department;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> getElevatorPitch() &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">`Hello, my name is <span class="subst">$&#123;<span class="keyword">this</span>.name&#125;</span> and I work in <span class="subst">$&#123;<span class="keyword">this</span>.department&#125;</span>.`</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> howard = <span class="keyword">new</span> Employee(<span class="string">"Howard"</span>, <span class="string">"Sales"</span>);</span><br><span class="line"><span class="built_in">console</span>.log(howard.getElevatorPitch());</span><br><span class="line"><span class="built_in">console</span>.log(howard.name); <span class="comment">// error</span></span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+Notice that while we can&amp;#39;t use `name` from outside of `Person`, we can still use it from within an instance method of `Employee` because `Employee` derives from `Person`.
+
+A constructor may also be marked `protected`.
+This means that the class cannot be instantiated outside of its containing class, but can be extended. For example,
+"><p>可以看到的确不能在外部访问 <code>Person</code> 类的 <code>name</code> 成员, 而 <code>Employee</code> 派生自 <code>Person</code>, 在 <code>Employee</code> 的成员方法访问就没问题,</p>
+<p>你可以用 <code>protected</code> 修饰构造函数.<br>类的 <code>protected</code> 构造函数表示不能在类外创建类的实例, 但可以继承. 举例,</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> Person &#123;</span><br><span class="line">    <span class="keyword">protected</span> name: <span class="built_in">string</span>;</span><br><span class="line">    <span class="keyword">protected</span> <span class="keyword">constructor</span>(<span class="params">theName: <span class="built_in">string</span></span>) &#123; <span class="keyword">this</span>.name = theName; &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Employee can extend Person</span></span><br><span class="line"><span class="keyword">class</span> Employee <span class="keyword">extends</span> Person &#123;</span><br><span class="line">    <span class="keyword">private</span> department: <span class="built_in">string</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">constructor</span>(<span class="params">name: <span class="built_in">string</span>, department: <span class="built_in">string</span></span>) &#123;</span><br><span class="line">        <span class="keyword">super</span>(name);</span><br><span class="line">        <span class="keyword">this</span>.department = department;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> getElevatorPitch() &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">`Hello, my name is <span class="subst">$&#123;<span class="keyword">this</span>.name&#125;</span> and I work in <span class="subst">$&#123;<span class="keyword">this</span>.department&#125;</span>.`</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> howard = <span class="keyword">new</span> Employee(<span class="string">"Howard"</span>, <span class="string">"Sales"</span>);</span><br><span class="line"><span class="keyword">let</span> john = <span class="keyword">new</span> Person(<span class="string">"John"</span>); <span class="comment">// Error: The 'Person' constructor is protected</span></span><br></pre></td></tr></table></figure>
+<h1 id="readonly-关键字" class="heading-control"><a href="#readonly-关键字" class="headerlink" title="readonly 关键字"></a>readonly 关键字<a class="heading-anchor" href="#readonly-关键字" aria-hidden="true"></a></h1><!-- # Readonly modifier -->
+<div class="translation-block" title="
+You can make properties readonly by using the `readonly` keyword.
+Readonly properties must be initialized at their declaration or in the constructor.
+"><p>你可以用 <code>readonly</code> 关键字定义”只读”属性.<br>只读属性必须在定义时, 或在构造函数内获得初值.</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> Octopus &#123;</span><br><span class="line">    readonly name: <span class="built_in">string</span>;</span><br><span class="line">    readonly numberOfLegs: <span class="built_in">number</span> = <span class="number">8</span>;</span><br><span class="line">    <span class="keyword">constructor</span> (<span class="params">theName: <span class="built_in">string</span></span>) &#123;</span><br><span class="line">        <span class="keyword">this</span>.name = theName;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">let</span> dad = <span class="keyword">new</span> Octopus(<span class="string">"Man with the 8 strong legs"</span>);</span><br><span class="line">dad.name = <span class="string">"Man with the 3-piece suit"</span>; <span class="comment">// error! name is readonly.</span></span><br></pre></td></tr></table></figure>
+<h2 id="参数属性" class="heading-control"><a href="#参数属性" class="headerlink" title="参数属性"></a>参数属性<a class="heading-anchor" href="#参数属性" aria-hidden="true"></a></h2><!-- ## Parameter properties -->
+<div class="translation-block" title="
+In our last example, we had to declare a readonly member `name` and a constructor parameter `theName` in the `Octopus` class. This is needed in order to have the value of `theName` accessible after the `Octopus` constructor is executed.
+*Parameter properties* let you create and initialize a member in one place.
+Here&amp;#39;s a further revision of the previous `Octopus` class using a parameter property:
+"><p>上一个例子, 我们为类 <code>Octopus</code> (章鱼) 定义了一个只读成员 <code>name</code>, 然后给构造函数添加参数 <code>theName</code>. 在构造函数内, 把 <code>theName</code> 赋值给 <code>this.name</code>, 这是为了在构造函数结束后继续使用 <code>theName</code>.<br><strong>构造属性</strong>语法让你一次性创建, 初始化一个属性.<br>以下是上例简化后的 <code>Octopus</code> 类定义:</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> Octopus &#123;</span><br><span class="line">    readonly numberOfLegs: <span class="built_in">number</span> = <span class="number">8</span>;</span><br><span class="line">    <span class="keyword">constructor</span>(<span class="params">readonly name: <span class="built_in">string</span></span>) &#123;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+Notice how we dropped `theName` altogether and just use the shortened `readonly name: string` parameter on the constructor to create and initialize the `name` member.
+We&amp;#39;ve consolidated the declarations and assignment into one location.
+
+Parameter properties are declared by prefixing a constructor parameter with an accessibility modifier or `readonly`, or both.
+Using `private` for a parameter property declares and initializes a private member; likewise, the same is done for `public`, `protected`, and `readonly`.
+"><p>我们丢掉了 <code>theName</code>, 构造函数参数 <code>readonly name: string</code> 同时定义并用实参初始化成员 <code>name</code>.<br>成员定义和初始化由此统一为一体.</p>
+<p>用<a href="#">访问修饰符</a>或 <code>readonly</code> 或两者组合修饰构造函数的一个参数来定义参数属性.<br>一个 <code>private</code> 参数属性对应类中一个 <code>private</code> 成员, 一个 <code>protected</code> 参数属性对应类中一个 <code>protected</code> 成员, 以此类推.</p></div>
+<h1 id="存取方法" class="heading-control"><a href="#存取方法" class="headerlink" title="存取方法"></a>存取方法<a class="heading-anchor" href="#存取方法" aria-hidden="true"></a></h1><!-- # Accessors -->
+<div class="translation-block" title="
+TypeScript supports getters&amp;#x2F;setters as a way of intercepting accesses to a member of an object.
+This gives you a way of having finer-grained control over how a member is accessed on each object.
+
+Let&amp;#39;s convert a simple class to use `get` and `set`.
+First, let&amp;#39;s start with an example without getters and setters.
+"><p>TypeScript 存/取方法可以拦截对类成员的存/取操作.<br>借助该特性, 你可以自定义存/取方法精细控制如何访问类成员.</p>
+<p>为获得直观的理解, 我们来改造一个类, 为它添加存取方法.<br>先从没有存/取方法的类开始:</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> Employee &#123;</span><br><span class="line">    fullName: <span class="built_in">string</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> employee = <span class="keyword">new</span> Employee();</span><br><span class="line">employee.fullName = <span class="string">"Bob Smith"</span>;</span><br><span class="line"><span class="keyword">if</span> (employee.fullName) &#123;</span><br><span class="line">    <span class="built_in">console</span>.log(employee.fullName);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+While allowing people to randomly set `fullName` directly is pretty handy, we may also want enforce some constraints when `fullName` is set.
+
+In this version, we add a setter that checks the length of the `newName` to make sure it&amp;#39;s compatible with the max-length of our backing database field. If it isn&amp;#39;t we throw an error notifying client code that something went wrong.
+
+To preserve existing functionality, we also add a simple getter that retrieves `fullName` unmodified.
+"><p>随意存取 <code>fullName</code> 的确很方便, 但为了数据的有效性, 你最好为存操作添加一些限制.</p>
+<p>现在来改造 <code>Employee</code> 类, 首先 <code>fullName</code> 加入存方法, 确保它的长度符合后端数据库对应字段的长度要求. 如果过长就抛出异常通知客户程序.</p>
+<p>为维持现有功能不变, 我们还添加了一个取方法, 未修改地读取出 <code>fullName</code>.</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> fullNameMaxLength = <span class="number">10</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> Employee &#123;</span><br><span class="line">    <span class="keyword">private</span> _fullName: <span class="built_in">string</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">get</span> fullName(): <span class="built_in">string</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">this</span>._fullName;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">set</span> fullName(newName: <span class="built_in">string</span>) &#123;</span><br><span class="line">        <span class="keyword">if</span> (newName &amp;&amp; newName.length &gt; fullNameMaxLength) &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> <span class="built_in">Error</span>(<span class="string">"fullName has a max length of "</span> + fullNameMaxLength);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">this</span>._fullName = newName;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> employee = <span class="keyword">new</span> Employee();</span><br><span class="line">employee.fullName = <span class="string">"Bob Smith"</span>;</span><br><span class="line"><span class="keyword">if</span> (employee.fullName) &#123;</span><br><span class="line">    <span class="built_in">console</span>.log(employee.fullName);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+To prove to ourselves that our accessor is now checking the length of values, we can attempt to assign a name longer than 10 characters and verify that we get an error.
+
+A couple of things to note about accessors:
+
+First, accessors require you to set the compiler to output ECMAScript 5 or higher.
+Downleveling to ECMAScript 3 is not supported.
+Second, accessors with a `get` and no `set` are automatically inferred to be `readonly`.
+This is helpful when generating a `.d.ts` file from your code, because users of your property can see that they can&amp;#39;t change it.
+"><p>现在把一个长度大于 10 的字符串赋值给 <code>fullName</code>, 观察是否有异常抛出, 以验证我们的存方法在发挥作用.</p>
+<p>存取方法若干说明:</p>
+<p>第一, 为使用存取方法, 编译器输出不得低于 ECMAScript 5.<br>降级到 ECMAScript 3 是不受支持的.<br>第二, 缺失存方法的属性等同于只读属性.<br>在导出 <code>.d.ts</code> 时尤其有用, 你的用户只能 “看到” 该属性, 而不能修改它.</p></div>
+<h1 id="静态属性" class="heading-control"><a href="#静态属性" class="headerlink" title="静态属性"></a>静态属性<a class="heading-anchor" href="#静态属性" aria-hidden="true"></a></h1><!-- # Static Properties -->
+<div class="translation-block" title="
+Up to this point, we&amp;#39;ve only talked about the *instance* members of the class, those that show up on the object when it&amp;#39;s instantiated.
+We can also create *static* members of a class, those that are visible on the class itself rather than on the instances.
+In this example, we use `static` on the origin, as it&amp;#39;s a general value for all grids.
+Each instance accesses this value through prepending the name of the class.
+Similarly to prepending `this.` in front of instance accesses, here we prepend `Grid.` in front of static accesses.
+"><p>到目前为止, 我们只探讨了类的实例成员, 实例方法依附类实例而存在.<br>同样地, 你可以为一个类创建静态成员, 静态成员无需创建类实例就能使用.<br>下例, 我们用 <code>static</code> 修饰变量 <code>origin</code>, 所有 grid (<code>Grid</code> 的实例) 共享这个变量.<br>如同 <code>this.</code> 代表实例成员访问.<br>实例方法必须使用类名前缀访问静态成员, 这里我们前置 <code>Grid.</code>.</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> Grid &#123;</span><br><span class="line">    <span class="keyword">static</span> origin = &#123;x: <span class="number">0</span>, y: <span class="number">0</span>&#125;;</span><br><span class="line">    calculateDistanceFromOrigin(point: &#123;x: <span class="built_in">number</span>; y: <span class="built_in">number</span>;&#125;) &#123;</span><br><span class="line">        <span class="keyword">let</span> xDist = (point.x - Grid.origin.x);</span><br><span class="line">        <span class="keyword">let</span> yDist = (point.y - Grid.origin.y);</span><br><span class="line">        <span class="keyword">return</span> <span class="built_in">Math</span>.sqrt(xDist * xDist + yDist * yDist) / <span class="keyword">this</span>.scale;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">constructor</span> (<span class="params"><span class="keyword">public</span> scale: <span class="built_in">number</span></span>) &#123; &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> grid1 = <span class="keyword">new</span> Grid(<span class="number">1.0</span>);  <span class="comment">// 1x scale</span></span><br><span class="line"><span class="keyword">let</span> grid2 = <span class="keyword">new</span> Grid(<span class="number">5.0</span>);  <span class="comment">// 5x scale</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">console</span>.log(grid1.calculateDistanceFromOrigin(&#123;x: <span class="number">10</span>, y: <span class="number">10</span>&#125;));</span><br><span class="line"><span class="built_in">console</span>.log(grid2.calculateDistanceFromOrigin(&#123;x: <span class="number">10</span>, y: <span class="number">10</span>&#125;));</span><br></pre></td></tr></table></figure>
+<h1 id="抽象类" class="heading-control"><a href="#抽象类" class="headerlink" title="抽象类"></a>抽象类<a class="heading-anchor" href="#抽象类" aria-hidden="true"></a></h1><!-- # Abstract Classes -->
+<div class="translation-block" title="
+Abstract classes are base classes from which other classes may be derived.
+They may not be instantiated directly.
+Unlike an interface, an abstract class may contain implementation details for its members.
+The `abstract` keyword is used to define abstract classes as well as abstract methods within an abstract class.
+"><p>抽象类是一种类, 你可以为它创建派生类. 但不能直接实例化它.<br>与接口不同, 一个抽象类可能已包含某些成员的实现细节.<br><code>abstract</code> 关键字用来声明抽象类, 或抽象类内部的抽象方法.</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">abstract</span> <span class="keyword">class</span> Animal &#123;</span><br><span class="line">    <span class="keyword">abstract</span> makeSound(): <span class="built_in">void</span>;</span><br><span class="line">    move(): <span class="built_in">void</span> &#123;</span><br><span class="line">        <span class="built_in">console</span>.log(<span class="string">"roaming the earth..."</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+Methods within an abstract class that are marked as abstract do not contain an implementation and must be implemented in derived classes.
+Abstract methods share a similar syntax to interface methods.
+Both define the signature of a method without including a method body.
+However, abstract methods must include the `abstract` keyword and may optionally include access modifiers.
+"><p>抽象类内部以 <code>abstract</code> 修饰的方法叫做抽象方法, 抽象类不实现抽象方法, 它的派生类要实现这些抽象方法.<br>抽象方法的定义语法与接口函数基本一致, 只声明函数的签名, 不提供实现(函数体).<br>然后用 <code>abstract</code> 关键字表示这是一个抽象方法, 最后添加可选的访问修饰符.</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">abstract</span> <span class="keyword">class</span> Department &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">constructor</span>(<span class="params"><span class="keyword">public</span> name: <span class="built_in">string</span></span>) &#123;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    printName(): <span class="built_in">void</span> &#123;</span><br><span class="line">        <span class="built_in">console</span>.log(<span class="string">"Department name: "</span> + <span class="keyword">this</span>.name);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">abstract</span> printMeeting(): <span class="built_in">void</span>; <span class="comment">// must be implemented in derived classes</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> AccountingDepartment <span class="keyword">extends</span> Department &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">constructor</span>(<span class="params"></span>) &#123;</span><br><span class="line">        <span class="keyword">super</span>(<span class="string">"Accounting and Auditing"</span>); <span class="comment">// constructors in derived classes must call super()</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    printMeeting(): <span class="built_in">void</span> &#123;</span><br><span class="line">        <span class="built_in">console</span>.log(<span class="string">"The Accounting Department meets each Monday at 10am."</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    generateReports(): <span class="built_in">void</span> &#123;</span><br><span class="line">        <span class="built_in">console</span>.log(<span class="string">"Generating accounting reports..."</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> department: Department; <span class="comment">// ok to create a reference to an abstract type</span></span><br><span class="line">department = <span class="keyword">new</span> Department(); <span class="comment">// error: cannot create an instance of an abstract class</span></span><br><span class="line">department = <span class="keyword">new</span> AccountingDepartment(); <span class="comment">// ok to create and assign a non-abstract subclass</span></span><br><span class="line">department.printName();</span><br><span class="line">department.printMeeting();</span><br><span class="line">department.generateReports(); <span class="comment">// error: method doesn't exist on declared abstract type</span></span><br></pre></td></tr></table></figure>
+<h1 id="高级话题" class="heading-control"><a href="#高级话题" class="headerlink" title="高级话题"></a>高级话题<a class="heading-anchor" href="#高级话题" aria-hidden="true"></a></h1><!-- # Advanced Techniques -->
+<h2 id="构造器函数" class="heading-control"><a href="#构造器函数" class="headerlink" title="构造器函数"></a>构造器函数<a class="heading-anchor" href="#构造器函数" aria-hidden="true"></a></h2><!-- ## Constructor functions -->
+<div class="translation-block" title="
+When you declare a class in TypeScript, you are actually creating multiple declarations at the same time.
+The first is the type of the *instance* of the class.
+"><p>你在 TypeScript 创建一个类的同时实际上创建了许多定义.<br>其一, 类实例的类型.</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> Greeter &#123;</span><br><span class="line">    greeting: <span class="built_in">string</span>;</span><br><span class="line">    <span class="keyword">constructor</span>(<span class="params">message: <span class="built_in">string</span></span>) &#123;</span><br><span class="line">        <span class="keyword">this</span>.greeting = message;</span><br><span class="line">    &#125;</span><br><span class="line">    greet() &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">"Hello, "</span> + <span class="keyword">this</span>.greeting;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> greeter: Greeter;</span><br><span class="line">greeter = <span class="keyword">new</span> Greeter(<span class="string">"world"</span>);</span><br><span class="line"><span class="built_in">console</span>.log(greeter.greet());</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+Here, when we say `let greeter: Greeter`, we&amp;#39;re using `Greeter` as the type of instances of the class `Greeter`.
+This is almost second nature to programmers from other object-oriented languages.
+
+We&amp;#39;re also creating another value that we call the *constructor function*.
+This is the function that is called when we `new` up instances of the class.
+To see what this looks like in practice, let&amp;#39;s take a look at the JavaScript created by the above example:
+"><p>当我们写下 <code>let greeter: Greeter</code>, <code>Greeter</code> 将作为 <code>Greeter</code> 类的实例类型.<br>对其他面向对象程序员来说, 这几乎是第二性质.</p>
+<p>其二, 我们还创建了一个为 <code>new</code> 操作符调用的<strong>构造器函数</strong>.<br>这个函数作为值赋给一个变量.<br>我们可以在生成的 JavaScript 中看到它:</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> Greeter = (<span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">function</span> <span class="title">Greeter</span>(<span class="params">message</span>) </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.greeting = message;</span><br><span class="line">    &#125;</span><br><span class="line">    Greeter.prototype.greet = <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">"Hello, "</span> + <span class="keyword">this</span>.greeting;</span><br><span class="line">    &#125;;</span><br><span class="line">    <span class="keyword">return</span> Greeter;</span><br><span class="line">&#125;)();</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> greeter;</span><br><span class="line">greeter = <span class="keyword">new</span> Greeter(<span class="string">"world"</span>);</span><br><span class="line"><span class="built_in">console</span>.log(greeter.greet());</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+Here, `let Greeter` is going to be assigned the constructor function.
+When we call `new` and run this function, we get an instance of the class.
+The constructor function also contains all of the static members of the class.
+Another way to think of each class is that there is an *instance* side and a *static* side.
+
+Let&amp;#39;s modify the example a bit to show this difference:
+"><p>这里, <code>let Greeter</code> 把构造器函数赋值给 <code>Greeter</code>.<br>当我们执行 <code>new</code> 操作调用构造器函数, 我们得到该类的一个实例.<br>构造器函数也包含所有类静态成员.<br>另一种看待类的方式是区分”实例面”和”静态面”.</p>
+<p>对上例稍作修改:</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> Greeter &#123;</span><br><span class="line">    <span class="keyword">static</span> standardGreeting = <span class="string">"Hello, there"</span>;</span><br><span class="line">    greeting: <span class="built_in">string</span>;</span><br><span class="line">    greet() &#123;</span><br><span class="line">        <span class="keyword">if</span> (<span class="keyword">this</span>.greeting) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="string">"Hello, "</span> + <span class="keyword">this</span>.greeting;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> Greeter.standardGreeting;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> greeter1: Greeter;</span><br><span class="line">greeter1 = <span class="keyword">new</span> Greeter();</span><br><span class="line"><span class="built_in">console</span>.log(greeter1.greet());</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> greeterMaker: <span class="keyword">typeof</span> Greeter = Greeter;</span><br><span class="line">greeterMaker.standardGreeting = <span class="string">"Hey there!"</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> greeter2: Greeter = <span class="keyword">new</span> greeterMaker();</span><br><span class="line"><span class="built_in">console</span>.log(greeter2.greet());</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+In this example, `greeter1` works similarly to before.
+We instantiate the `Greeter` class, and use this object.
+This we have seen before.
+
+Next, we then use the class directly.
+Here we create a new variable called `greeterMaker`.
+This variable will hold the class itself, or said another way its constructor function.
+Here we use `typeof Greeter`, that is &amp;quot;give me the type of the `Greeter` class itself&amp;quot; rather than the instance type.
+Or, more precisely, &amp;quot;give me the type of the symbol called `Greeter`,&amp;quot; which is the type of the constructor function.
+This type will contain all of the static members of Greeter along with the constructor that creates instances of the `Greeter` class.
+We show this by using `new` on `greeterMaker`, creating new instances of `Greeter` and invoking them as before.
+"><p>在这个例子中, <code>greeter1</code> 的工作方式没有变化.<br>我们实例化 <code>Greeter</code>, 得到一个实例.<br>没什么特别的.</p>
+<p>接下来, 我们直接使用类本身.<br>首先创建一个名为 <code>greeterMaker</code> 的变量.<br>这个变量引用类本身, 或者说, 这个类的构造器函数.<br>它的类型是 <code>typeof Greeter</code>, <code>typeof Greeter</code> 即 “把类 <code>Greeter</code> 的类型给我”, 而不是类实例的类型.<br>更准确地说, “给我标识符 <code>Greeter</code> 的类型”, 即构造器函数的类型.<br>它包括 <code>Greeter</code> 所有静态成员, 还有能创建 <code>Greeter</code> 类实例的构造器.<br>我们最后演示把 <code>new</code> 运算符作用在 <code>greeterMaker</code> 身上创建一个 <code>Greeter</code> 实例, 调用它的 <code>greet</code> 方法.</p></div>
+<h2 id="类作为接口" class="heading-control"><a href="#类作为接口" class="headerlink" title="类作为接口"></a>类作为接口<a class="heading-anchor" href="#类作为接口" aria-hidden="true"></a></h2><!-- ## Using a class as an interface -->
+<div class="translation-block" title="
+As we said in the previous section, a class declaration creates two things: a type representing instances of the class and a constructor function.
+Because classes create types, you can use them in the same places you would be able to use interfaces.
+"><p>如上节所述, 类定义创建两个事物: 一个类实例类型, 一个构造器函数.<br>因为类创建类型, 你可以在能应用接口的地方应用类.</p></div>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> Point &#123;</span><br><span class="line">    x: <span class="built_in">number</span>;</span><br><span class="line">    y: <span class="built_in">number</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">interface</span> Point3d <span class="keyword">extends</span> Point &#123;</span><br><span class="line">    z: <span class="built_in">number</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> point3d: Point3d = &#123;x: <span class="number">1</span>, y: <span class="number">2</span>, z: <span class="number">3</span>&#125;;</span><br></pre></td></tr></table></figure>
+    </div>
+
+    
+    
+    
+        
+      
+        <div id="reward-container">
+  <div>如果这篇文章对您有用，可以考虑打赏:)</div>
+  <button id="reward-button" disable="enable" onclick="var qr = document.getElementById(&quot;qr&quot;); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+        
+      
+      <div style="display: inline-block">
+        <img src="/images/wechatpay.png" alt="Hyan Lee 微信支付">
+        <p>微信支付</p>
+      </div>
+
+  </div>
+</div>
+
+      
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>Hyan Lee</li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://hyan23.org/2019/11/20/ts-classes/" title="类">https://hyan23.org/2019/11/20/ts-classes/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！</li>
+</ul>
+</div>
+
+      
+
+      <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+              
+                <a href="/2019/11/20/ts-interfaces/" rel="next" title="接口">
+                  <i class="fa fa-chevron-left"></i> 接口
+                </a>
+              
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+              
+                <a href="/2019/11/20/ts-functions/" rel="prev" title="函数">
+                  函数 <i class="fa fa-chevron-right"></i>
+                </a>
+              
+            </div>
+          </div>
+        
+      </footer>
+    
+  </div>
+  
+  
+  
+  </article>
+
+  </div>
+
+
+          </div>
+          
+    
+    <div class="comments" id="gitalk-container"></div>
+  
+
+        </div>
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+        
+        
+        
+        
+      
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#介绍"><span class="nav-number">1.</span> <span class="nav-text">介绍</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#类"><span class="nav-number">2.</span> <span class="nav-text">类</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#继承"><span class="nav-number">3.</span> <span class="nav-text">继承</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#访问修饰符"><span class="nav-number">4.</span> <span class="nav-text">访问修饰符</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#公有是默认状态"><span class="nav-number">4.1.</span> <span class="nav-text">公有是默认状态</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#理解-private"><span class="nav-number">4.2.</span> <span class="nav-text">理解 private</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#理解-protected"><span class="nav-number">4.3.</span> <span class="nav-text">理解 protected</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#readonly-关键字"><span class="nav-number">5.</span> <span class="nav-text">readonly 关键字</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#参数属性"><span class="nav-number">5.1.</span> <span class="nav-text">参数属性</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#存取方法"><span class="nav-number">6.</span> <span class="nav-text">存取方法</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#静态属性"><span class="nav-number">7.</span> <span class="nav-text">静态属性</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#抽象类"><span class="nav-number">8.</span> <span class="nav-text">抽象类</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#高级话题"><span class="nav-number">9.</span> <span class="nav-text">高级话题</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#构造器函数"><span class="nav-number">9.1.</span> <span class="nav-text">构造器函数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#类作为接口"><span class="nav-number">9.2.</span> <span class="nav-text">类作为接口</span></a></li></ol></li></ol></div>
+        
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image"
+      src="/images/avatar2.png"
+      alt="Hyan Lee">
+  <p class="site-author-name" itemprop="name">Hyan Lee</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">31</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-categories">
+        
+          
+            <a href="/categories/">
+          
+        
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">分类</span>
+        </a>
+      </div>
+    
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+      
+      
+        
+      
+      
+        
+      
+        <a href="https://github.com/hyan23" title="GitHub &rarr; https://github.com/hyan23" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+    
+      <span class="links-of-author-item">
+      
+      
+        
+      
+      
+        
+      
+        <a href="mailto:hyan23lee@hotmail.com" title="E-Mail &rarr; mailto:hyan23lee@hotmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+    
+      <span class="links-of-author-item">
+      
+      
+        
+      
+      
+        
+      
+        <a href="https://t.me/hyan23" title="Telegram &rarr; https://t.me/hyan23" rel="noopener" target="_blank"><i class="fa fa-fw fa-telegram"></i>Telegram</a>
+      </span>
+    
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    
+  
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+      
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2017 – <span itemprop="copyrightYear">2020</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Hyan Lee</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    
+    <span title="站点总字数">118k</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v3.9.0</div>
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js?v=3.1.0"></script>
+  <script src="//cdn.jsdelivr.net/npm/medium-zoom@1/dist/medium-zoom.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+<script src="/js/utils.js?v=7.4.0"></script>
+<script src="/js/schemes/pisces.js?v=7.4.0"></script>
+<script src="/js/next-boot.js?v=7.4.0"></script>
+
+
+
+  
+  <script>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+    mermaid.initialize({
+      theme: 'forest',
+      logLevel: 3,
+      flowchart: { curve: 'linear' },
+      gantt: { axisFormat: '%m/%d/%Y' },
+      sequence: { actorMargin: 50 }
+    });
+  }, window.mermaid);
+}
+</script>
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID: '442da4785490db3ece48',
+      clientSecret: '3bfa2829a34371ca37db636917e791d114bd338c',
+      repo: 'blog-comments',
+      owner: 'hyan23',
+      admin: ['hyan23'],
+      id: 'a93177625f475c79f9fd668522072218',
+        language: window.navigator.language || window.navigator.userLanguage,
+      
+      distractionFreeMode: 'true'
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+</script>
+
+</body>
+</html>

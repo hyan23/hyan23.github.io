@@ -1,0 +1,867 @@
+<!DOCTYPE html>
+
+
+
+
+
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/favicon/apple-touch-icon.png?v=7.4.0">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon/favicon-32x32.png?v=7.4.0">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon/favicon-16x16.png?v=7.4.0">
+  <link rel="mask-icon" href="/images/favicon/safari-pinned-tab.svg?v=7.4.0" color="#222">
+  <link rel="manifest" href="/images/favicon/site.webmanifest">
+  <meta name="msapplication-config" content="/images/favicon/browserconfig.xml">
+  <meta http-equiv="Cache-Control" content="no-transform">
+  <meta http-equiv="Cache-Control" content="no-siteapp">
+
+<link rel="stylesheet" href="/css/main.css?v=7.4.0">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '7.4.0',
+    exturl: false,
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false},
+    copycode: {"enable":false,"show_result":false,"style":null},
+    back2top: {"enable":true,"sidebar":true,"scrollpercent":false},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: true,
+    lazyload: true,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: "",
+      labels: ""
+    },
+    localsearch: {"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: '',
+    motion: {"enable":false},
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="状态: 初稿 介绍 TypeScript 为你提供许多用于常用类型转换的实用类型. 这些工具全局可用.">
+<meta name="keywords" content="博客,个人博客,日志,在线工具">
+<meta property="og:type" content="article">
+<meta property="og:title" content="实用类型">
+<meta property="og:url" content="https://hyan23.org/2019/11/20/ts-utility-types/index.html">
+<meta property="og:site_name" content="Hyan Lee">
+<meta property="og:description" content="状态: 初稿 介绍 TypeScript 为你提供许多用于常用类型转换的实用类型. 这些工具全局可用.">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2020-02-29T12:10:14.566Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="实用类型">
+<meta name="twitter:description" content="状态: 初稿 介绍 TypeScript 为你提供许多用于常用类型转换的实用类型. 这些工具全局可用.">
+  <link rel="canonical" href="https://hyan23.org/2019/11/20/ts-utility-types/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>实用类型 | Hyan Lee</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+  <div class="container">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Hyan Lee</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+      
+      
+      
+        
+        <li class="menu-item menu-item-home">
+      
+    
+      
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-关于-/-留言板">
+      
+    
+      
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于 / 留言板</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-categories">
+      
+    
+      
+      
+        
+      
+        
+          
+        
+      
+        
+      
+    
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类<span class="badge">6</span></a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-archives">
+      
+    
+      
+      
+        
+          
+        
+      
+        
+      
+        
+      
+    
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">31</span></a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-精选-/-系列">
+      
+    
+      
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <a href="/selections/" rel="section"><i class="fa fa-fw fa-book"></i>精选 / 系列</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-摄影">
+      
+    
+      
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <a href="/gallery/" rel="section"><i class="fa fa-fw fa-camera"></i>摄影</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-工具">
+      
+    
+      
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <a href="/tools/" rel="section"><i class="fa fa-fw fa-calculator"></i>工具</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-友情链接">
+      
+    
+      
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <a href="/friends/" rel="section"><i class="fa fa-fw fa-external-link"></i>友情链接</a>
+
+  </li>
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+            
+
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+      <article itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block post">
+    <link itemprop="mainEntityOfPage" href="https://hyan23.org/2019/11/20/ts-utility-types/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Hyan Lee">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar2.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hyan Lee">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">实用类型
+
+          
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              
+                
+              
+
+              <time title="创建时间：2019-11-20 09:35:07" itemprop="dateCreated datePublished" datetime="2019-11-20T09:35:07+08:00">2019-11-20</time>
+            </span>
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-02-29 20:10:14" itemprop="dateModified" datetime="2020-02-29T20:10:14+08:00">2020-02-29</time>
+              </span>
+            
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/翻译稿/" itemprop="url" rel="index"><span itemprop="name">翻译稿</span></a></span>
+
+                
+                
+                  ，
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/翻译稿/TypeScript/" itemprop="url" rel="index"><span itemprop="name">TypeScript</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+          
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">本文字数：</span>
+              
+              <span>1k</span>
+            </span>
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <pre><code>状态: 初稿
+</code></pre><h1 id="介绍" class="heading-control"><a href="#介绍" class="headerlink" title="介绍"></a>介绍<a class="heading-anchor" href="#介绍" aria-hidden="true"></a></h1><!-- # Introduction -->
+<div class="translation-block" title="
+TypeScript provides several utility types to facilitate common type transformations. These utilities are available globally.
+"><p>TypeScript 为你提供许多用于常用类型转换的实用类型. 这些工具全局可用.</p></div>
+<a id="more"></a>
+<!--
+## Table of contents
+
+- [介绍](#%E4%BB%8B%E7%BB%8D)
+  - [Table of contents](#table-of-contents)
+- [`Partial<T>`](#partialt)
+      - [实例](#%E5%AE%9E%E4%BE%8B)
+- [`Readonly<T>`](#readonlyt)
+        - [实例](#%E5%AE%9E%E4%BE%8B-1)
+        - [`Object.freeze`](#objectfreeze)
+- [`Record<K,T>`](#recordkt)
+        - [实例](#%E5%AE%9E%E4%BE%8B-2)
+- [`Pick<T,K>`](#picktk)
+        - [实例](#%E5%AE%9E%E4%BE%8B-3)
+- [`Omit<T,K>`](#omittk)
+        - [实例](#%E5%AE%9E%E4%BE%8B-4)
+- [`Exclude<T,U>`](#excludetu)
+        - [实例](#%E5%AE%9E%E4%BE%8B-5)
+- [`Extract<T,U>`](#extracttu)
+        - [实例](#%E5%AE%9E%E4%BE%8B-6)
+- [`NonNullable<T>`](#nonnullablet)
+        - [实例](#%E5%AE%9E%E4%BE%8B-7)
+- [`Parameters<T>`](#parameterst)
+        - [实例](#%E5%AE%9E%E4%BE%8B-8)
+- [`ReturnType<T>`](#returntypet)
+        - [实例](#%E5%AE%9E%E4%BE%8B-9)
+- [`InstanceType<T>`](#instancetypet)
+        - [实例](#%E5%AE%9E%E4%BE%8B-10)
+- [`Required<T>`](#requiredt)
+        - [实例](#%E5%AE%9E%E4%BE%8B-11)
+- [`ThisType<T>`](#thistypet)
+        - [实例](#%E5%AE%9E%E4%BE%8B-12)
+-->
+<h1 id="Partial-lt-T-gt" class="heading-control"><a href="#Partial-lt-T-gt" class="headerlink" title="Partial&lt;T&gt;"></a><code>Partial&lt;T&gt;</code><a class="heading-anchor" href="#Partial-lt-T-gt" aria-hidden="true"></a></h1><div class="translation-block" title="
+Constructs a type with all properties of `T` set to optional. This utility will return a type that represents all subsets of a given type.
+"><p>构建一个新类型, 把所有类型为 <code>T</code> 的属性设为”可选”. 该工具返回一个代表给定类型所有子类型的类型.</p></div>
+<h4 id="实例" class="heading-control"><a href="#实例" class="headerlink" title="实例"></a>实例<a class="heading-anchor" href="#实例" aria-hidden="true"></a></h4><!-- ##### Example -->
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">interface</span> Todo &#123;</span><br><span class="line">    title: <span class="built_in">string</span>;</span><br><span class="line">    description: <span class="built_in">string</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">updateTodo</span>(<span class="params">todo: Todo, fieldsToUpdate: Partial&lt;Todo&gt;</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> &#123; ...todo, ...fieldsToUpdate &#125;;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> todo1 = &#123;</span><br><span class="line">    title: <span class="string">'organize desk'</span>,</span><br><span class="line">    description: <span class="string">'clear clutter'</span>,</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> todo2 = updateTodo(todo1, &#123;</span><br><span class="line">    description: <span class="string">'throw out trash'</span>,</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<h1 id="Readonly-lt-T-gt" class="heading-control"><a href="#Readonly-lt-T-gt" class="headerlink" title="Readonly&lt;T&gt;"></a><code>Readonly&lt;T&gt;</code><a class="heading-anchor" href="#Readonly-lt-T-gt" aria-hidden="true"></a></h1><div class="translation-block" title="
+Constructs a type with all properties of `T` set to `readonly`, meaning the properties of the constructed type cannot be reassigned.
+"><p>构建一个类型, 把所有类型为 <code>T</code> 的属性设为 <code>readonly</code>, 表示结果类型的属性不可重赋值.</p></div>
+<h5 id="实例-1" class="heading-control"><a href="#实例-1" class="headerlink" title="实例"></a>实例<a class="heading-anchor" href="#实例-1" aria-hidden="true"></a></h5><!-- ##### Example -->
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">interface</span> Todo &#123;</span><br><span class="line">    title: <span class="built_in">string</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> todo: Readonly&lt;Todo&gt; = &#123;</span><br><span class="line">    title: <span class="string">'Delete inactive users'</span>,</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">todo.title = <span class="string">'Hello'</span>; <span class="comment">// Error: cannot reassign a readonly property</span></span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+This utility is useful for representing assignment expressions that will fail at runtime (i.e. when attempting to reassign properties of a [frozen object](https:&amp;#x2F;&amp;#x2F;developer.mozilla.org&amp;#x2F;en-US&amp;#x2F;docs&amp;#x2F;Web&amp;#x2F;JavaScript&amp;#x2F;Reference&amp;#x2F;Global_Objects&amp;#x2F;Object&amp;#x2F;freeze)).
+"><p>这个工具可以代表在运行期会失败的赋值表达式 (即: 当试图对一个 <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/freeze" target="_blank" rel="noopener">frozen object</a> 的属性重赋值).</p></div>
+<h5 id="Object-freeze" class="heading-control"><a href="#Object-freeze" class="headerlink" title="Object.freeze"></a><code>Object.freeze</code><a class="heading-anchor" href="#Object-freeze" aria-hidden="true"></a></h5><figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">freeze</span>&lt;<span class="title">T</span>&gt;(<span class="params">obj: T</span>): <span class="title">Readonly</span>&lt;<span class="title">T</span>&gt;</span>;</span><br></pre></td></tr></table></figure>
+<h1 id="Record-lt-K-T-gt" class="heading-control"><a href="#Record-lt-K-T-gt" class="headerlink" title="Record&lt;K,T&gt;"></a><code>Record&lt;K,T&gt;</code><a class="heading-anchor" href="#Record-lt-K-T-gt" aria-hidden="true"></a></h1><div class="translation-block" title="
+Constructs a type with a set of properties `K` of type `T`. This utility can be used to map the properties of a type to another type.
+"><p>构建一个类型, 它有一个类型为 <code>T</code> 的属性组 <code>K</code>. 这个工具可以把一类型的属性映射为另一类型.</p></div>
+<h5 id="实例-2" class="heading-control"><a href="#实例-2" class="headerlink" title="实例"></a>实例<a class="heading-anchor" href="#实例-2" aria-hidden="true"></a></h5><!-- ##### Example -->
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">interface</span> PageInfo &#123;</span><br><span class="line">    title: <span class="built_in">string</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> Page = <span class="string">'home'</span> | <span class="string">'about'</span> | <span class="string">'contact'</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> x: Record&lt;Page, PageInfo&gt; = &#123;</span><br><span class="line">    about: &#123; title: <span class="string">'about'</span> &#125;,</span><br><span class="line">    contact: &#123; title: <span class="string">'contact'</span> &#125;,</span><br><span class="line">    home: &#123; title: <span class="string">'home'</span> &#125;,</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<h1 id="Pick-lt-T-K-gt" class="heading-control"><a href="#Pick-lt-T-K-gt" class="headerlink" title="Pick&lt;T,K&gt;"></a><code>Pick&lt;T,K&gt;</code><a class="heading-anchor" href="#Pick-lt-T-K-gt" aria-hidden="true"></a></h1><div class="translation-block" title="
+Constructs a type by picking the set of properties `K` from `T`.
+"><p>从 <code>T</code> 中挑选属性组 <code>K</code>, 构建一个类型.</p></div>
+<h5 id="实例-3" class="heading-control"><a href="#实例-3" class="headerlink" title="实例"></a>实例<a class="heading-anchor" href="#实例-3" aria-hidden="true"></a></h5><!-- ##### Example -->
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">interface</span> Todo &#123;</span><br><span class="line">    title: <span class="built_in">string</span>;</span><br><span class="line">    description: <span class="built_in">string</span>;</span><br><span class="line">    completed: <span class="built_in">boolean</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> TodoPreview = Pick&lt;Todo, <span class="string">'title'</span> | <span class="string">'completed'</span>&gt;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> todo: TodoPreview = &#123;</span><br><span class="line">    title: <span class="string">'Clean room'</span>,</span><br><span class="line">    completed: <span class="literal">false</span>,</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<h1 id="Omit-lt-T-K-gt" class="heading-control"><a href="#Omit-lt-T-K-gt" class="headerlink" title="Omit&lt;T,K&gt;"></a><code>Omit&lt;T,K&gt;</code><a class="heading-anchor" href="#Omit-lt-T-K-gt" aria-hidden="true"></a></h1><div class="translation-block" title="
+Constructs a type by picking all properties from `T` and then removing `K`.
+"><p>挑选 <code>T</code> 中所有属性, 然后移除属性组 <code>K</code>, 构建一个类型.</p></div>
+<h5 id="实例-4" class="heading-control"><a href="#实例-4" class="headerlink" title="实例"></a>实例<a class="heading-anchor" href="#实例-4" aria-hidden="true"></a></h5><!-- ##### Example -->
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">interface</span> Todo &#123;</span><br><span class="line">    title: <span class="built_in">string</span>;</span><br><span class="line">    description: <span class="built_in">string</span>;</span><br><span class="line">    completed: <span class="built_in">boolean</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> TodoPreview = Omit&lt;Todo, <span class="string">'description'</span>&gt;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> todo: TodoPreview = &#123;</span><br><span class="line">    title: <span class="string">'Clean room'</span>,</span><br><span class="line">    completed: <span class="literal">false</span>,</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<h1 id="Exclude-lt-T-U-gt" class="heading-control"><a href="#Exclude-lt-T-U-gt" class="headerlink" title="Exclude&lt;T,U&gt;"></a><code>Exclude&lt;T,U&gt;</code><a class="heading-anchor" href="#Exclude-lt-T-U-gt" aria-hidden="true"></a></h1><div class="translation-block" title="
+Constructs a type by excluding from `T` all properties that are assignable to `U`.
+"><p>从 <code>T</code> 排除所有能赋值给 <code>U</code> 的属性, 构建一个类型.</p></div>
+<h5 id="实例-5" class="heading-control"><a href="#实例-5" class="headerlink" title="实例"></a>实例<a class="heading-anchor" href="#实例-5" aria-hidden="true"></a></h5><!-- ##### Example -->
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> T0 = Exclude&lt;<span class="string">"a"</span> | <span class="string">"b"</span> | <span class="string">"c"</span>, <span class="string">"a"</span>&gt;;  <span class="comment">// "b" | "c"</span></span><br><span class="line"><span class="keyword">type</span> T1 = Exclude&lt;<span class="string">"a"</span> | <span class="string">"b"</span> | <span class="string">"c"</span>, <span class="string">"a"</span> | <span class="string">"b"</span>&gt;;  <span class="comment">// "c"</span></span><br><span class="line"><span class="keyword">type</span> T2 = Exclude&lt;<span class="built_in">string</span> | <span class="built_in">number</span> | <span class="function">(<span class="params">(<span class="params"></span>) =&gt; <span class="built_in">void</span></span>), <span class="params">Function</span>&gt;;  // <span class="params">string</span> | <span class="params">number</span></span></span><br></pre></td></tr></table></figure>
+<h1 id="Extract-lt-T-U-gt" class="heading-control"><a href="#Extract-lt-T-U-gt" class="headerlink" title="Extract&lt;T,U&gt;"></a><code>Extract&lt;T,U&gt;</code><a class="heading-anchor" href="#Extract-lt-T-U-gt" aria-hidden="true"></a></h1><div class="translation-block" title="
+Constructs a type by extracting from `T` all properties that are assignable to `U`.
+"><p>从 <code>T</code> 中提取所有能赋值给 <code>U</code> 的属性, 构建一个类型.</p></div>
+<h5 id="实例-6" class="heading-control"><a href="#实例-6" class="headerlink" title="实例"></a>实例<a class="heading-anchor" href="#实例-6" aria-hidden="true"></a></h5><!-- ##### Example -->
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> T0 = Extract&lt;<span class="string">"a"</span> | <span class="string">"b"</span> | <span class="string">"c"</span>, <span class="string">"a"</span> | <span class="string">"f"</span>&gt;;  <span class="comment">// "a"</span></span><br><span class="line"><span class="keyword">type</span> T1 = Extract&lt;<span class="built_in">string</span> | <span class="built_in">number</span> | <span class="function">(<span class="params">(<span class="params"></span>) =&gt; <span class="built_in">void</span></span>), <span class="params">Function</span>&gt;;  // <span class="params">()</span> =&gt;</span> <span class="built_in">void</span></span><br></pre></td></tr></table></figure>
+<h1 id="NonNullable-lt-T-gt" class="heading-control"><a href="#NonNullable-lt-T-gt" class="headerlink" title="NonNullable&lt;T&gt;"></a><code>NonNullable&lt;T&gt;</code><a class="heading-anchor" href="#NonNullable-lt-T-gt" aria-hidden="true"></a></h1><div class="translation-block" title="
+Constructs a type by excluding `null` and `undefined` from `T`.
+"><p>从 <code>T</code> 中排除所有 <code>null</code> 和 <code>undefined</code>, 构建一个类型.</p></div>
+<h5 id="实例-7" class="heading-control"><a href="#实例-7" class="headerlink" title="实例"></a>实例<a class="heading-anchor" href="#实例-7" aria-hidden="true"></a></h5><!-- ##### Example -->
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> T0 = NonNullable&lt;<span class="built_in">string</span> | <span class="built_in">number</span> | <span class="literal">undefined</span>&gt;;  <span class="comment">// string | number</span></span><br><span class="line"><span class="keyword">type</span> T1 = NonNullable&lt;<span class="built_in">string</span>[] | <span class="literal">null</span> | <span class="literal">undefined</span>&gt;;  <span class="comment">// string[]</span></span><br></pre></td></tr></table></figure>
+<h1 id="Parameters-lt-T-gt" class="heading-control"><a href="#Parameters-lt-T-gt" class="headerlink" title="Parameters&lt;T&gt;"></a><code>Parameters&lt;T&gt;</code><a class="heading-anchor" href="#Parameters-lt-T-gt" aria-hidden="true"></a></h1><div class="translation-block" title="
+Constructs a tuple type of the types of the parameters of a function type `T`.
+"><p>从函数类型 <code>T</code> 的参数类型构建一个元组类型.</p></div>
+<h5 id="实例-8" class="heading-control"><a href="#实例-8" class="headerlink" title="实例"></a>实例<a class="heading-anchor" href="#实例-8" aria-hidden="true"></a></h5><!-- ##### Example -->
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">declare</span> <span class="function"><span class="keyword">function</span> <span class="title">f1</span>(<span class="params">arg: &#123; a: <span class="built_in">number</span>, b: <span class="built_in">string</span> &#125;</span>): <span class="title">void</span></span></span><br><span class="line"><span class="function"><span class="title">type</span> <span class="title">T0</span> = <span class="title">Parameters</span>&lt;(<span class="params"></span>) =&gt; <span class="title">string</span>&gt;</span>;  <span class="comment">// []</span></span><br><span class="line"><span class="keyword">type</span> T1 = Parameters&lt;<span class="function">(<span class="params">s: <span class="built_in">string</span></span>) =&gt;</span> <span class="built_in">void</span>&gt;;  <span class="comment">// [string]</span></span><br><span class="line"><span class="keyword">type</span> T2 = Parameters&lt;<span class="function">(<span class="params">&lt;T&gt;(<span class="params">arg: T</span>) =&gt; T</span>)&gt;;  // [<span class="params">unknown</span>]</span></span><br><span class="line"><span class="function"><span class="params">type</span> <span class="params">T4</span> = <span class="params">Parameters</span>&lt;<span class="params">typeof</span> <span class="params">f1</span>&gt;;  // &#123; <span class="params">a</span>: <span class="params">number</span>, <span class="params">b</span>: <span class="params">string</span> &#125;</span></span><br><span class="line"><span class="function"><span class="params">type</span> <span class="params">T5</span> = <span class="params">Parameters</span>&lt;<span class="params">any</span>&gt;;  // <span class="params">unknown</span>[]</span></span><br><span class="line"><span class="function"><span class="params">type</span> <span class="params">T6</span> = <span class="params">Parameters</span>&lt;<span class="params">never</span>&gt;;  // <span class="params">any</span></span></span><br><span class="line"><span class="function"><span class="params">type</span> <span class="params">T7</span> = <span class="params">Parameters</span>&lt;<span class="params">string</span>&gt;;  // <span class="params">Error</span></span></span><br><span class="line"><span class="function"><span class="params">type</span> <span class="params">T8</span> = <span class="params">Parameters</span>&lt;<span class="params">Function</span>&gt;;  // <span class="params">Error</span></span></span><br></pre></td></tr></table></figure>
+<h1 id="ReturnType-lt-T-gt" class="heading-control"><a href="#ReturnType-lt-T-gt" class="headerlink" title="ReturnType&lt;T&gt;"></a><code>ReturnType&lt;T&gt;</code><a class="heading-anchor" href="#ReturnType-lt-T-gt" aria-hidden="true"></a></h1><div class="translation-block" title="
+Constructs a type consisting of the return type of function `T`.
+"><p>构建一个类型, 它由函数 <code>T</code> 的返回值类型组成.</p></div>
+<h5 id="实例-9" class="heading-control"><a href="#实例-9" class="headerlink" title="实例"></a>实例<a class="heading-anchor" href="#实例-9" aria-hidden="true"></a></h5><!-- ##### Example -->
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">declare</span> <span class="function"><span class="keyword">function</span> <span class="title">f1</span>(<span class="params"></span>): </span>&#123; a: <span class="built_in">number</span>, b: <span class="built_in">string</span> &#125;</span><br><span class="line"><span class="keyword">type</span> T0 = ReturnType&lt;<span class="function"><span class="params">()</span> =&gt;</span> <span class="built_in">string</span>&gt;;  <span class="comment">// string</span></span><br><span class="line"><span class="keyword">type</span> T1 = ReturnType&lt;<span class="function">(<span class="params">s: <span class="built_in">string</span></span>) =&gt;</span> <span class="built_in">void</span>&gt;;  <span class="comment">// void</span></span><br><span class="line"><span class="keyword">type</span> T2 = ReturnType&lt;<span class="function">(<span class="params">&lt;T&gt;(<span class="params"></span>) =&gt; T</span>)&gt;;  // &#123;&#125;</span></span><br><span class="line"><span class="function"><span class="params">type</span> <span class="params">T3</span> = <span class="params">ReturnType</span>&lt;(<span class="params">&lt;T <span class="keyword">extends</span> U, U <span class="keyword">extends</span> <span class="built_in">number</span>[]&gt;(<span class="params"></span>) =&gt; T</span>)&gt;;  // <span class="params">number</span>[]</span></span><br><span class="line"><span class="function"><span class="params">type</span> <span class="params">T4</span> = <span class="params">ReturnType</span>&lt;<span class="params">typeof</span> <span class="params">f1</span>&gt;;  // &#123; <span class="params">a</span>: <span class="params">number</span>, <span class="params">b</span>: <span class="params">string</span> &#125;</span></span><br><span class="line"><span class="function"><span class="params">type</span> <span class="params">T5</span> = <span class="params">ReturnType</span>&lt;<span class="params">any</span>&gt;;  // <span class="params">any</span></span></span><br><span class="line"><span class="function"><span class="params">type</span> <span class="params">T6</span> = <span class="params">ReturnType</span>&lt;<span class="params">never</span>&gt;;  // <span class="params">any</span></span></span><br><span class="line"><span class="function"><span class="params">type</span> <span class="params">T7</span> = <span class="params">ReturnType</span>&lt;<span class="params">string</span>&gt;;  // <span class="params">Error</span></span></span><br><span class="line"><span class="function"><span class="params">type</span> <span class="params">T8</span> = <span class="params">ReturnType</span>&lt;<span class="params">Function</span>&gt;;  // <span class="params">Error</span></span></span><br></pre></td></tr></table></figure>
+<h1 id="InstanceType-lt-T-gt" class="heading-control"><a href="#InstanceType-lt-T-gt" class="headerlink" title="InstanceType&lt;T&gt;"></a><code>InstanceType&lt;T&gt;</code><a class="heading-anchor" href="#InstanceType-lt-T-gt" aria-hidden="true"></a></h1><div class="translation-block" title="
+Constructs a type consisting of the instance type of a constructor function type `T`.
+"><p>构建一个类型, 它由构造器函数类型 <code>T</code> 的实例类型组成.</p></div>
+<h5 id="实例-10" class="heading-control"><a href="#实例-10" class="headerlink" title="实例"></a>实例<a class="heading-anchor" href="#实例-10" aria-hidden="true"></a></h5><!-- ##### Example -->
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> C &#123;</span><br><span class="line">    x = <span class="number">0</span>;</span><br><span class="line">    y = <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> T0 = InstanceType&lt;<span class="keyword">typeof</span> C&gt;;  <span class="comment">// C</span></span><br><span class="line"><span class="keyword">type</span> T1 = InstanceType&lt;<span class="built_in">any</span>&gt;;  <span class="comment">// any</span></span><br><span class="line"><span class="keyword">type</span> T2 = InstanceType&lt;never&gt;;  <span class="comment">// any</span></span><br><span class="line"><span class="keyword">type</span> T3 = InstanceType&lt;<span class="built_in">string</span>&gt;;  <span class="comment">// Error</span></span><br><span class="line"><span class="keyword">type</span> T4 = InstanceType&lt;<span class="built_in">Function</span>&gt;;  <span class="comment">// Error</span></span><br></pre></td></tr></table></figure>
+<h1 id="Required-lt-T-gt" class="heading-control"><a href="#Required-lt-T-gt" class="headerlink" title="Required&lt;T&gt;"></a><code>Required&lt;T&gt;</code><a class="heading-anchor" href="#Required-lt-T-gt" aria-hidden="true"></a></h1><div class="translation-block" title="
+Constructs a type consisting of all properties of `T` set to required.
+"><p>构建一个类型, 把 <code>T</code> 中所有属性设为 “必选”.</p></div>
+<h5 id="实例-11" class="heading-control"><a href="#实例-11" class="headerlink" title="实例"></a>实例<a class="heading-anchor" href="#实例-11" aria-hidden="true"></a></h5><!-- ##### Example -->
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">interface</span> Props &#123;</span><br><span class="line">    a?: <span class="built_in">number</span>;</span><br><span class="line">    b?: <span class="built_in">string</span>;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> obj: Props = &#123; a: <span class="number">5</span> &#125;; <span class="comment">// OK</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> obj2: Required&lt;Props&gt; = &#123; a: <span class="number">5</span> &#125;; <span class="comment">// Error: property 'b' missing</span></span><br></pre></td></tr></table></figure>
+<h1 id="ThisType-lt-T-gt" class="heading-control"><a href="#ThisType-lt-T-gt" class="headerlink" title="ThisType&lt;T&gt;"></a><code>ThisType&lt;T&gt;</code><a class="heading-anchor" href="#ThisType-lt-T-gt" aria-hidden="true"></a></h1><div class="translation-block" title="
+This utility does not return a transformed type. Instead, it serves as a marker for a contextual `this` type. Note that the `--noImplicitThis` flag must be enabled to use this utility.
+"><p>这个工具不返回一个经转换的类型. 相反, 它作为上下文 <code>this</code> 类型的标识. 注意, 要使用这个工具, 必须打开 <code>--noImplicitThis</code> 选项.</p></div>
+<h5 id="实例-12" class="heading-control"><a href="#实例-12" class="headerlink" title="实例"></a>实例<a class="heading-anchor" href="#实例-12" aria-hidden="true"></a></h5><!-- ##### Example -->
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Compile with --noImplicitThis</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> ObjectDescriptor&lt;D, M&gt; = &#123;</span><br><span class="line">    data?: D;</span><br><span class="line">    methods?: M &amp; ThisType&lt;D &amp; M&gt;;  <span class="comment">// Type of 'this' in methods is D &amp; M</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">makeObject</span>&lt;<span class="title">D</span>, <span class="title">M</span>&gt;(<span class="params">desc: ObjectDescriptor&lt;D, M&gt;</span>): <span class="title">D</span> &amp; <span class="title">M</span> </span>&#123;</span><br><span class="line">    <span class="keyword">let</span> data: object = desc.data || &#123;&#125;;</span><br><span class="line">    <span class="keyword">let</span> methods: object = desc.methods || &#123;&#125;;</span><br><span class="line">    <span class="keyword">return</span> &#123; ...data, ...methods &#125; <span class="keyword">as</span> D &amp; M;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> obj = makeObject(&#123;</span><br><span class="line">    data: &#123; x: <span class="number">0</span>, y: <span class="number">0</span> &#125;,</span><br><span class="line">    methods: &#123;</span><br><span class="line">        moveBy(dx: <span class="built_in">number</span>, dy: <span class="built_in">number</span>) &#123;</span><br><span class="line">            <span class="keyword">this</span>.x += dx;  <span class="comment">// Strongly typed this</span></span><br><span class="line">            <span class="keyword">this</span>.y += dy;  <span class="comment">// Strongly typed this</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line">obj.x = <span class="number">10</span>;</span><br><span class="line">obj.y = <span class="number">20</span>;</span><br><span class="line">obj.moveBy(<span class="number">5</span>, <span class="number">5</span>);</span><br></pre></td></tr></table></figure>
+<div class="translation-block" title="
+In the example above, the `methods` object in the argument to `makeObject` has a contextual type that includes `ThisType&amp;lt;D &amp;amp; M&amp;gt;` and therefore the type of `this` in methods within the `methods` object is `{ x: number, y: number } &amp;amp; { moveBy(dx: number, dy: number): number }`. Notice how the type of the `methods` property simultaneously is an inference target and a source for the `this` type in methods.
+
+The `ThisType&amp;lt;T&amp;gt;` marker interface is simply an empty interface declared in `lib.d.ts`. Beyond being recognized in the contextual type of an object literal, the interface acts like any empty interface.
+"><p>上例中, <code>makeObject</code> 的参数中的 <code>methods</code> 对象有一个包括 <code>ThisType&lt;D &amp; M&gt;</code> 的上下文类型, 因此 <code>methods</code> 对象内方法中的 <code>this</code> 的类型是 <code>{ x: number, y: number } &amp; { moveBy(dx: number, dy: number): number }</code>. 注意 <code>methods</code> 属性的类型是如何同时成为推断方法中 <code>this</code> 类型的目标和源的.</p>
+<p><code>ThisType&lt;T&gt;</code> 标记接口只是一个在 <code>lib.d.ts</code> 声明的空接口. 除了可以在对象字面量的上下文类型中被识别, 它与普通空接口没有区别.</p></div>
+    </div>
+
+    
+    
+    
+        
+      
+        <div id="reward-container">
+  <div>如果这篇文章对您有用，可以考虑打赏:)</div>
+  <button id="reward-button" disable="enable" onclick="var qr = document.getElementById(&quot;qr&quot;); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+        
+      
+      <div style="display: inline-block">
+        <img src="/images/wechatpay.png" alt="Hyan Lee 微信支付">
+        <p>微信支付</p>
+      </div>
+
+  </div>
+</div>
+
+      
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>Hyan Lee</li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://hyan23.org/2019/11/20/ts-utility-types/" title="实用类型">https://hyan23.org/2019/11/20/ts-utility-types/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！</li>
+</ul>
+</div>
+
+      
+
+      <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+              
+                <a href="/2019/11/20/ts-type-checking-javascript-files/" rel="next" title="类型检查 JavaScript 文件">
+                  <i class="fa fa-chevron-left"></i> 类型检查 JavaScript 文件
+                </a>
+              
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+              
+                <a href="/2019/12/09/ts-handbook-zh/" rel="prev" title="TypeScript 中文手册">
+                  TypeScript 中文手册 <i class="fa fa-chevron-right"></i>
+                </a>
+              
+            </div>
+          </div>
+        
+      </footer>
+    
+  </div>
+  
+  
+  
+  </article>
+
+  </div>
+
+
+          </div>
+          
+    
+    <div class="comments" id="gitalk-container"></div>
+  
+
+        </div>
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+        
+        
+        
+        
+      
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#介绍"><span class="nav-number">1.</span> <span class="nav-text">介绍</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Partial-lt-T-gt"><span class="nav-number">2.</span> <span class="nav-text">Partial&lt;T&gt;</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Readonly-lt-T-gt"><span class="nav-number">3.</span> <span class="nav-text">Readonly&lt;T&gt;</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Record-lt-K-T-gt"><span class="nav-number">4.</span> <span class="nav-text">Record&lt;K,T&gt;</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Pick-lt-T-K-gt"><span class="nav-number">5.</span> <span class="nav-text">Pick&lt;T,K&gt;</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Omit-lt-T-K-gt"><span class="nav-number">6.</span> <span class="nav-text">Omit&lt;T,K&gt;</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Exclude-lt-T-U-gt"><span class="nav-number">7.</span> <span class="nav-text">Exclude&lt;T,U&gt;</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Extract-lt-T-U-gt"><span class="nav-number">8.</span> <span class="nav-text">Extract&lt;T,U&gt;</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#NonNullable-lt-T-gt"><span class="nav-number">9.</span> <span class="nav-text">NonNullable&lt;T&gt;</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Parameters-lt-T-gt"><span class="nav-number">10.</span> <span class="nav-text">Parameters&lt;T&gt;</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#ReturnType-lt-T-gt"><span class="nav-number">11.</span> <span class="nav-text">ReturnType&lt;T&gt;</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#InstanceType-lt-T-gt"><span class="nav-number">12.</span> <span class="nav-text">InstanceType&lt;T&gt;</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Required-lt-T-gt"><span class="nav-number">13.</span> <span class="nav-text">Required&lt;T&gt;</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#ThisType-lt-T-gt"><span class="nav-number">14.</span> <span class="nav-text">ThisType&lt;T&gt;</span></a></li></ol></div>
+        
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image"
+      src="/images/avatar2.png"
+      alt="Hyan Lee">
+  <p class="site-author-name" itemprop="name">Hyan Lee</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">31</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-categories">
+        
+          
+            <a href="/categories/">
+          
+        
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">分类</span>
+        </a>
+      </div>
+    
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+      
+      
+        
+      
+      
+        
+      
+        <a href="https://github.com/hyan23" title="GitHub &rarr; https://github.com/hyan23" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+    
+      <span class="links-of-author-item">
+      
+      
+        
+      
+      
+        
+      
+        <a href="mailto:hyan23lee@hotmail.com" title="E-Mail &rarr; mailto:hyan23lee@hotmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+    
+      <span class="links-of-author-item">
+      
+      
+        
+      
+      
+        
+      
+        <a href="https://t.me/hyan23" title="Telegram &rarr; https://t.me/hyan23" rel="noopener" target="_blank"><i class="fa fa-fw fa-telegram"></i>Telegram</a>
+      </span>
+    
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    
+  
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+      
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2017 – <span itemprop="copyrightYear">2020</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Hyan Lee</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    
+    <span title="站点总字数">118k</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v3.9.0</div>
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js?v=3.1.0"></script>
+  <script src="//cdn.jsdelivr.net/npm/medium-zoom@1/dist/medium-zoom.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+<script src="/js/utils.js?v=7.4.0"></script>
+<script src="/js/schemes/pisces.js?v=7.4.0"></script>
+<script src="/js/next-boot.js?v=7.4.0"></script>
+
+
+
+  
+  <script>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+    mermaid.initialize({
+      theme: 'forest',
+      logLevel: 3,
+      flowchart: { curve: 'linear' },
+      gantt: { axisFormat: '%m/%d/%Y' },
+      sequence: { actorMargin: 50 }
+    });
+  }, window.mermaid);
+}
+</script>
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID: '442da4785490db3ece48',
+      clientSecret: '3bfa2829a34371ca37db636917e791d114bd338c',
+      repo: 'blog-comments',
+      owner: 'hyan23',
+      admin: ['hyan23'],
+      id: '210756c6ce7aef130118c0615b93f676',
+        language: window.navigator.language || window.navigator.userLanguage,
+      
+      distractionFreeMode: 'true'
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+</script>
+
+</body>
+</html>

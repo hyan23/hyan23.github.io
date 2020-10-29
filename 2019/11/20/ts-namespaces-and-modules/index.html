@@ -1,0 +1,868 @@
+<!DOCTYPE html>
+
+
+
+
+
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/favicon/apple-touch-icon.png?v=7.4.0">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon/favicon-32x32.png?v=7.4.0">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon/favicon-16x16.png?v=7.4.0">
+  <link rel="mask-icon" href="/images/favicon/safari-pinned-tab.svg?v=7.4.0" color="#222">
+  <link rel="manifest" href="/images/favicon/site.webmanifest">
+  <meta name="msapplication-config" content="/images/favicon/browserconfig.xml">
+  <meta http-equiv="Cache-Control" content="no-transform">
+  <meta http-equiv="Cache-Control" content="no-siteapp">
+
+<link rel="stylesheet" href="/css/main.css?v=7.4.0">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '7.4.0',
+    exturl: false,
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false},
+    copycode: {"enable":false,"show_result":false,"style":null},
+    back2top: {"enable":true,"sidebar":true,"scrollpercent":false},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: true,
+    lazyload: true,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: "",
+      labels: ""
+    },
+    localsearch: {"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: '',
+    motion: {"enable":false},
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="状态: 初稿  对命名的说明:有必要说明, 在 TypeScript 1.5 中, 一些术语发生了变化.“内部模块” 现在叫做 “名字空间”.“外部模块” 简称 “模块”, 这是出于同 ECMAScript 2015 的命名保持一致的考虑, (module X { 等同于现在提出的 namespace X {).">
+<meta name="keywords" content="博客,个人博客,日志,在线工具">
+<meta property="og:type" content="article">
+<meta property="og:title" content="名字空间和模块">
+<meta property="og:url" content="https://hyan23.org/2019/11/20/ts-namespaces-and-modules/index.html">
+<meta property="og:site_name" content="Hyan Lee">
+<meta property="og:description" content="状态: 初稿  对命名的说明:有必要说明, 在 TypeScript 1.5 中, 一些术语发生了变化.“内部模块” 现在叫做 “名字空间”.“外部模块” 简称 “模块”, 这是出于同 ECMAScript 2015 的命名保持一致的考虑, (module X { 等同于现在提出的 namespace X {).">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2020-02-19T04:36:57.883Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="名字空间和模块">
+<meta name="twitter:description" content="状态: 初稿  对命名的说明:有必要说明, 在 TypeScript 1.5 中, 一些术语发生了变化.“内部模块” 现在叫做 “名字空间”.“外部模块” 简称 “模块”, 这是出于同 ECMAScript 2015 的命名保持一致的考虑, (module X { 等同于现在提出的 namespace X {).">
+  <link rel="canonical" href="https://hyan23.org/2019/11/20/ts-namespaces-and-modules/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>名字空间和模块 | Hyan Lee</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+  <div class="container">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Hyan Lee</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+      
+      
+      
+        
+        <li class="menu-item menu-item-home">
+      
+    
+      
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-关于-/-留言板">
+      
+    
+      
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于 / 留言板</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-categories">
+      
+    
+      
+      
+        
+      
+        
+          
+        
+      
+        
+      
+    
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类<span class="badge">6</span></a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-archives">
+      
+    
+      
+      
+        
+          
+        
+      
+        
+      
+        
+      
+    
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">31</span></a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-精选-/-系列">
+      
+    
+      
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <a href="/selections/" rel="section"><i class="fa fa-fw fa-book"></i>精选 / 系列</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-摄影">
+      
+    
+      
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <a href="/gallery/" rel="section"><i class="fa fa-fw fa-camera"></i>摄影</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-工具">
+      
+    
+      
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <a href="/tools/" rel="section"><i class="fa fa-fw fa-calculator"></i>工具</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-友情链接">
+      
+    
+      
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <a href="/friends/" rel="section"><i class="fa fa-fw fa-external-link"></i>友情链接</a>
+
+  </li>
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+            
+
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+      <article itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block post">
+    <link itemprop="mainEntityOfPage" href="https://hyan23.org/2019/11/20/ts-namespaces-and-modules/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Hyan Lee">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar2.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hyan Lee">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">名字空间和模块
+
+          
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              
+                
+              
+
+              <time title="创建时间：2019-11-20 09:33:31" itemprop="dateCreated datePublished" datetime="2019-11-20T09:33:31+08:00">2019-11-20</time>
+            </span>
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-02-19 12:36:57" itemprop="dateModified" datetime="2020-02-19T12:36:57+08:00">2020-02-19</time>
+              </span>
+            
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/翻译稿/" itemprop="url" rel="index"><span itemprop="name">翻译稿</span></a></span>
+
+                
+                
+                  ，
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/翻译稿/TypeScript/" itemprop="url" rel="index"><span itemprop="name">TypeScript</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+          
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">本文字数：</span>
+              
+              <span>1.6k</span>
+            </span>
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <pre><code>状态: 初稿
+</code></pre><div class="translation-block" title="
+&amp;gt; **A note about terminology:**
+It&amp;#39;s important to note that in TypeScript 1.5, the nomenclature has changed.
+&amp;quot;Internal modules&amp;quot; are now &amp;quot;namespaces&amp;quot;.
+&amp;quot;External modules&amp;quot; are now simply &amp;quot;modules&amp;quot;, as to align with [ECMAScript 2015](http:&amp;#x2F;&amp;#x2F;www.ecma-international.org&amp;#x2F;ecma-262&amp;#x2F;6.0&amp;#x2F;)&amp;#39;s terminology, (namely that `module X {` is equivalent to the now-preferred `namespace X {`).
+"><blockquote>
+<p><strong>对命名的说明:</strong><br>有必要说明, 在 TypeScript 1.5 中, 一些术语发生了变化.<br>“内部模块” 现在叫做 “名字空间”.<br>“外部模块” 简称 “模块”, 这是出于同 <a href="http://www.ecma-international.org/ecma-262/6.0/" target="_blank" rel="noopener">ECMAScript 2015</a> 的命名保持一致的考虑, (<code>module X {</code> 等同于现在提出的 <code>namespace X {</code>).</p>
+</blockquote></div>
+<a id="more"></a>
+<h1 id="介绍" class="heading-control"><a href="#介绍" class="headerlink" title="介绍"></a>介绍<a class="heading-anchor" href="#介绍" aria-hidden="true"></a></h1><!-- # Introduction -->
+<div class="translation-block" title="
+This post outlines the various ways to organize your code using namespaces and modules in TypeScript.
+We&amp;#39;ll also go over some advanced topics of how to use namespaces and modules, and address some common pitfalls when using them in TypeScript.
+
+See the [Modules](.&amp;#x2F;Modules.md) documentation for more information about modules.
+See the [Namespaces](.&amp;#x2F;Namespaces.md) documentation for more information about namespaces.
+"><p>本章概述在 TypeScript 中结合名字空间和模块组织你程序的若干方法.<br>我们将复习一些使用名字空间和模块的高级主题, 学会如何应对实际操练中的常见陷阱.</p>
+<p>阅读<a href="#">模块</a>获得更多关于模块的信息.<br>阅读<a href="#">名字空间</a>获得更多关于名字空间的信息.</p></div>
+<h1 id="使用名字空间" class="heading-control"><a href="#使用名字空间" class="headerlink" title="使用名字空间"></a>使用名字空间<a class="heading-anchor" href="#使用名字空间" aria-hidden="true"></a></h1><!-- # Using Namespaces -->
+<div class="translation-block" title="
+Namespaces are simply named JavaScript objects in the global namespace.
+This makes namespaces a very simple construct to use.
+They can span multiple files, and can be concatenated using `--outFile`.
+Namespaces can be a good way to structure your code in a Web Application, with all dependencies included as `&amp;lt;script&amp;gt;` tags in your HTML page.
+
+Just like all global namespace pollution, it can be hard to identify component dependencies, especially in a large application.
+"><p>事实上, 名字空间只是 JavaScript 全局空间中的命名对象.<br>这也是它易用的直接原因.<br>名字空间可以跨越多个文件, 最后利用 <code>--outFile</code> 选项合并.<br>名字空间是组织你 Web 应用程序的优良选择, 所有依赖都在 HTML 页面用 <code>&lt;script&gt;</code> 标签包含.</p>
+<p>它也有全局空间污染的问题, 特别是对于大型应用程序, 组件依赖关系有时很难确定.</p></div>
+<h1 id="使用模块" class="heading-control"><a href="#使用模块" class="headerlink" title="使用模块"></a>使用模块<a class="heading-anchor" href="#使用模块" aria-hidden="true"></a></h1><!-- # Using Modules -->
+<div class="translation-block" title="
+Just like namespaces, modules can contain both code and declarations.
+The main difference is that modules *declare* their dependencies.
+
+Modules also have a dependency on a module loader (such as CommonJs&amp;#x2F;Require.js).
+For a small JS application this might not be optimal, but for larger applications, the cost comes with long term modularity and maintainability benefits.
+Modules provide for better code reuse, stronger isolation and better tooling support for bundling.
+"><p>同样作为组织程序的方法, 模块也能容纳声明和实现.<br>不同的是模块<em>声明</em>自己的依赖.</p>
+<p>模块还依赖模块加载器(比如 CommonJs/Require.js).<br>它或许不是小 JS 应用程序的最佳选择, 但对于大型应用程序, 这点代价换来的是长期保持模块化和可维护的优势.<br>模块能带来更好的代码重用机会, 更强的隔离性, 更完善的打包工具支持.</p></div>
+<div class="translation-block" title="
+It is also worth noting that, for Node.js applications, modules are the default and the recommended approach to structure your code.
+
+Starting with ECMAScript 2015, modules are native part of the language, and should be supported by all compliant engine implementations.
+Thus, for new projects modules would be the recommended code organization mechanism.
+"><p>同样值得一提的是, 针对 Node.js 程序, 模块是默认以及被推荐的组织你程序的方式.</p>
+<p>从 ECMAScript 2015 起, 模块成为一项语言特性, 应当被所有兼容引擎实现支持.<br>因此, 模块应被推荐作为新项目的代码组织机制.</p></div>
+<h1 id="名字空间及模块中的陷阱" class="heading-control"><a href="#名字空间及模块中的陷阱" class="headerlink" title="名字空间及模块中的陷阱"></a>名字空间及模块中的陷阱<a class="heading-anchor" href="#名字空间及模块中的陷阱" aria-hidden="true"></a></h1><!-- # Pitfalls of Namespaces and Modules -->
+<div class="translation-block" title="
+In this section we&amp;#39;ll describe various common pitfalls in using namespaces and modules, and how to avoid them.
+"><p>在这节, 我们列举多种使用名字空间或模块的常见陷阱, 以及规避它们的方法.</p></div>
+<h2 id="用-lt-reference-gt-引用一个模块" class="heading-control"><a href="#用-lt-reference-gt-引用一个模块" class="headerlink" title="用 /// &lt;reference&gt; 引用一个模块"></a>用 <code>/// &lt;reference&gt;</code> 引用一个模块<a class="heading-anchor" href="#用-lt-reference-gt-引用一个模块" aria-hidden="true"></a></h2><!-- ## `/// <reference>`-ing a module -->
+<div class="translation-block" title="
+A common mistake is to try to use the `&amp;#x2F;&amp;#x2F;&amp;#x2F; &amp;lt;reference ... &amp;#x2F;&amp;gt;` syntax to refer to a module file, rather than using an `import` statement.
+To understand the distinction, we first need to understand how the compiler can locate the type information for a module based on the path of an `import` (e.g. the `...` in `import x from &amp;quot;...&amp;quot;;`, `import x = require(&amp;quot;...&amp;quot;);`, etc.) path.
+
+The compiler will try to find a `.ts`, `.tsx`, and then a `.d.ts` with the appropriate path.
+If a specific file could not be found, then the compiler will look for an *ambient module declaration*.
+Recall that these need to be declared in a `.d.ts` file.
+"><p>一个常见错误是试图用 <code>/// &lt;reference ... /&gt;</code> 语法引用一个模块文件, 而不是 <code>import</code> 语句.<br>为厘清两者差异, 首先我们要理解编译器是如何根据 <code>import</code> 路径 (即 <code>import x from &quot;...&quot;;</code>, <code>import x = require(&quot;...&quot;);</code> 等语句的 <code>...</code> 部分.) 定位一个模块的类型信息的.</p>
+<p>编译器试图以适当路径查找 <code>.ts</code>, <code>.tsx</code>, 然后是 <code>.d.ts</code> 文件.<br>如果编译器无法找到这个文件, 它随即查找<em>外部模块定义</em>.<br>回忆一下, 这些信息在 <code>.d.ts</code> 文件声明.</p></div>
+<ul>
+<li><p><code>myModules.d.ts</code></p>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// In a .d.ts file or .ts file that is not a module:</span></span><br><span class="line"><span class="keyword">declare</span> <span class="keyword">module</span> "SomeModule" &#123;</span><br><span class="line">    <span class="keyword">export</span> <span class="function"><span class="keyword">function</span> <span class="title">fn</span>(<span class="params"></span>): <span class="title">string</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><code>myOtherModule.ts</code></p>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/// &lt;reference path="myModules.d.ts" /&gt;</span></span><br><span class="line"><span class="keyword">import</span> * <span class="keyword">as</span> m <span class="keyword">from</span> <span class="string">"SomeModule"</span>;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<div class="translation-block" title="
+The reference tag here allows us to locate the declaration file that contains the declaration for the ambient module.
+This is how the `node.d.ts` file that several of the TypeScript samples use is consumed.
+"><p>这里的 reference 标签允许我们定位包含外部模块声明的声明文件.<br>这也是许多 TypeScript 示例使用 <code>node.d.ts</code> 的格式.</p></div>
+<h2 id="滥用名字空间" class="heading-control"><a href="#滥用名字空间" class="headerlink" title="滥用名字空间"></a>滥用名字空间<a class="heading-anchor" href="#滥用名字空间" aria-hidden="true"></a></h2><!-- ## Needless Namespacing -->
+<div class="translation-block" title="
+If you&amp;#39;re converting a program from namespaces to modules, it can be easy to end up with a file that looks like this:
+"><p>当你把程序从名字空间转移到模块, 很容易产生这样的文件:</p></div>
+<ul>
+<li><p><code>shapes.ts</code></p>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">export</span> <span class="keyword">namespace</span> Shapes &#123;</span><br><span class="line">    <span class="keyword">export</span> <span class="keyword">class</span> Triangle &#123; <span class="comment">/* ... */</span> &#125;</span><br><span class="line">    <span class="keyword">export</span> <span class="keyword">class</span> Square &#123; <span class="comment">/* ... */</span> &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<div class="translation-block" title="
+The top-level module here `Shapes` wraps up `Triangle` and `Square` for no reason.
+This is confusing and annoying for consumers of your module:
+"><p>把 <code>Triangle</code> 和 <code>Square</code> 放进顶层模块 <code>Shapes</code> 是没必要的.<br>你模块的用户会为此头晕, 厌烦:</p></div>
+<ul>
+<li><p><code>shapeConsumer.ts</code></p>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> * <span class="keyword">as</span> shapes <span class="keyword">from</span> <span class="string">"./shapes"</span>;</span><br><span class="line"><span class="keyword">let</span> t = <span class="keyword">new</span> shapes.Shapes.Triangle(); <span class="comment">// shapes.Shapes?</span></span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<div class="translation-block" title="
+A key feature of modules in TypeScript is that two different modules will never contribute names to the same scope.
+Because the consumer of a module decides what name to assign it, there&amp;#39;s no need to proactively wrap up the exported symbols in a namespace.
+
+To reiterate why you shouldn&amp;#39;t try to namespace your module contents, the general idea of namespacing is to provide logical grouping of constructs and to prevent name collisions.
+Because the module file itself is already a logical grouping, and its top-level name is defined by the code that imports it, it&amp;#39;s unnecessary to use an additional module layer for exported objects.
+
+Here&amp;#39;s a revised example:
+"><p>TypeScript 模块的一个关键特征是两个不同模块绝不会往同一个空间贡献标识符.<br>因为模块用户最终会为模块分配一个名字, 没必要提前把所有导出标识符放进额外的名字空间.</p>
+<p>再次强调, 名字空间要解决的问题是提供逻辑分组, 和避免命名冲突.<br>而模块文件本身就是一个逻辑分组, 它顶层名字由导入它的代码定义, 额外地为导出项创建一个模块层是没必要的.</p>
+<p>修改后的示例如下:</p></div>
+<ul>
+<li><p><code>shapes.ts</code></p>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">export</span> <span class="keyword">class</span> Triangle &#123; <span class="comment">/* ... */</span> &#125;</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">class</span> Square &#123; <span class="comment">/* ... */</span> &#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><code>shapeConsumer.ts</code></p>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> * <span class="keyword">as</span> shapes <span class="keyword">from</span> <span class="string">"./shapes"</span>;</span><br><span class="line"><span class="keyword">let</span> t = <span class="keyword">new</span> shapes.Triangle();</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h2 id="模块的问题" class="heading-control"><a href="#模块的问题" class="headerlink" title="模块的问题"></a>模块的问题<a class="heading-anchor" href="#模块的问题" aria-hidden="true"></a></h2><!-- ## Trade-offs of Modules -->
+<div class="translation-block" title="
+Just as there is a one-to-one correspondence between JS files and modules, TypeScript has a one-to-one correspondence between module source files and their emitted JS files.
+One effect of this is that it&amp;#39;s not possible to concatenate multiple module source files depending on the module system you target.
+For instance, you can&amp;#39;t use the `outFile` option while targeting `commonjs` or `umd`, but with TypeScript 1.8 and later, [it&amp;#39;s possible](.&amp;#x2F;release%20notes&amp;#x2F;TypeScript%201.8.md#concatenate-amd-and-system-modules-with---outfile) to use `outFile` when targeting `amd` or `system`.
+"><p>正如 JS 文件和模块是一对一关系, TypeScript 模块源文件与编译后的 JS 文件同样是一对一关系.<br>一个问题是取决于你面向的模块系统, 有时不可能合并多个模块源文件.<br>例如, 面向 <code>commonjs</code> 或 <code>umd</code> 时, <code>outFile</code> 选项将不可用, 但对 TypeScript 1.8 或更高版本, 你<a href="./release%20notes/TypeScript%201.8.md#concatenate-amd-and-system-modules-with---outfile">可以</a>面向 <code>amd</code> 或 <code>system</code> 合并文件.</p></div>
+    </div>
+
+    
+    
+    
+        
+      
+        <div id="reward-container">
+  <div>如果这篇文章对您有用，可以考虑打赏:)</div>
+  <button id="reward-button" disable="enable" onclick="var qr = document.getElementById(&quot;qr&quot;); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+        
+      
+      <div style="display: inline-block">
+        <img src="/images/wechatpay.png" alt="Hyan Lee 微信支付">
+        <p>微信支付</p>
+      </div>
+
+  </div>
+</div>
+
+      
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>Hyan Lee</li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://hyan23.org/2019/11/20/ts-namespaces-and-modules/" title="名字空间和模块">https://hyan23.org/2019/11/20/ts-namespaces-and-modules/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！</li>
+</ul>
+</div>
+
+      
+
+      <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+              
+                <a href="/2019/11/20/ts-namespaces/" rel="next" title="名字空间">
+                  <i class="fa fa-chevron-left"></i> 名字空间
+                </a>
+              
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+              
+                <a href="/2019/11/20/ts-module-resolution/" rel="prev" title="模块解析">
+                  模块解析 <i class="fa fa-chevron-right"></i>
+                </a>
+              
+            </div>
+          </div>
+        
+      </footer>
+    
+  </div>
+  
+  
+  
+  </article>
+
+  </div>
+
+
+          </div>
+          
+    
+    <div class="comments" id="gitalk-container"></div>
+  
+
+        </div>
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+        
+        
+        
+        
+      
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#介绍"><span class="nav-number">1.</span> <span class="nav-text">介绍</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#使用名字空间"><span class="nav-number">2.</span> <span class="nav-text">使用名字空间</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#使用模块"><span class="nav-number">3.</span> <span class="nav-text">使用模块</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#名字空间及模块中的陷阱"><span class="nav-number">4.</span> <span class="nav-text">名字空间及模块中的陷阱</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#用-lt-reference-gt-引用一个模块"><span class="nav-number">4.1.</span> <span class="nav-text">用 /// &lt;reference&gt; 引用一个模块</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#滥用名字空间"><span class="nav-number">4.2.</span> <span class="nav-text">滥用名字空间</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#模块的问题"><span class="nav-number">4.3.</span> <span class="nav-text">模块的问题</span></a></li></ol></li></ol></div>
+        
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image"
+      src="/images/avatar2.png"
+      alt="Hyan Lee">
+  <p class="site-author-name" itemprop="name">Hyan Lee</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">31</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-categories">
+        
+          
+            <a href="/categories/">
+          
+        
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">分类</span>
+        </a>
+      </div>
+    
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+      
+      
+        
+      
+      
+        
+      
+        <a href="https://github.com/hyan23" title="GitHub &rarr; https://github.com/hyan23" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+    
+      <span class="links-of-author-item">
+      
+      
+        
+      
+      
+        
+      
+        <a href="mailto:hyan23lee@hotmail.com" title="E-Mail &rarr; mailto:hyan23lee@hotmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+    
+      <span class="links-of-author-item">
+      
+      
+        
+      
+      
+        
+      
+        <a href="https://t.me/hyan23" title="Telegram &rarr; https://t.me/hyan23" rel="noopener" target="_blank"><i class="fa fa-fw fa-telegram"></i>Telegram</a>
+      </span>
+    
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    
+  
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+      
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2017 – <span itemprop="copyrightYear">2020</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Hyan Lee</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    
+    <span title="站点总字数">118k</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v3.9.0</div>
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js?v=3.1.0"></script>
+  <script src="//cdn.jsdelivr.net/npm/medium-zoom@1/dist/medium-zoom.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+<script src="/js/utils.js?v=7.4.0"></script>
+<script src="/js/schemes/pisces.js?v=7.4.0"></script>
+<script src="/js/next-boot.js?v=7.4.0"></script>
+
+
+
+  
+  <script>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+    mermaid.initialize({
+      theme: 'forest',
+      logLevel: 3,
+      flowchart: { curve: 'linear' },
+      gantt: { axisFormat: '%m/%d/%Y' },
+      sequence: { actorMargin: 50 }
+    });
+  }, window.mermaid);
+}
+</script>
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID: '442da4785490db3ece48',
+      clientSecret: '3bfa2829a34371ca37db636917e791d114bd338c',
+      repo: 'blog-comments',
+      owner: 'hyan23',
+      admin: ['hyan23'],
+      id: 'bf3f6a5fbc7788468dab9e6483256885',
+        language: window.navigator.language || window.navigator.userLanguage,
+      
+      distractionFreeMode: 'true'
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+</script>
+
+</body>
+</html>
